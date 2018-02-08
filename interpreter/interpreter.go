@@ -72,31 +72,40 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 			// if we have found a function that matches the name
 			if interp.functions[n].Name == blockText {
 				fn := interp.functions[n]
+
+				// make a copy of the children
+
+				children := make([]*block.Block, len(b.Children))
+				for i, child := range b.Children {
+					children[i] = new(block.Block)
+					*children[i] = *child
+				}
+
 				// evaluate children if needed to
 				i := 0
-				for ; i < len(fn.Arguments) && i < len(b.Children); i++ {
+				for ; i < len(fn.Arguments) && i < len(children); i++ {
 					if fn.Arguments[i] != block.BlockKind {
-						if err := interp.Evaluate(b.Children[i]); err != nil {
-							return errors.Errorf("Error in child %s: %v", b.Children[i].Text, err)
+						if err := interp.Evaluate(children[i]); err != nil {
+							return errors.Errorf("Error in child %s: %v", children[i].Text, err)
 						}
 					}
 				}
 				if fn.IsVariadic {
 					lastArgumentIndex := len(fn.Arguments) - 1
 					// evaluate the rest
-					for ; i < len(b.Children); i++ {
+					for ; i < len(children); i++ {
 						if fn.Arguments[lastArgumentIndex] != block.BlockKind {
-							if err := interp.Evaluate(b.Children[i]); err != nil {
-								return errors.Errorf("Error in child %s: %v", b.Children[i].Text, err)
+							if err := interp.Evaluate(children[i]); err != nil {
+								return errors.Errorf("Error in child %s: %v", children[i].Text, err)
 							}
 						}
 					}
 				}
-				if fn.MatchesArguments(b.Arguments()) {
+				if fn.MatchesArguments(block.Arguments(children)) {
 					if interp.Logger != nil {
 						interp.Logger.Printf("Running fn `%s'\n", fn.String())
 					}
-					result, err := fn.Func(&interp.Interpreter, b.Children)
+					result, err := fn.Func(&interp.Interpreter, children)
 					if err != nil {
 						return errors.Errorf("Error in function %s: %v", fn.Name, err)
 					}

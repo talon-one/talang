@@ -5,6 +5,7 @@ package block
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/ericlagergren/decimal"
 )
@@ -16,6 +17,7 @@ const (
 	DecimalKind Kind = iota
 	StringKind  Kind = iota
 	BoolKind    Kind = iota
+	TimeKind    Kind = iota
 	BlockKind   Kind = iota
 )
 
@@ -23,20 +25,9 @@ type Block struct {
 	Text     string
 	Decimal  *decimal.Big
 	Bool     bool
+	Time     time.Time
 	Kind     Kind
 	Children []*Block
-}
-
-func (b *Block) IsEmpty() bool {
-	return len(b.Children) == 0 && len(b.Text) == 0
-}
-
-func (b *Block) IsDecimal() bool {
-	return b.Kind == DecimalKind
-}
-
-func (b *Block) IsBlock() bool {
-	return b.Kind == BlockKind
 }
 
 func New(text string, children ...*Block) *Block {
@@ -66,11 +57,40 @@ func NewBool(boolean bool) *Block {
 	}
 	return &b
 }
+
+func NewTime(t time.Time) *Block {
+	var b Block
+	b.Time = t
+	b.Kind = TimeKind
+	b.Text = b.Time.Format(time.RFC3339)
+	return &b
+}
+
 func NewString(str string) *Block {
 	var b Block
 	b.Text = str
 	b.Kind = StringKind
 	return &b
+}
+
+func (b *Block) IsEmpty() bool {
+	return len(b.Children) == 0 && len(b.Text) == 0
+}
+
+func (b *Block) IsDecimal() bool {
+	return b.Kind == DecimalKind
+}
+
+func (b *Block) IsBlock() bool {
+	return b.Kind == BlockKind
+}
+
+func (b *Block) IsTime() bool {
+	return b.Kind == TimeKind
+}
+
+func (b *Block) IsString() bool {
+	return b.Kind == StringKind
 }
 
 func (b *Block) initValue(text string) {
@@ -88,6 +108,13 @@ func (b *Block) initValue(text string) {
 	} else if strings.EqualFold("false", text) {
 		b.Bool = false
 		b.Kind = BoolKind
+		return
+	}
+
+	var err error
+	b.Time, err = time.Parse(time.RFC3339, text)
+	if err == nil {
+		b.Kind = TimeKind
 		return
 	}
 
@@ -109,6 +136,8 @@ func (b *Block) Update(source *Block) {
 		b.Decimal = source.Decimal
 	case BoolKind:
 		b.Bool = source.Bool
+	case TimeKind:
+		b.Time = source.Time
 	}
 	b.Text = source.Text
 	b.Children = source.Children
@@ -126,9 +155,9 @@ func (b *Block) String() string {
 
 }
 
-func (b *Block) Arguments() []Kind {
-	types := make([]Kind, len(b.Children))
-	for i, child := range b.Children {
+func Arguments(children []*Block) []Kind {
+	types := make([]Kind, len(children))
+	for i, child := range children {
 		types[i] = child.Kind
 	}
 	return types

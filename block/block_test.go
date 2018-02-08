@@ -79,6 +79,16 @@ func TestIsDecimal(t *testing.T) {
 	require.Equal(t, true, block.IsDecimal())
 }
 
+func TestIsTime(t *testing.T) {
+	block := New("2001-01-01T01:01:01Z")
+	require.Equal(t, true, block.IsTime())
+}
+
+func TestIsString(t *testing.T) {
+	block := New("Hello World")
+	require.Equal(t, true, block.IsString())
+}
+
 func TestIsEmpty(t *testing.T) {
 	var block Block
 	require.Equal(t, true, block.IsEmpty())
@@ -120,8 +130,8 @@ func TestString(t *testing.T) {
 
 func TestArguments(t *testing.T) {
 	block := New("+", New("1"), New("2"))
-	require.EqualValues(t, []Kind{DecimalKind, DecimalKind}, block.Arguments())
+	require.EqualValues(t, []Kind{DecimalKind, DecimalKind}, Arguments(block.Children))
 
 	block = New("+", New("Hello"), New("1"))
-	require.EqualValues(t, []Kind{StringKind, DecimalKind}, block.Arguments())
+	require.EqualValues(t, []Kind{StringKind, DecimalKind}, Arguments(block.Children))
 }
