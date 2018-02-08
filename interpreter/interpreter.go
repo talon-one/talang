@@ -1,30 +1,26 @@
 package interpreter
 
 import (
+	"log"
 	"strings"
 
-	"log"
-
 	"github.com/pkg/errors"
-	"github.com/talon-one/talang/interpreter/internal"
+	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/interpreter/shared"
 	lexer "github.com/talon-one/talang/lexer"
-	"github.com/talon-one/talang/term"
 )
 
 type Interpreter struct {
-	internal.Interpreter
-	functionMap map[string]TaFunc
-	Logger      *log.Logger
+	shared.Interpreter
+	functions []shared.TaSignature
+	Logger    *log.Logger
 }
 
 func NewInterpreter() (*Interpreter, error) {
-	interp := Interpreter{
-		functionMap: make(map[string]TaFunc),
-	}
+	interp := Interpreter{}
 	if err := interp.registerCoreFunctions(); err != nil {
 		return nil, err
 	}
-	interp.Logger = log.New(&dummyWriter{}, "", 0)
 	return &interp, nil
 }
 
@@ -36,16 +32,16 @@ func MustNewInterpreter() *Interpreter {
 	return interp
 }
 
-func (interp *Interpreter) LexAndEvaluate(str string) (term.Term, error) {
+func (interp *Interpreter) LexAndEvaluate(str string) (*block.Block, error) {
 	t, err := lexer.Lex(str)
 	if err != nil {
 		return t, err
 	}
-	err = interp.Evaluate(&t)
+	err = interp.Evaluate(t)
 	return t, err
 }
 
-func (interp *Interpreter) MustLexAndEvaluate(str string) term.Term {
+func (interp *Interpreter) MustLexAndEvaluate(str string) *block.Block {
 	t, err := interp.LexAndEvaluate(str)
 	if err != nil {
 		panic(err)
@@ -53,34 +49,71 @@ func (interp *Interpreter) MustLexAndEvaluate(str string) term.Term {
 	return t
 }
 
-func (interp *Interpreter) Evaluate(t *term.Term) error {
-	if t == nil || t.IsEmpty() {
+func (interp *Interpreter) Evaluate(b *block.Block) error {
+	if b == nil || b.IsEmpty() {
 		return errors.New("Empty term")
 	}
+
+	childCount := len(b.Children)
+
 	// term has just one child, and no operation
-	if len(t.Children) == 1 && len(t.Text) == 0 {
-		*t = t.Children[0]
-		return interp.Evaluate(t)
+	if childCount == 1 && len(b.Text) == 0 {
+		*b = *b.Children[0]
+		return interp.Evaluate(b)
 	}
 
-	if len(t.Text) > 0 {
-		interp.Logger.Printf("Evaluating `%s'\n", t.String())
-		fnName := strings.ToLower(t.Text)
-		if fn, ok := interp.functionMap[fnName]; ok {
-
-			for i := range t.Children {
-				if err := interp.Evaluate(&t.Children[i]); err != nil {
-					return errors.Errorf("Error in child %s: %v", t.Children[i].Text, err)
+	if len(b.Text) > 0 {
+		if interp.Logger != nil {
+			interp.Logger.Printf("Evaluating `%s'\n", b.String())
+		}
+		blockText := strings.ToLower(b.Text)
+		// iterate trough all functions
+		for n := 0; n < len(interp.functions); n++ {
+			// if we have found a function that matches the name
+			if interp.functions[n].Name == blockText {
+				fn := interp.functions[n]
+				// evaluate children if needed to
+				i := 0
+				for ; i < len(fn.Arguments) && i < len(b.Children); i++ {
+					if fn.Arguments[i] != block.BlockKind {
+						if err := interp.Evaluate(b.Children[i]); err != nil {
+							return errors.Errorf("Error in child %s: %v", b.Children[i].Text, err)
+						}
+					}
+				}
+				if fn.IsVariadic {
+					lastArgumentIndex := len(fn.Arguments) - 1
+					// evaluate the rest
+					for ; i < len(b.Children); i++ {
+						if fn.Arguments[lastArgumentIndex] != block.BlockKind {
+							if err := interp.Evaluate(b.Children[i]); err != nil {
+								return errors.Errorf("Error in child %s: %v", b.Children[i].Text, err)
+							}
+						}
+					}
+				}
+				if fn.MatchesArguments(b.Arguments()) {
+					if interp.Logger != nil {
+						interp.Logger.Printf("Running fn `%s'\n", fn.String())
+					}
+					result, err := fn.Func(&interp.Interpreter, b.Children)
+					if err != nil {
+						return errors.Errorf("Error in function %s: %v", fn.Name, err)
+					}
+					if interp.Logger != nil {
+						interp.Logger.Printf("Updating value to `%s'\n", result)
+					}
+					b.Update(result)
+					if b.IsBlock() {
+						return interp.Evaluate(b)
+					}
+					break
+				} else if interp.Logger != nil {
+					interp.Logger.Printf("NOT Running fn `%s' (not matching signature)\n", fn.String())
 				}
 			}
-			interp.Logger.Printf("Running fn `%s'\n", fnName)
-			result, err := fn(&interp.Interpreter, t.Children...)
-			if err != nil {
-				return errors.Errorf("Error in function %s: %v", fnName, err)
-			}
-			interp.Logger.Printf("Updating value to `%s'\n", result)
-			t.Update(result)
 		}
+
 	}
 
 	return nil

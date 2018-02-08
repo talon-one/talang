@@ -1,12 +1,14 @@
 package interpreter
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/term"
+	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/interpreter/shared"
 )
 
 func TestInterpreter(t *testing.T) {
@@ -22,6 +24,7 @@ func TestInterpreter(t *testing.T) {
 	}
 
 	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
 
 	for _, test := range tests {
 		require.Equal(t, test.expected, interp.MustLexAndEvaluate(test.input).Text, "Error in test `%s'", test.input)
@@ -31,7 +34,7 @@ func TestInterpreter(t *testing.T) {
 func TestInterpreterInvalidTerm(t *testing.T) {
 	interp := MustNewInterpreter()
 	require.Error(t, interp.Evaluate(nil))
-	require.Error(t, interp.Evaluate(&term.Term{}))
+	require.Error(t, interp.Evaluate(&block.Block{}))
 }
 
 func BenchmarkInterpreter(b *testing.B) {
@@ -55,8 +58,98 @@ func BenchmarkInterpreter(b *testing.B) {
 	}
 }
 
+/*
 func TestFoo(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-	interp.MustLexAndEvaluate("(+ 1 1)")
+	interp.MustLexAndEvaluate("(= 1 1)")
+}
+
+func TestMisc(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	require.Equal(t, "2", interp.MustLexAndEvaluate("(misc (+ 1 1))").Text)
+}
+*/
+
+func TestOverloading(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	require.NoError(t, interp.RemoveAllFunctions())
+	require.Equal(t, "(+ 1 2)", interp.MustLexAndEvaluate("(+ 1 2)").String())
+	require.Equal(t, "(+ A B)", interp.MustLexAndEvaluate("(+ A B)").String())
+
+	interp.RegisterFunction(shared.TaSignature{
+		Name:       "+",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+			block.DecimalKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
+		},
+	})
+	require.Equal(t, "3", interp.MustLexAndEvaluate("(+ 1 2)").String())
+	require.Equal(t, "(+ A B)", interp.MustLexAndEvaluate("(+ A B)").String())
+
+	interp.RegisterFunction(shared.TaSignature{
+		Name:       "+",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.New(args[0].String() + args[1].String()), nil
+		},
+	})
+	require.Equal(t, "3", interp.MustLexAndEvaluate("(+ 1 2)").String())
+	require.Equal(t, "AB", interp.MustLexAndEvaluate("(+ A B)").String())
+}
+
+func TestOverloadingNested(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	require.NoError(t, interp.RemoveAllFunctions())
+
+	interp.RegisterFunction(shared.TaSignature{
+		Name:       "+",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+			block.DecimalKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
+		},
+	})
+
+	interp.RegisterFunction(shared.TaSignature{
+		Name:       "+",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.New(args[0].String() + args[1].String()), nil
+		},
+	})
+
+	nestedFuncCounter := 0
+	interp.RegisterFunction(shared.TaSignature{
+		Name:       "nestedfunc",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AnyKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			nestedFuncCounter++
+			return block.NewString(fmt.Sprintf("%d", nestedFuncCounter)), nil
+		},
+	})
+
+	require.Equal(t, "2C", interp.MustLexAndEvaluate("(+ (nestedfunc) C)").String())
+	require.Equal(t, 2, nestedFuncCounter)
 }

@@ -1,114 +1,146 @@
+//go:generate go run generate.go -pkg=math
 package math
 
 import (
+	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
-	"github.com/shopspring/decimal"
-	"github.com/talon-one/talang/interpreter/internal"
-	"github.com/talon-one/talang/term"
+	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/interpreter/shared"
 )
 
-func Add(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	d := decimal.Zero
-	for i := 0; i < len(args); i++ {
-		if !args[i].IsDecimal() {
-			return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[i].Text)
+var Add = shared.TaSignature{
+	Name:       "+",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return nil, errors.New("invalid or missing arguments")
 		}
-		d = d.Add(args[i].Decimal)
-	}
-	return d.String(), nil
+		var d *decimal.Big
+		for i := 0; i < argc; i++ {
+			if i == 0 {
+				d = args[i].Decimal
+			} else {
+				d = d.Add(d, args[i].Decimal)
+			}
+		}
+		return block.NewDecimal(d), nil
+	},
 }
 
-func Sub(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	var d decimal.Decimal
-	for i := 0; i < len(args); i++ {
-		if !args[i].IsDecimal() {
-			return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[i].Text)
+var Sub = shared.TaSignature{
+	Name:       "-",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) < 2 {
+			return nil, errors.New("invalid or missing arguments")
 		}
-		if i == 0 {
-			d = args[i].Decimal
-		} else {
-			d = d.Sub(args[i].Decimal)
+		var d *decimal.Big
+		for i := 0; i < len(args); i++ {
+			if i == 0 {
+				d = args[i].Decimal
+			} else {
+				d = d.Sub(d, args[i].Decimal)
+			}
 		}
-	}
-	return d.String(), nil
+		return block.NewDecimal(d), nil
+	},
 }
 
-func Mul(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	var d decimal.Decimal
-	for i := 0; i < len(args); i++ {
-		if !args[i].IsDecimal() {
-			return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[i].Text)
+var Mul = shared.TaSignature{
+	Name:       "*",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) < 2 {
+			return nil, errors.New("invalid or missing arguments")
 		}
-		if i == 0 {
-			d = args[i].Decimal
-		} else {
-			d = d.Mul(args[i].Decimal)
+		var d *decimal.Big
+		for i := 0; i < len(args); i++ {
+			if i == 0 {
+				d = args[i].Decimal
+			} else {
+				d = d.Mul(d, args[i].Decimal)
+			}
 		}
-	}
-	return d.String(), nil
+		return block.NewDecimal(d), nil
+	},
 }
 
-func Div(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	var d decimal.Decimal
-	for i := 0; i < len(args); i++ {
-		if !args[i].IsDecimal() {
-			return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[i].Text)
+var Div = shared.TaSignature{
+	Name:       "/",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) < 2 {
+			return nil, errors.New("invalid or missing arguments")
 		}
-		if i == 0 {
-			d = args[i].Decimal
-		} else {
-			d = d.Div(args[i].Decimal)
+		var d *decimal.Big
+		for i := 0; i < len(args); i++ {
+			if i == 0 {
+				d = args[i].Decimal
+			} else {
+				d = d.Quo(d, args[i].Decimal)
+			}
 		}
-	}
-	return d.String(), nil
+		return block.NewDecimal(d), nil
+	},
 }
 
-func Mod(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	var d decimal.Decimal
-	for i := 0; i < len(args); i++ {
-		if !args[i].IsDecimal() {
-			return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[i].Text)
+var Mod = shared.TaSignature{
+	Name:       "mod",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) < 2 {
+			return nil, errors.New("invalid or missing arguments")
 		}
-		if i == 0 {
-			d = args[i].Decimal
-		} else {
-			d = d.Mod(args[i].Decimal)
+		var d *decimal.Big
+		for i := 0; i < len(args); i++ {
+			if i == 0 {
+				d = args[i].Decimal
+			} else {
+				d = d.Rem(d, args[i].Decimal)
+			}
 		}
-	}
-	return d.String(), nil
+		return block.NewDecimal(d), nil
+	},
 }
 
-func Ceil(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) != 1 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	if !args[0].IsDecimal() {
-		return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[0].Text)
-	}
-	return args[0].Decimal.Ceil().String(), nil
+var Ceil = shared.TaSignature{
+	Name: "ceil",
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) != 1 {
+			return nil, errors.New("invalid or missing arguments")
+		}
+		return nil, errors.New("Not implemented")
+	},
 }
 
-func Floor(interp *internal.Interpreter, args ...term.Term) (string, error) {
-	if len(args) != 1 {
-		return "", errors.New("invalid or missing arguments")
-	}
-	if !args[0].IsDecimal() {
-		return "", errors.Errorf("invalid or missing arguments: `%s' is not a decimal", args[0].Text)
-	}
-	return args[0].Decimal.Floor().String(), nil
+var Floor = shared.TaSignature{
+	Name: "floor",
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) != 1 {
+			return nil, errors.New("invalid or missing arguments")
+		}
+		return nil, errors.New("Not implemented")
+	},
 }

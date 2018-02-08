@@ -4,33 +4,43 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/interpreter/internal"
-	"github.com/talon-one/talang/term"
+	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/interpreter/shared"
 )
 
 func TestRegisterFunction(t *testing.T) {
 	interp := MustNewInterpreter()
-
+	require.NoError(t, interp.RemoveAllFunctions())
 	// register a function
-	require.NoError(t, interp.RegisterFunction("MyFN", func(interp *internal.Interpreter, args ...term.Term) (string, error) {
-		return "Hello World", nil
+	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
+		Name: "MyFN",
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.NewString("Hello World"), nil
+		},
 	}))
+
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
 
 	// try to register an already registered function
-	require.Error(t, interp.RegisterFunction("myfn", func(interp *internal.Interpreter, args ...term.Term) (string, error) {
-		return "Hello Universe", nil
-	}))
+	require.Error(t, interp.RegisterFunction(shared.TaSignature{
+		Name: "myfn",
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.NewString("Hello Universe"), nil
+		}}))
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
 
 	// update the function
-	require.NoError(t, interp.UpdateFunction("MyFn", func(interp *internal.Interpreter, args ...term.Term) (string, error) {
-		return "Hello Galaxy", nil
-	}))
+	require.NoError(t, interp.UpdateFunction(shared.TaSignature{
+		Name: "MyFn",
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			return block.NewString("Hello Galaxy"), nil
+		}}))
 	require.Equal(t, "Hello Galaxy", interp.MustLexAndEvaluate("myfn").Text)
 
 	// delete the function
-	require.NoError(t, interp.RemoveFunction("MyFn"))
+	require.NoError(t, interp.RemoveFunction(shared.TaSignature{
+		Name: "MyFN",
+	}))
 	require.Equal(t, "myfn", interp.MustLexAndEvaluate("myfn").Text)
 
 }

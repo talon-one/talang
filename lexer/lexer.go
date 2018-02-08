@@ -4,14 +4,14 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/talon-one/talang/term"
+	"github.com/talon-one/talang/block"
 )
 
 // (= 1 2)
 
-func Lex(str string) (term.Term, error) {
+func Lex(str string) (*block.Block, error) {
 	// the first word is always the operation
-	var children []term.Term
+	var children []*block.Block
 	var operation string
 
 parse:
@@ -33,7 +33,7 @@ parse:
 				if len(operation) == 0 {
 					operation = str[start:i]
 				} else {
-					children = append(children, term.New(str[start:i]))
+					children = append(children, block.New(str[start:i]))
 				}
 			}
 			var j int
@@ -51,7 +51,7 @@ parse:
 		case 0x27: // SingleQoute
 			nestedScope, err := Lex(str[start:i])
 			if err != nil {
-				return term.Term{}, err
+				return nil, err
 			}
 			if !nestedScope.IsEmpty() {
 				children = append(children, nestedScope)
@@ -61,7 +61,7 @@ parse:
 			if len(operation) == 0 {
 				operation = tokenString
 			} else {
-				children = append(children, term.New(tokenString))
+				children = append(children, block.New(tokenString))
 			}
 
 			if rest == str {
@@ -73,7 +73,7 @@ parse:
 			tokenString, rest := unquote(str[i:], r, 0x29, utf8.RuneError)
 			nestedScope, err := Lex(tokenString)
 			if err != nil {
-				return term.Term{}, err
+				return nil, err
 			}
 			if !nestedScope.IsEmpty() {
 				children = append(children, nestedScope)
@@ -92,13 +92,13 @@ parse:
 		if len(operation) == 0 {
 			operation = str[start:]
 		} else {
-			children = append(children, term.New(str[start:]))
+			children = append(children, block.New(str[start:]))
 		}
 	}
 
 end:
 
-	return term.New(operation, children...), nil
+	return block.New(operation, children...), nil
 }
 
 func unquote(str string, start, end, escape rune) (string, string) {
