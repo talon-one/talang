@@ -2,6 +2,8 @@
 package cmp
 
 import (
+	"time"
+
 	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
@@ -50,7 +52,7 @@ var NotEqual = shared.TaSignature{
 	},
 }
 
-var GreaterThan = shared.TaSignature{
+var GreaterThanDecimal = shared.TaSignature{
 	Name:       ">",
 	IsVariadic: true,
 	Arguments: []block.Kind{
@@ -68,6 +70,32 @@ var GreaterThan = shared.TaSignature{
 				d = args[i].Decimal
 			} else {
 				if d.Cmp(args[i].Decimal) <= 0 {
+					return block.NewBool(false), nil
+				}
+			}
+		}
+		return block.NewBool(true), nil
+	},
+}
+
+var GreaterThanTime = shared.TaSignature{
+	Name:       ">",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.TimeKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return block.NewBool(false), errors.New("invalid or missing arguments")
+		}
+
+		var a time.Time
+		for i := 0; i < argc; i++ {
+			if i == 0 {
+				a = args[i].Time
+			} else {
+				if !a.After(args[i].Time) {
 					return block.NewBool(false), nil
 				}
 			}

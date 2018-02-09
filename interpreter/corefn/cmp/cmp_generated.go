@@ -6,7 +6,8 @@ func AllOperations() []shared.TaSignature {
 	return []shared.TaSignature{
 		Equal,
 		NotEqual,
-		GreaterThan,
+		GreaterThanDecimal,
+		GreaterThanTime,
 		LessThan,
 		GreaterThanOrEqual,
 		LessThanOrEqual,
