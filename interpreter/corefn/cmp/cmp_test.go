@@ -2,6 +2,7 @@ package cmp
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
@@ -32,13 +33,23 @@ func TestNotEqual(t *testing.T) {
 	require.Equal(t, "false", mustFunc(NotEqual.Func(nil, []*block.Block{block.New("1"), block.New("1"), block.New("1")})))
 }
 
-func TestGreaterThan(t *testing.T) {
-	require.Error(t, getError(GreaterThan.Func(nil, []*block.Block{})))
-	require.Error(t, getError(GreaterThan.Func(nil, []*block.Block{block.New("1")})))
-	require.Equal(t, "true", mustFunc(GreaterThan.Func(nil, []*block.Block{block.New("2"), block.New("1")})))
-	require.Equal(t, "true", mustFunc(GreaterThan.Func(nil, []*block.Block{block.New("3"), block.New("1"), block.New("2")})))
-	require.Equal(t, "false", mustFunc(GreaterThan.Func(nil, []*block.Block{block.New("0"), block.New("-1"), block.New("2")})))
-	require.Equal(t, "false", mustFunc(GreaterThan.Func(nil, []*block.Block{block.New("1"), block.New("1")})))
+func TestGreaterThanDecimal(t *testing.T) {
+	require.Error(t, getError(GreaterThanDecimal.Func(nil, []*block.Block{})))
+	require.Error(t, getError(GreaterThanDecimal.Func(nil, []*block.Block{block.New("1")})))
+	require.Equal(t, "true", mustFunc(GreaterThanDecimal.Func(nil, []*block.Block{block.New("2"), block.New("1")})))
+	require.Equal(t, "true", mustFunc(GreaterThanDecimal.Func(nil, []*block.Block{block.New("3"), block.New("1"), block.New("2")})))
+	require.Equal(t, "false", mustFunc(GreaterThanDecimal.Func(nil, []*block.Block{block.New("0"), block.New("-1"), block.New("2")})))
+	require.Equal(t, "false", mustFunc(GreaterThanDecimal.Func(nil, []*block.Block{block.New("1"), block.New("1")})))
+}
+
+func TestGreaterThanTime(t *testing.T) {
+	now := time.Now()
+	require.Error(t, getError(GreaterThanTime.Func(nil, []*block.Block{})))
+	require.Error(t, getError(GreaterThanTime.Func(nil, []*block.Block{block.NewTime(now)})))
+	require.Equal(t, "true", mustFunc(GreaterThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(-time.Second))})))
+	require.Equal(t, "true", mustFunc(GreaterThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(-time.Second)), block.NewTime(now.Add(-time.Minute))})))
+	require.Equal(t, "false", mustFunc(GreaterThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(-time.Second)), block.NewTime(now.Add(time.Minute))})))
+	require.Equal(t, "false", mustFunc(GreaterThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now)})))
 }
 
 func TestLessThan(t *testing.T) {
