@@ -52,38 +52,82 @@ func TestGreaterThanTime(t *testing.T) {
 	require.Equal(t, "false", mustFunc(GreaterThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now)})))
 }
 
-func TestLessThan(t *testing.T) {
-	require.Error(t, getError(LessThan.Func(nil, []*block.Block{})))
-	require.Error(t, getError(LessThan.Func(nil, []*block.Block{block.New("1")})))
-	require.Equal(t, "true", mustFunc(LessThan.Func(nil, []*block.Block{block.New("1"), block.New("2")})))
-	require.Equal(t, "true", mustFunc(LessThan.Func(nil, []*block.Block{block.New("1"), block.New("2"), block.New("3")})))
-	require.Equal(t, "false", mustFunc(LessThan.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("2")})))
-	require.Equal(t, "false", mustFunc(LessThan.Func(nil, []*block.Block{block.New("1"), block.New("1")})))
+func TestLessThanDecimal(t *testing.T) {
+	require.Error(t, getError(LessThanDecimal.Func(nil, []*block.Block{})))
+	require.Error(t, getError(LessThanDecimal.Func(nil, []*block.Block{block.New("1")})))
+	require.Equal(t, "true", mustFunc(LessThanDecimal.Func(nil, []*block.Block{block.New("1"), block.New("2")})))
+	require.Equal(t, "true", mustFunc(LessThanDecimal.Func(nil, []*block.Block{block.New("1"), block.New("2"), block.New("3")})))
+	require.Equal(t, "false", mustFunc(LessThanDecimal.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("2")})))
+	require.Equal(t, "false", mustFunc(LessThanDecimal.Func(nil, []*block.Block{block.New("1"), block.New("1")})))
 }
 
-func TestGreaterThanOrEqual(t *testing.T) {
-	require.Error(t, getError(GreaterThanOrEqual.Func(nil, []*block.Block{})))
-	require.Error(t, getError(GreaterThanOrEqual.Func(nil, []*block.Block{block.New("1")})))
-	require.Equal(t, "true", mustFunc(GreaterThanOrEqual.Func(nil, []*block.Block{block.New("2"), block.New("1")})))
-	require.Equal(t, "true", mustFunc(GreaterThanOrEqual.Func(nil, []*block.Block{block.New("3"), block.New("1"), block.New("2"), block.New("3")})))
-	require.Equal(t, "false", mustFunc(GreaterThanOrEqual.Func(nil, []*block.Block{block.New("0"), block.New("-1"), block.New("2")})))
+func TestLessThanTime(t *testing.T) {
+	now := time.Now()
+	require.Error(t, getError(LessThanTime.Func(nil, []*block.Block{})))
+	require.Error(t, getError(LessThanTime.Func(nil, []*block.Block{block.NewTime(now)})))
+	require.Equal(t, "true", mustFunc(LessThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "true", mustFunc(LessThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Minute))})))
+	require.Equal(t, "false", mustFunc(LessThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(-time.Second)), block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "false", mustFunc(LessThanTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now)})))
 }
 
-func TestLessThanOrEqual(t *testing.T) {
-	require.Error(t, getError(LessThanOrEqual.Func(nil, []*block.Block{})))
-	require.Error(t, getError(LessThanOrEqual.Func(nil, []*block.Block{block.New("1")})))
-	require.Equal(t, "true", mustFunc(LessThanOrEqual.Func(nil, []*block.Block{block.New("1"), block.New("2")})))
-	require.Equal(t, "true", mustFunc(LessThanOrEqual.Func(nil, []*block.Block{block.New("1"), block.New("2"), block.New("3"), block.New("1")})))
-	require.Equal(t, "false", mustFunc(LessThanOrEqual.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("2")})))
+func TestGreaterThanOrEqualDecimal(t *testing.T) {
+	require.Error(t, getError(GreaterThanOrEqualDecimal.Func(nil, []*block.Block{})))
+	require.Error(t, getError(GreaterThanOrEqualDecimal.Func(nil, []*block.Block{block.New("1")})))
+	require.Equal(t, "true", mustFunc(GreaterThanOrEqualDecimal.Func(nil, []*block.Block{block.New("2"), block.New("1")})))
+	require.Equal(t, "true", mustFunc(GreaterThanOrEqualDecimal.Func(nil, []*block.Block{block.New("3"), block.New("1"), block.New("2"), block.New("3")})))
+	require.Equal(t, "false", mustFunc(GreaterThanOrEqualDecimal.Func(nil, []*block.Block{block.New("0"), block.New("-1"), block.New("2")})))
 }
 
-func TestBetween(t *testing.T) {
-	require.Error(t, getError(Between.Func(nil, []*block.Block{})))
-	require.Error(t, getError(Between.Func(nil, []*block.Block{block.New("1")})))
-	require.Error(t, getError(Between.Func(nil, []*block.Block{block.New("1"), block.New("2")})))
-	require.Equal(t, "true", mustFunc(Between.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("2")})))
-	require.Equal(t, "true", mustFunc(Between.Func(nil, []*block.Block{block.New("1"), block.New("1"), block.New("2")})))
-	require.Equal(t, "true", mustFunc(Between.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("1")})))
-	require.Equal(t, "true", mustFunc(Between.Func(nil, []*block.Block{block.New("0"), block.New("1"), block.New("2"), block.New("0"), block.New("2")})))
-	require.Equal(t, "false", mustFunc(Between.Func(nil, []*block.Block{block.New("3"), block.New("0"), block.New("2")})))
+func TestGreaterThanOrEqualTime(t *testing.T) {
+	now := time.Now()
+	require.Error(t, getError(GreaterThanOrEqualTime.Func(nil, []*block.Block{})))
+	require.Error(t, getError(GreaterThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "true", mustFunc(GreaterThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second * 2)), block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "true", mustFunc(GreaterThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second * 3)), block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second * 2)), block.NewTime(now.Add(time.Second * 3))})))
+	require.Equal(t, "false", mustFunc(GreaterThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(-time.Second)), block.NewTime(now.Add(time.Second * 2))})))
+}
+
+func TestLessThanOrEqualDecimal(t *testing.T) {
+	require.Error(t, getError(LessThanOrEqualDecimal.Func(nil, []*block.Block{})))
+	require.Error(t, getError(LessThanOrEqualDecimal.Func(nil, []*block.Block{block.New("1")})))
+	require.Equal(t, "true", mustFunc(LessThanOrEqualDecimal.Func(nil, []*block.Block{block.New("1"), block.New("2")})))
+	require.Equal(t, "true", mustFunc(LessThanOrEqualDecimal.Func(nil, []*block.Block{block.New("1"), block.New("2"), block.New("3"), block.New("1")})))
+	require.Equal(t, "false", mustFunc(LessThanOrEqualDecimal.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("2")})))
+}
+
+func TestLessThanOrEqualTime(t *testing.T) {
+	now := time.Now()
+	require.Error(t, getError(LessThanOrEqualTime.Func(nil, []*block.Block{})))
+	require.Error(t, getError(LessThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "true", mustFunc(LessThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second * 2))})))
+	require.Equal(t, "true", mustFunc(LessThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second * 2)), block.NewTime(now.Add(time.Second * 3)), block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "false", mustFunc(LessThanOrEqualTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now), block.NewTime(now.Add(time.Second * 2))})))
+}
+
+func TestBetweenDecimal(t *testing.T) {
+	require.Error(t, getError(BetweenDecimal.Func(nil, []*block.Block{})))
+	require.Error(t, getError(BetweenDecimal.Func(nil, []*block.Block{block.New("1")})))
+	require.Error(t, getError(BetweenDecimal.Func(nil, []*block.Block{block.New("1"), block.New("2")})))
+	require.Equal(t, "true", mustFunc(BetweenDecimal.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("2")})))
+	require.Equal(t, "true", mustFunc(BetweenDecimal.Func(nil, []*block.Block{block.New("1"), block.New("1"), block.New("2")})))
+	require.Equal(t, "true", mustFunc(BetweenDecimal.Func(nil, []*block.Block{block.New("1"), block.New("0"), block.New("1")})))
+	require.Equal(t, "true", mustFunc(BetweenDecimal.Func(nil, []*block.Block{block.New("0"), block.New("1"), block.New("2"), block.New("0"), block.New("2")})))
+	require.Equal(t, "false", mustFunc(BetweenDecimal.Func(nil, []*block.Block{block.New("3"), block.New("0"), block.New("2")})))
+}
+
+func TestBetweenTime(t *testing.T) {
+	now := time.Now()
+	require.Error(t, getError(BetweenTime.Func(nil, []*block.Block{})))
+	require.Error(t, getError(BetweenTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second))})))
+	require.Error(t, getError(BetweenTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second * 2))})))
+	require.Equal(t, "true", mustFunc(BetweenTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now), block.NewTime(now.Add(time.Second * 2))})))
+	require.Equal(t, "true", mustFunc(BetweenTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second * 2))})))
+	require.Equal(t, "true", mustFunc(BetweenTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second)), block.NewTime(now), block.NewTime(now.Add(time.Second))})))
+	require.Equal(t, "true", mustFunc(BetweenTime.Func(nil, []*block.Block{block.NewTime(now), block.NewTime(now.Add(time.Second)), block.NewTime(now.Add(time.Second * 2)), block.NewTime(now), block.NewTime(now.Add(time.Second * 2))})))
+	require.Equal(t, "false", mustFunc(BetweenTime.Func(nil, []*block.Block{block.NewTime(now.Add(time.Second * 3)), block.NewTime(now), block.NewTime(now.Add(time.Second * 2))})))
+}
+
+func TestAllOperations(t *testing.T) {
+	AllOperations()
 }

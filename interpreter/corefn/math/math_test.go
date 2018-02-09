@@ -75,3 +75,7 @@ func TestFloor(t *testing.T) {
 	require.Equal(t, "-3", mustFunc(Floor.Func(nil, []*block.Block{block.New("-2.7")})))
 	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("-2")})))
 }
+
+func TestAllOperations(t *testing.T) {
+	AllOperations()
+}

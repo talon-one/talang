@@ -2,9 +2,6 @@
 package cmp
 
 import (
-	"time"
-
-	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
@@ -64,14 +61,10 @@ var GreaterThanDecimal = shared.TaSignature{
 			return block.NewBool(false), errors.New("invalid or missing arguments")
 		}
 
-		var d *decimal.Big
-		for i := 0; i < argc; i++ {
-			if i == 0 {
-				d = args[i].Decimal
-			} else {
-				if d.Cmp(args[i].Decimal) <= 0 {
-					return block.NewBool(false), nil
-				}
+		a := args[0].Decimal
+		for i := 1; i < argc; i++ {
+			if a.Cmp(args[i].Decimal) <= 0 {
+				return block.NewBool(false), nil
 			}
 		}
 		return block.NewBool(true), nil
@@ -90,21 +83,17 @@ var GreaterThanTime = shared.TaSignature{
 			return block.NewBool(false), errors.New("invalid or missing arguments")
 		}
 
-		var a time.Time
-		for i := 0; i < argc; i++ {
-			if i == 0 {
-				a = args[i].Time
-			} else {
-				if !a.After(args[i].Time) {
-					return block.NewBool(false), nil
-				}
+		a := args[0].Time
+		for i := 1; i < argc; i++ {
+			if !a.After(args[i].Time) {
+				return block.NewBool(false), nil
 			}
 		}
 		return block.NewBool(true), nil
 	},
 }
 
-var LessThan = shared.TaSignature{
+var LessThanDecimal = shared.TaSignature{
 	Name:       "<",
 	IsVariadic: true,
 	Arguments: []block.Kind{
@@ -116,21 +105,39 @@ var LessThan = shared.TaSignature{
 			return block.NewBool(false), errors.New("invalid or missing arguments")
 		}
 
-		var d *decimal.Big
-		for i := 0; i < argc; i++ {
-			if i == 0 {
-				d = args[i].Decimal
-			} else {
-				if d.Cmp(args[i].Decimal) >= 0 {
-					return block.NewBool(false), nil
-				}
+		a := args[0].Decimal
+		for i := 1; i < argc; i++ {
+			if a.Cmp(args[i].Decimal) >= 0 {
+				return block.NewBool(false), nil
 			}
 		}
 		return block.NewBool(true), nil
 	},
 }
 
-var GreaterThanOrEqual = shared.TaSignature{
+var LessThanTime = shared.TaSignature{
+	Name:       "<",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.TimeKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return block.NewBool(false), errors.New("invalid or missing arguments")
+		}
+
+		a := args[0].Time
+		for i := 1; i < argc; i++ {
+			if !a.Before(args[i].Time) {
+				return block.NewBool(false), nil
+			}
+		}
+		return block.NewBool(true), nil
+	},
+}
+
+var GreaterThanOrEqualDecimal = shared.TaSignature{
 	Name:       ">=",
 	IsVariadic: true,
 	Arguments: []block.Kind{
@@ -142,21 +149,39 @@ var GreaterThanOrEqual = shared.TaSignature{
 			return block.NewBool(false), errors.New("invalid or missing arguments")
 		}
 
-		var d *decimal.Big
-		for i := 0; i < argc; i++ {
-			if i == 0 {
-				d = args[i].Decimal
-			} else {
-				if d.Cmp(args[i].Decimal) < 0 {
-					return block.NewBool(false), nil
-				}
+		a := args[0].Decimal
+		for i := 1; i < argc; i++ {
+			if a.Cmp(args[i].Decimal) < 0 {
+				return block.NewBool(false), nil
 			}
 		}
 		return block.NewBool(true), nil
 	},
 }
 
-var LessThanOrEqual = shared.TaSignature{
+var GreaterThanOrEqualTime = shared.TaSignature{
+	Name:       ">=",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.TimeKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return block.NewBool(false), errors.New("invalid or missing arguments")
+		}
+
+		a := args[0].Time
+		for i := 0; i < argc; i++ {
+			if !a.Equal(args[i].Time) && !a.After(args[i].Time) {
+				return block.NewBool(false), nil
+			}
+		}
+		return block.NewBool(true), nil
+	},
+}
+
+var LessThanOrEqualDecimal = shared.TaSignature{
 	Name:       "<=",
 	IsVariadic: true,
 	Arguments: []block.Kind{
@@ -168,21 +193,39 @@ var LessThanOrEqual = shared.TaSignature{
 			return block.NewBool(false), errors.New("invalid or missing arguments")
 		}
 
-		var d *decimal.Big
-		for i := 0; i < argc; i++ {
-			if i == 0 {
-				d = args[i].Decimal
-			} else {
-				if d.Cmp(args[i].Decimal) > 0 {
-					return block.NewBool(false), nil
-				}
+		a := args[0].Decimal
+		for i := 1; i < argc; i++ {
+			if a.Cmp(args[i].Decimal) > 0 {
+				return block.NewBool(false), nil
 			}
 		}
 		return block.NewBool(true), nil
 	},
 }
 
-var Between = shared.TaSignature{
+var LessThanOrEqualTime = shared.TaSignature{
+	Name:       "<=",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.TimeKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return block.NewBool(false), errors.New("invalid or missing arguments")
+		}
+
+		a := args[0].Time
+		for i := 0; i < argc; i++ {
+			if !a.Equal(args[i].Time) && !a.Before(args[i].Time) {
+				return block.NewBool(false), nil
+			}
+		}
+		return block.NewBool(true), nil
+	},
+}
+
+var BetweenDecimal = shared.TaSignature{
 	Name:       "between",
 	IsVariadic: true,
 	Arguments: []block.Kind{
@@ -201,6 +244,32 @@ var Between = shared.TaSignature{
 
 		for i := 0; i < argc; i++ {
 			if args[i].Decimal.Cmp(min.Decimal) < 0 || args[i].Decimal.Cmp(max.Decimal) > 0 {
+				return block.NewBool(false), nil
+			}
+		}
+		return block.NewBool(true), nil
+	},
+}
+
+var BetweenTime = shared.TaSignature{
+	Name:       "between",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.TimeKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 3 {
+			return block.NewBool(false), errors.New("invalid or missing arguments")
+		}
+
+		min := args[argc-2]
+		max := args[argc-1]
+
+		argc -= 2
+
+		for i := 0; i < argc; i++ {
+			if args[i].Time.Before(min.Time) || args[i].Time.After(max.Time) {
 				return block.NewBool(false), nil
 			}
 		}

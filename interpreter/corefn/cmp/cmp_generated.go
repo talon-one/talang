@@ -8,9 +8,13 @@ func AllOperations() []shared.TaSignature {
 		NotEqual,
 		GreaterThanDecimal,
 		GreaterThanTime,
-		LessThan,
-		GreaterThanOrEqual,
-		LessThanOrEqual,
-		Between,
+		LessThanDecimal,
+		LessThanTime,
+		GreaterThanOrEqualDecimal,
+		GreaterThanOrEqualTime,
+		LessThanOrEqualDecimal,
+		LessThanOrEqualTime,
+		BetweenDecimal,
+		BetweenTime,
 	}
 }
