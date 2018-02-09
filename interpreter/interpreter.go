@@ -110,6 +110,9 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 					if err != nil {
 						return errors.Errorf("Error in function %s: %v", fn.Name, err)
 					}
+					if result == nil {
+						result = block.NewString("")
+					}
 					if interp.Logger != nil {
 						interp.Logger.Printf("Updating value to `%s'\n", result)
 					}

@@ -55,7 +55,7 @@ func TestBinding(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
 
-	interp.Binding["Root"] = shared.Binding{
+	interp.Binding["Root1"] = shared.Binding{
 		Value: block.New("1"),
 		Children: map[string]shared.Binding{
 			"Child1": shared.Binding{
@@ -66,17 +66,40 @@ func TestBinding(t *testing.T) {
 			},
 		},
 	}
+	interp.Binding["Root2"] = shared.Binding{}
 
-	b := interp.MustLexAndEvaluate("(+ (. Root) 2)")
+	b := interp.MustLexAndEvaluate("(+ (. Root1) 2)")
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "3", b.Text)
-	b = interp.MustLexAndEvaluate("(+ (. Root Child1) 2)")
+	b = interp.MustLexAndEvaluate("(+ (. Root1 Child1) 2)")
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "4", b.Text)
 
-	b = interp.MustLexAndEvaluate("(. Root Child2)")
+	b = interp.MustLexAndEvaluate("(. Root1 Child2)")
 	require.Equal(t, true, b.IsString())
 	require.Equal(t, "Hello", b.Text)
 
-	require.Error(t, getError(interp.LexAndEvaluate("(. Root Child3)")))
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Child3)")))
+
+	require.Equal(t, "", interp.MustLexAndEvaluate("(. Root2)").Text)
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root2 Child1)")))
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root3)")))
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root3 Child1)")))
+}
+
+func TestFuncInBinding(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+
+	interp.Binding["Root"] = shared.Binding{
+		Children: map[string]shared.Binding{
+			"2": shared.Binding{
+				Value: block.New("2"),
+			},
+		},
+	}
+
+	b := interp.MustLexAndEvaluate("(+ (. Root (+ 1 1)) 2)")
+	require.Equal(t, true, b.IsDecimal())
+	require.Equal(t, "4", b.Text)
 }
