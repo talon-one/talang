@@ -4,13 +4,34 @@ package block
 
 import "strconv"
 
-const _Kind_name = "AnyKindDecimalKindStringKindBoolKindBlockKind"
+const (
+	_Kind_name_0 = "DecimalKindStringKind"
+	_Kind_name_1 = "BoolKind"
+	_Kind_name_2 = "TimeKind"
+	_Kind_name_3 = "AtomKindBlockKind"
+	_Kind_name_4 = "AnyKind"
+)
 
-var _Kind_index = [...]uint8{0, 7, 18, 28, 36, 45}
+var (
+	_Kind_index_0 = [...]uint8{0, 11, 21}
+	_Kind_index_3 = [...]uint8{0, 8, 17}
+)
 
 func (i Kind) String() string {
-	if i < 0 || i >= Kind(len(_Kind_index)-1) {
+	switch {
+	case 1 <= i && i <= 2:
+		i -= 1
+		return _Kind_name_0[_Kind_index_0[i]:_Kind_index_0[i+1]]
+	case i == 4:
+		return _Kind_name_1
+	case i == 8:
+		return _Kind_name_2
+	case 15 <= i && i <= 16:
+		i -= 15
+		return _Kind_name_3[_Kind_index_3[i]:_Kind_index_3[i+1]]
+	case i == 31:
+		return _Kind_name_4
+	default:
 		return "Kind(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
-	return _Kind_name[_Kind_index[i]:_Kind_index[i+1]]
 }

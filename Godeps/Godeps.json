@@ -1,0 +1,59 @@
+{
+	"ImportPath": "github.com/talon-one/talang",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v80",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Comment": "v1.1.0-11-g87df7c6",
+			"Rev": "87df7c60d5820d0f8ae11afede5aa52325c09717"
+		},
+		{
+			"ImportPath": "github.com/ericlagergren/decimal",
+			"Rev": "565db25d3383a9e5161093590e23e9f8fdc071ad"
+		},
+		{
+			"ImportPath": "github.com/ericlagergren/decimal/internal/arith",
+			"Rev": "565db25d3383a9e5161093590e23e9f8fdc071ad"
+		},
+		{
+			"ImportPath": "github.com/ericlagergren/decimal/internal/arith/checked",
+			"Rev": "565db25d3383a9e5161093590e23e9f8fdc071ad"
+		},
+		{
+			"ImportPath": "github.com/ericlagergren/decimal/internal/buf",
+			"Rev": "565db25d3383a9e5161093590e23e9f8fdc071ad"
+		},
+		{
+			"ImportPath": "github.com/ericlagergren/decimal/internal/c",
+			"Rev": "565db25d3383a9e5161093590e23e9f8fdc071ad"
+		},
+		{
+			"ImportPath": "github.com/ericlagergren/decimal/internal/compat",
+			"Rev": "565db25d3383a9e5161093590e23e9f8fdc071ad"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.8.0-11-g30136e2",
+			"Rev": "30136e27e2ac8d167177e8a583aa4c3fea5be833"
+		},
+		{
+			"ImportPath": "github.com/pmezard/go-difflib/difflib",
+			"Comment": "v1.0.0",
+			"Rev": "792786c7400a136282c1664665ae0a8db921c6c2"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Comment": "v1.2.0-4-g87b1dfb",
+			"Rev": "87b1dfb5b2fa649f52695dd9eae19abe404a4308"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/require",
+			"Comment": "v1.2.0-4-g87b1dfb",
+			"Rev": "87b1dfb5b2fa649f52695dd9eae19abe404a4308"
+		}
+	]
+}
