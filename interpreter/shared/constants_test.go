@@ -107,7 +107,7 @@ func TestMatchesArguments(t *testing.T) {
 			block.BoolKind,
 		}))
 	})
-	t.Run("All Arguments", func(t *testing.T) {
+	t.Run("AnyKind", func(t *testing.T) {
 		sig := TaSignature{
 			Arguments: []block.Kind{
 				block.AnyKind,
@@ -119,6 +119,27 @@ func TestMatchesArguments(t *testing.T) {
 		}))
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
 			block.StringKind,
+		}))
+		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
+			block.BlockKind,
+		}))
+	})
+
+	t.Run("AtomKind", func(t *testing.T) {
+		sig := TaSignature{
+			Arguments: []block.Kind{
+				block.AtomKind,
+			},
+		}
+
+		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
+			block.DecimalKind,
+		}))
+		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
+			block.StringKind,
+		}))
+		require.Equal(t, false, sig.MatchesArguments([]block.Kind{
+			block.BlockKind,
 		}))
 	})
 }

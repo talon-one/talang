@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/corefn/cmp"
 	"github.com/talon-one/talang/interpreter/corefn/math"
 	"github.com/talon-one/talang/interpreter/corefn/misc"
@@ -57,6 +58,34 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.functions = append(interp.functions, cmp.AllOperations()...)
 
 	interp.functions = append(interp.functions, misc.Misc)
+
+	// binding
+	interp.functions = append(interp.functions, shared.TaSignature{
+		Name:       ".",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AtomKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			bindMap := interp.Binding
+			var value *block.Block
+			for i := 0; i < len(args); i++ {
+				if binding, ok := bindMap[args[i].Text]; ok {
+					bindMap = binding.Children
+					value = binding.Value
+				} else {
+					// join args
+					qualifiers := make([]string, len(args))
+					for j, arg := range args {
+						qualifiers[j] = arg.Text
+					}
+					return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
+				}
+			}
+			//
+			return value, nil
+		},
+	})
 	return nil
 }
 

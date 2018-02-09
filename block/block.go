@@ -13,12 +13,13 @@ import (
 type Kind int
 
 const (
-	AnyKind     Kind = iota
-	DecimalKind Kind = iota
-	StringKind  Kind = iota
-	BoolKind    Kind = iota
-	TimeKind    Kind = iota
-	BlockKind   Kind = iota
+	DecimalKind Kind = 1 << iota
+	StringKind  Kind = 1 << iota
+	BoolKind    Kind = 1 << iota
+	TimeKind    Kind = 1 << iota
+	BlockKind   Kind = 1 << iota
+	AtomKind    Kind = DecimalKind | StringKind | BoolKind | TimeKind
+	AnyKind     Kind = AtomKind | BlockKind
 )
 
 type Block struct {

@@ -7,7 +7,14 @@ import (
 	"github.com/talon-one/talang/block"
 )
 
-type Interpreter struct{}
+type Binding struct {
+	Value    *block.Block
+	Children map[string]Binding
+}
+
+type Interpreter struct {
+	Binding map[string]Binding
+}
 
 type TaFunc func(*Interpreter, []*block.Block) (*block.Block, error)
 
@@ -59,7 +66,7 @@ func (sig *TaSignature) MatchesArguments(args []block.Kind) bool {
 			return false
 		}
 		for i, kind := range args {
-			if sig.Arguments[i] != block.AnyKind && sig.Arguments[i] != kind {
+			if sig.Arguments[i]&kind == 0 {
 				return false
 			}
 		}
@@ -67,7 +74,7 @@ func (sig *TaSignature) MatchesArguments(args []block.Kind) bool {
 	}
 	sigArgc := len(sig.Arguments) - 1
 	for i, j := 0, 0; i < len(args); i++ {
-		if sig.Arguments[j] != block.AnyKind && sig.Arguments[j] != args[i] {
+		if sig.Arguments[j]&args[i] == 0 {
 			return false
 		}
 		if i < sigArgc {

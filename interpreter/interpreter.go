@@ -21,6 +21,7 @@ func NewInterpreter() (*Interpreter, error) {
 	if err := interp.registerCoreFunctions(); err != nil {
 		return nil, err
 	}
+	interp.Binding = make(map[string]shared.Binding)
 	return &interp, nil
 }
 
