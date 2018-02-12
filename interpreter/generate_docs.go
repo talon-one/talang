@@ -4,25 +4,60 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"os"
 	"sort"
 	"strings"
 
+	"html/template"
+
 	"github.com/talon-one/talang/interpreter"
 )
 
-func main() {
-	f, err := os.Create("functions.json")
-	if err != nil {
-		panic(err)
+var flagOutput = flag.String("format", "md", "format to use for output")
+
+const htmlTemplate string = `
+<html>
+	<style type="text/css">
+	p {
+		font-family: monospace;
+		display: block;
+		margin: .4rem 0;
+		padding: 0;
 	}
-	defer f.Close()
+	</style>
+	{{ range $index, $element := . }}
+		<p><b>{{ $element.Name -}}</b>
+			(
+			{{- range $i,$arg := $element.Arguments -}}
+				{{if $i}}, {{end}}{{ $arg -}}
+			{{ end -}}
+			{{ if $element.IsVariadic }}...{{ end -}}
+			)
+			{{- $element.Returns }}
+		</p>
+	{{ end }}
+</html>
+`
+
+const markdownTemplate string = `
+Functions
+{{ range $index, $element := . }}
+    {{ $element.Name -}}
+(
+{{- range $i,$arg := $element.Arguments -}}
+	{{if $i}}, {{end}}{{ $arg -}}
+{{ end -}}
+{{ if $element.IsVariadic }}...{{ end -}}
+)
+{{- $element.Returns -}}
+{{ end }}
+`
+
+func main() {
+	flag.Parse()
 
 	interp := interpreter.MustNewInterpreter()
-
-	encoder := json.NewEncoder(f)
-	encoder.SetIndent("", "    ")
-	encoder.SetEscapeHTML(false)
 
 	type fn struct {
 		IsVariadic bool
@@ -60,5 +95,43 @@ func main() {
 	sort.Slice(fns, func(i, j int) bool {
 		return strings.Compare(fns[i].Name, fns[j].Name) < 0
 	})
-	encoder.Encode(fns)
+
+	switch strings.ToLower(*flagOutput) {
+	case "json":
+		f, err := os.Create("functions.json")
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		encoder := json.NewEncoder(f)
+		encoder.SetIndent("", "    ")
+		encoder.SetEscapeHTML(false)
+		encoder.Encode(fns)
+	case "html":
+		f, err := os.Create("functions.html")
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+
+		t, err := template.New("html").Parse(htmlTemplate)
+		if err != nil {
+			panic(err)
+		}
+		t.Execute(f, fns)
+	case "md":
+		f, err := os.Create("functions.md")
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+
+		t, err := template.New("html").Parse(markdownTemplate)
+		if err != nil {
+			panic(err)
+		}
+		t.Execute(f, fns)
+	default:
+		panic("Unknown output format")
+	}
 }
