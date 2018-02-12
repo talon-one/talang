@@ -50,6 +50,13 @@ func TestEndsWith(t *testing.T) {
 	require.Equal(t, "true", mustFunc(EndsWith.Func(nil, []*block.Block{block.New("Hello World"), block.New("World"), block.New("ld")})))
 }
 
+func TestRegexp(t *testing.T) {
+	require.Error(t, getError(Regexp.Func(nil, []*block.Block{})))
+	require.Error(t, getError(Regexp.Func(nil, []*block.Block{block.New("foo")})))
+	require.Equal(t, "true", mustFunc(Regexp.Func(nil, []*block.Block{block.New("foobar"), block.New("^foo")})))
+	require.Equal(t, "false", mustFunc(Regexp.Func(nil, []*block.Block{block.New("foobar"), block.New("^foo$")})))
+}
+
 func TestAllOperations(t *testing.T) {
 	AllOperations()
 }

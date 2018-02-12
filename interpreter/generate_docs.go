@@ -13,6 +13,7 @@ import (
 	texttemplate "text/template"
 
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/interpreter/shared"
 )
 
 var flagOutput = flag.String("format", "md", "format to use for output")
@@ -20,38 +21,54 @@ var flagOutput = flag.String("format", "md", "format to use for output")
 const htmlTemplate string = `
 <html>
 	<style type="text/css">
+	details {
+		font-family: monospace;
+		display: block;
+		margin: 1rem 0;
+		padding: 0;
+	}
 	p {
 		font-family: monospace;
 		display: block;
-		margin: .4rem 0;
+		margin: 0 0 0 .4rem;
 		padding: 0;
 	}
 	</style>
+	<h1>Embedded Functions</h1>
 	{{ range $index, $element := . }}
-		<p><b>{{ $element.Name -}}</b>
+		<details>
+			<summary><b>{{ $element.Name -}}</b>
 			(
 			{{- range $i,$arg := $element.Arguments -}}
 				{{if $i}}, {{end}}{{ $arg -}}
 			{{ end -}}
 			{{ if $element.IsVariadic }}...{{ end -}}
 			)
-			{{- $element.Returns }}
-		</p>
+			{{- $element.Returns -}}
+			</summary>
+			<p>{{ $element.Description }}</p>
+		</details>
 	{{ end }}
 </html>
 `
 
-const markdownTemplate string = `
-# Functions
+const markdownTemplate string = `# Embedded Functions
+
+{{ range $index, $element := . }}- [{{ $element.Name -}}](/#{{ $element.Name -}})
+{{ end }}
+
+----
+
 {{ range $index, $element := . }}
-    {{ $element.Name -}}
+### {{ $element.Name -}}
 (
 {{- range $i,$arg := $element.Arguments -}}
 	{{if $i}}, {{end}}{{ $arg -}}
 {{ end -}}
 {{ if $element.IsVariadic }}...{{ end -}}
 )
-{{- $element.Returns -}}
+{{- $element.Returns }}
+    {{ $element.Description }}
 {{ end }}
 `
 
@@ -61,10 +78,9 @@ func main() {
 	interp := interpreter.MustNewInterpreter()
 
 	type fn struct {
-		IsVariadic bool
-		Arguments  []string
-		Name       string
-		Returns    string
+		Arguments []string
+		Returns   string
+		shared.TaSignature
 	}
 
 	fns := make([]fn, len(interp.Functions()))
@@ -86,10 +102,9 @@ func main() {
 		}
 
 		fns[i] = fn{
-			IsVariadic: f.IsVariadic,
-			Name:       f.Name,
-			Arguments:  arguments,
-			Returns:    returns,
+			Arguments:   arguments,
+			Returns:     returns,
+			TaSignature: f,
 		}
 	}
 

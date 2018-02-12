@@ -8,5 +8,6 @@ func AllOperations() []shared.TaSignature {
 		NotContains,
 		StartsWith,
 		EndsWith,
+		Regexp,
 	}
 }

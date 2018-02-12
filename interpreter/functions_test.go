@@ -58,11 +58,14 @@ func TestBinding(t *testing.T) {
 	interp.Binding["Root1"] = shared.Binding{
 		Value: block.New("1"),
 		Children: map[string]shared.Binding{
-			"Child1": shared.Binding{
+			"Decimal": shared.Binding{
 				Value: block.New("2"),
 			},
-			"Child2": shared.Binding{
+			"String": shared.Binding{
 				Value: block.New("Hello"),
+			},
+			"List": shared.Binding{
+				Value: block.New("", block.NewString("Item1"), block.NewString("Item2")),
 			},
 		},
 	}
@@ -71,20 +74,23 @@ func TestBinding(t *testing.T) {
 	b := interp.MustLexAndEvaluate("(+ (. Root1) 2)")
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "3", b.Text)
-	b = interp.MustLexAndEvaluate("(+ (. Root1 Child1) 2)")
+	b = interp.MustLexAndEvaluate("(+ (. Root1 Decimal) 2)")
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "4", b.Text)
 
-	b = interp.MustLexAndEvaluate("(. Root1 Child2)")
+	b = interp.MustLexAndEvaluate("(. Root1 String)")
 	require.Equal(t, true, b.IsString())
 	require.Equal(t, "Hello", b.Text)
 
-	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Child3)")))
+	b = interp.MustLexAndEvaluate("(. Root1 List)")
+	require.Equal(t, true, b.IsBlock())
+
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Unknown)")))
 
 	require.Equal(t, "", interp.MustLexAndEvaluate("(. Root2)").Text)
-	require.Error(t, getError(interp.LexAndEvaluate("(. Root2 Child1)")))
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root2 Decimal)")))
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root3)")))
-	require.Error(t, getError(interp.LexAndEvaluate("(. Root3 Child1)")))
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root3 Decimal)")))
 }
 
 func TestFuncInBinding(t *testing.T) {

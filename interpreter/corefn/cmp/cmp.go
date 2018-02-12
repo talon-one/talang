@@ -14,7 +14,8 @@ var Equal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.AnyKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the arguments are the same",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -36,7 +37,8 @@ var NotEqual = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.AnyKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the arguments are not the same",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -58,7 +60,8 @@ var GreaterThanDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is greather then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -81,7 +84,8 @@ var GreaterThanTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is greather then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -104,7 +108,8 @@ var LessThanDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is less then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -127,7 +132,8 @@ var LessThanTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is less then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -150,7 +156,8 @@ var GreaterThanOrEqualDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is greather or equal then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -173,7 +180,8 @@ var GreaterThanOrEqualTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is greather or equal then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -196,7 +204,8 @@ var LessThanOrEqualDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is less or equal then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -219,7 +228,8 @@ var LessThanOrEqualTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the first argument is less or equal then the following",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -242,7 +252,8 @@ var BetweenDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the arguments are between the second last and the last argument",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {
@@ -269,7 +280,8 @@ var BetweenTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Tests if the arguments are between the second last and the last argument",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {

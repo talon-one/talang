@@ -14,7 +14,8 @@ var Add = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Adds the arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -38,7 +39,8 @@ var Sub = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Substracts the arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -61,7 +63,8 @@ var Mul = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Multiplies the arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -84,7 +87,8 @@ var Div = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Divides the arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -107,7 +111,8 @@ var Mod = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Modulo the arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -129,7 +134,8 @@ var Floor = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Floor the decimal argument",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -149,7 +155,8 @@ var Ceil = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
-	Returns: block.DecimalKind,
+	Returns:     block.DecimalKind,
+	Description: "Ceil the decimal argument",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")

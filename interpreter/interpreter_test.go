@@ -58,20 +58,6 @@ func BenchmarkInterpreter(b *testing.B) {
 	}
 }
 
-/*
-func TestFoo(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-	interp.MustLexAndEvaluate("(= 1 1)")
-}
-
-func TestMisc(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-	require.Equal(t, "2", interp.MustLexAndEvaluate("(misc (+ 1 1))").Text)
-}
-*/
-
 func TestOverloading(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
@@ -152,4 +138,10 @@ func TestOverloadingNested(t *testing.T) {
 
 	require.Equal(t, "2C", interp.MustLexAndEvaluate("(+ (nestedfunc) C)").String())
 	require.Equal(t, 2, nestedFuncCounter)
+}
+
+func TestLists(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp.MustLexAndEvaluate("(= 1 1)")
 }

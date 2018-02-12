@@ -19,11 +19,12 @@ type Interpreter struct {
 type TaFunc func(*Interpreter, []*block.Block) (*block.Block, error)
 
 type TaSignature struct {
-	IsVariadic bool
-	Arguments  []block.Kind
-	Name       string
-	Func       TaFunc `json:"-"`
-	Returns    block.Kind
+	IsVariadic  bool
+	Arguments   []block.Kind
+	Name        string
+	Func        TaFunc `json:"-"`
+	Returns     block.Kind
+	Description string
 }
 
 func (s *TaSignature) String() string {

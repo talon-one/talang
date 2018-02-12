@@ -2,6 +2,7 @@
 package string
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -15,7 +16,8 @@ var Contains = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Returns wether the first argument exists in the following arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -37,7 +39,8 @@ var NotContains = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Returns wether the first argument does not exist in the following arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -59,7 +62,8 @@ var StartsWith = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Returns wether the first argument is the prefix of the following arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -80,7 +84,8 @@ var EndsWith = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
-	Returns: block.BoolKind,
+	Returns:     block.BoolKind,
+	Description: "Returns wether the first argument is the suffix of the following arguments",
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -93,5 +98,27 @@ var EndsWith = shared.TaSignature{
 			}
 		}
 		return block.NewBool(true), nil
+	},
+}
+
+var Regexp = shared.TaSignature{
+	Name:       "~",
+	IsVariadic: false,
+	Arguments: []block.Kind{
+		block.StringKind,
+		block.StringKind,
+	},
+	Returns:     block.BoolKind,
+	Description: "Returns wether the first argument matches the regular expression in the second argument",
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return nil, errors.New("invalid or missing arguments")
+		}
+		re, err := regexp.Compile(args[1].String())
+		if err != nil {
+			return block.NewBool(false), err
+		}
+		return block.NewBool(re.MatchString(args[0].String())), nil
 	},
 }

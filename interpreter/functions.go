@@ -72,37 +72,40 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.functions = append(interp.functions, misc.Misc)
 
 	// binding
-	interp.functions = append(interp.functions, shared.TaSignature{
-		Name:       ".",
-		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.AtomKind,
-		},
-		Returns: block.BlockKind,
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
-			bindMap := interp.Binding
-			var value *block.Block
-			for i := 0; i < len(args); i++ {
-				if binding, ok := bindMap[args[i].Text]; ok {
-					bindMap = binding.Children
-					value = binding.Value
-				} else {
-					// join args
-					qualifiers := make([]string, len(args))
-					for j, arg := range args {
-						qualifiers[j] = arg.Text
-					}
-					return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
-				}
-			}
-			//
-			return value, nil
-		},
-	})
+	interp.functions = append(interp.functions, bindingFunc)
 	return nil
 }
 
 func (interp *Interpreter) RemoveAllFunctions() error {
 	interp.functions = []shared.TaSignature{}
 	return nil
+}
+
+var bindingFunc = shared.TaSignature{
+	Name:       ".",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.AtomKind,
+	},
+	Returns:     block.BlockKind,
+	Description: "Access a variable in the binding",
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		bindMap := interp.Binding
+		var value *block.Block
+		for i := 0; i < len(args); i++ {
+			if binding, ok := bindMap[args[i].Text]; ok {
+				bindMap = binding.Children
+				value = binding.Value
+			} else {
+				// join args
+				qualifiers := make([]string, len(args))
+				for j, arg := range args {
+					qualifiers[j] = arg.Text
+				}
+				return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
+			}
+		}
+		//
+		return value, nil
+	},
 }
