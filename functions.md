@@ -6,6 +6,9 @@
 ### *(Decimal...)Decimal
     Multiplies the arguments
 
+### +(String...)String
+    Concat strings
+
 ### +(Decimal...)Decimal
     Adds the arguments
 
@@ -18,16 +21,16 @@
 ### /(Decimal...)Decimal
     Divides the arguments
 
-### <(Decimal...)Bool
-    Tests if the first argument is less then the following
-
 ### <(Time...)Bool
     Tests if the first argument is less then the following
 
-### <=(Decimal...)Bool
-    Tests if the first argument is less or equal then the following
+### <(Decimal...)Bool
+    Tests if the first argument is less then the following
 
 ### <=(Time...)Bool
+    Tests if the first argument is less or equal then the following
+
+### <=(Decimal...)Bool
     Tests if the first argument is less or equal then the following
 
 ### =(Any...)Bool

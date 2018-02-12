@@ -10,6 +10,24 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
+var Add = shared.TaSignature{
+	Name:       "+",
+	IsVariadic: true,
+	Arguments: []block.Kind{
+		block.StringKind,
+	},
+	Returns:     block.StringKind,
+	Description: "Concat strings",
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		values := make([]string, argc)
+		for i := 0; i < argc; i++ {
+			values[i] = args[i].Text
+		}
+		return block.NewString(strings.Join(values, "")), nil
+	},
+}
+
 var Contains = shared.TaSignature{
 	Name:       "contains",
 	IsVariadic: true,

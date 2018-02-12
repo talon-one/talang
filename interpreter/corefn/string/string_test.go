@@ -18,6 +18,11 @@ func getError(result interface{}, err error) error {
 	return err
 }
 
+func TestAdd(t *testing.T) {
+	require.Equal(t, "", mustFunc(Add.Func(nil, []*block.Block{})))
+	require.Equal(t, "Hello World and Universe", mustFunc(Add.Func(nil, []*block.Block{block.New("Hello World"), block.New(" and "), block.New("Universe")})))
+}
+
 func TestContains(t *testing.T) {
 	require.Error(t, getError(Contains.Func(nil, []*block.Block{})))
 	require.Error(t, getError(Contains.Func(nil, []*block.Block{block.New("1")})))
@@ -53,6 +58,7 @@ func TestEndsWith(t *testing.T) {
 func TestRegexp(t *testing.T) {
 	require.Error(t, getError(Regexp.Func(nil, []*block.Block{})))
 	require.Error(t, getError(Regexp.Func(nil, []*block.Block{block.New("foo")})))
+	require.Error(t, getError(Regexp.Func(nil, []*block.Block{block.New("foo"), block.New("[a")})))
 	require.Equal(t, "true", mustFunc(Regexp.Func(nil, []*block.Block{block.New("foobar"), block.New("^foo")})))
 	require.Equal(t, "false", mustFunc(Regexp.Func(nil, []*block.Block{block.New("foobar"), block.New("^foo$")})))
 }
