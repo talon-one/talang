@@ -9,7 +9,7 @@ func AllOperations() []shared.TaSignature {
 		Mul,
 		Div,
 		Mod,
-		Ceil,
 		Floor,
+		Ceil,
 	}
 }
