@@ -28,6 +28,15 @@ var Add = shared.TaSignature{
 	},
 }
 
+var Concat = shared.TaSignature{
+	Name:        "concat",
+	IsVariadic:  Add.IsVariadic,
+	Arguments:   Add.Arguments,
+	Returns:     Add.Returns,
+	Description: Add.Description,
+	Func:        Add.Func,
+}
+
 var Contains = shared.TaSignature{
 	Name:       "contains",
 	IsVariadic: true,
