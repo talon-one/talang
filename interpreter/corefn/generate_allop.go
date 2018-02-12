@@ -22,7 +22,7 @@ func main() {
 	if len(*pkg) == 0 {
 		panic("pkg not defined")
 	}
-	f, err := os.Create(fmt.Sprintf("%s_generated.go", *pkg))
+	f, err := os.Create(fmt.Sprintf("%s_allop.go", *pkg))
 	if err != nil {
 		panic(err)
 	}

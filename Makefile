@@ -1,5 +1,6 @@
 build:
 	go generate ./...
+	go run interpreter/generate_docs.go
 
 test: build
 	go test -cover ./...

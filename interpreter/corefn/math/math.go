@@ -1,4 +1,4 @@
-//go:generate go run generate.go -pkg=math
+//go:generate go run ../generate_allop.go -pkg=math
 package math
 
 import (
@@ -14,6 +14,7 @@ var Add = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -37,6 +38,7 @@ var Sub = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -59,6 +61,7 @@ var Mul = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -81,6 +84,7 @@ var Div = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -103,6 +107,7 @@ var Mod = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -124,6 +129,7 @@ var Floor = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -135,7 +141,6 @@ var Floor = shared.TaSignature{
 			ctx.RoundingMode = decimal.ToZero
 		}
 		return block.NewDecimal(ctx.RoundToInt(args[0].Decimal)), nil
-
 	},
 }
 
@@ -144,6 +149,7 @@ var Ceil = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.DecimalKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -156,6 +162,5 @@ var Ceil = shared.TaSignature{
 			ctx.RoundingMode = decimal.AwayFromZero
 		}
 		return block.NewDecimal(ctx.RoundToInt(args[0].Decimal)), nil
-
 	},
 }

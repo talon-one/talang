@@ -52,6 +52,14 @@ func (interp *Interpreter) GetFunction(signature shared.TaSignature) *shared.TaS
 	return nil
 }
 
+func (interp *Interpreter) Functions() []shared.TaSignature {
+	fns := make([]shared.TaSignature, len(interp.functions))
+	for i, fn := range interp.functions {
+		fns[i] = fn
+	}
+	return fns
+}
+
 func (interp *Interpreter) registerCoreFunctions() error {
 	// simple mathematics
 	interp.functions = append(interp.functions, math.AllOperations()...)
@@ -70,6 +78,7 @@ func (interp *Interpreter) registerCoreFunctions() error {
 		Arguments: []block.Kind{
 			block.AtomKind,
 		},
+		Returns: block.BlockKind,
 		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 			bindMap := interp.Binding
 			var value *block.Block

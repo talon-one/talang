@@ -1,4 +1,5 @@
-//go:generate go run generate.go -pkg=cmp
+//go:generate go run ../generate_allop.go -pkg=cmp
+
 package cmp
 
 import (
@@ -13,6 +14,7 @@ var Equal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.AnyKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -34,6 +36,7 @@ var NotEqual = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.AnyKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -55,6 +58,7 @@ var GreaterThanDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -77,6 +81,7 @@ var GreaterThanTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -99,6 +104,7 @@ var LessThanDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -121,6 +127,7 @@ var LessThanTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -143,6 +150,7 @@ var GreaterThanOrEqualDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -165,6 +173,7 @@ var GreaterThanOrEqualTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -187,6 +196,7 @@ var LessThanOrEqualDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -209,6 +219,7 @@ var LessThanOrEqualTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -231,6 +242,7 @@ var BetweenDecimal = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.DecimalKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {
@@ -257,6 +269,7 @@ var BetweenTime = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.TimeKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {

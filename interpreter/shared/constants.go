@@ -22,7 +22,8 @@ type TaSignature struct {
 	IsVariadic bool
 	Arguments  []block.Kind
 	Name       string
-	Func       TaFunc
+	Func       TaFunc `json:"-"`
+	Returns    block.Kind
 }
 
 func (s *TaSignature) String() string {

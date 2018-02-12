@@ -1,4 +1,4 @@
-//go:generate go run generate.go -pkg=string
+//go:generate go run ../generate_allop.go -pkg=string
 package string
 
 import (
@@ -15,6 +15,7 @@ var Contains = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -36,6 +37,7 @@ var NotContains = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -57,6 +59,7 @@ var StartsWith = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -77,6 +80,7 @@ var EndsWith = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.StringKind,
 	},
+	Returns: block.BoolKind,
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
