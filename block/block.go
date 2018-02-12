@@ -101,33 +101,36 @@ func (b *Block) initValue(text string) {
 		return
 	}
 
-	// is it a bool?
-	if strings.EqualFold("true", text) {
-		b.Bool = true
-		b.Kind = BoolKind
-		return
-	} else if strings.EqualFold("false", text) {
-		b.Bool = false
-		b.Kind = BoolKind
-		return
-	}
+	if len(b.Text) > 0 {
+		// is it a bool?
+		if strings.EqualFold("true", text) {
+			b.Bool = true
+			b.Kind = BoolKind
+			return
+		} else if strings.EqualFold("false", text) {
+			b.Bool = false
+			b.Kind = BoolKind
+			return
+		}
 
-	var err error
-	b.Time, err = time.Parse(time.RFC3339, text)
-	if err == nil {
-		b.Kind = TimeKind
-		return
-	}
+		var err error
+		b.Time, err = time.Parse(time.RFC3339, text)
+		if err == nil {
+			b.Kind = TimeKind
+			return
+		}
 
-	var ok bool
-	// try to parse it as a decimal
-	b.Decimal, ok = decimal.New(0, 0).SetString(text)
-	if ok == true {
-		b.Kind = DecimalKind
-		return
+		var ok bool
+		// try to parse it as a decimal
+		b.Decimal, ok = decimal.New(0, 0).SetString(text)
+		if ok == true {
+			b.Kind = DecimalKind
+			return
+		}
+		b.Kind = StringKind
+	} else {
+		b.Kind = BlockKind
 	}
-
-	b.Kind = StringKind
 }
 
 func (b *Block) Update(source *Block) {

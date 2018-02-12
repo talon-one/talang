@@ -27,10 +27,10 @@
 ### <(Decimal...)Bool
     Tests if the first argument is less then the following
 
-### <=(Time...)Bool
+### <=(Decimal...)Bool
     Tests if the first argument is less or equal then the following
 
-### <=(Decimal...)Bool
+### <=(Time...)Bool
     Tests if the first argument is less or equal then the following
 
 ### =(Any...)Bool
@@ -48,14 +48,17 @@
 ### >=(Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
-### between(Decimal...)Bool
+### between(Time...)Bool
     Tests if the arguments are between the second last and the last argument
 
-### between(Time...)Bool
+### between(Decimal...)Bool
     Tests if the arguments are between the second last and the last argument
 
 ### ceil(Decimal)Decimal
     Ceil the decimal argument
+
+### concat(String...)String
+    Concat strings
 
 ### contains(String...)Bool
     Returns wether the first argument exists in the following arguments
