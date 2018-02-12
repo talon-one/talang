@@ -119,19 +119,6 @@ var Mod = shared.TaSignature{
 	},
 }
 
-var Ceil = shared.TaSignature{
-	Name: "ceil",
-	Arguments: []block.Kind{
-		block.DecimalKind,
-	},
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
-		if len(args) != 1 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-		return nil, errors.New("Not implemented")
-	},
-}
-
 var Floor = shared.TaSignature{
 	Name: "floor",
 	Arguments: []block.Kind{
@@ -141,6 +128,34 @@ var Floor = shared.TaSignature{
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")
 		}
-		return nil, errors.New("Not implemented")
+		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
+		if args[0].Decimal.Signbit() {
+			ctx.RoundingMode = decimal.AwayFromZero
+		} else {
+			ctx.RoundingMode = decimal.ToZero
+		}
+		return block.NewDecimal(ctx.RoundToInt(args[0].Decimal)), nil
+
+	},
+}
+
+var Ceil = shared.TaSignature{
+	Name: "ceil",
+	Arguments: []block.Kind{
+		block.DecimalKind,
+	},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		if len(args) != 1 {
+			return nil, errors.New("invalid or missing arguments")
+		}
+
+		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
+		if args[0].Decimal.Signbit() {
+			ctx.RoundingMode = decimal.ToZero
+		} else {
+			ctx.RoundingMode = decimal.AwayFromZero
+		}
+		return block.NewDecimal(ctx.RoundToInt(args[0].Decimal)), nil
+
 	},
 }

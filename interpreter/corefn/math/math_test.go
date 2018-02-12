@@ -1,6 +1,7 @@
 package math
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -58,24 +59,43 @@ func TestMod(t *testing.T) {
 	require.Equal(t, "1", mustFunc(Mod.Func(nil, []*block.Block{block.New("4"), block.New("3"), block.New("2")})))
 }
 
+func TestFloor(t *testing.T) {
+	require.Error(t, getError(Floor.Func(nil, []*block.Block{})))
+	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2")})))
+	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2.4")})))
+	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2.5")})))
+	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2.9")})))
+	require.Equal(t, "-3", mustFunc(Floor.Func(nil, []*block.Block{block.New("-2.7")})))
+	require.Equal(t, "-2", mustFunc(Floor.Func(nil, []*block.Block{block.New("-2")})))
+}
+
 func TestCeil(t *testing.T) {
 	require.Error(t, getError(Ceil.Func(nil, []*block.Block{})))
 	require.Equal(t, "2", mustFunc(Ceil.Func(nil, []*block.Block{block.New("2")})))
 	require.Equal(t, "3", mustFunc(Ceil.Func(nil, []*block.Block{block.New("2.4")})))
 	require.Equal(t, "3", mustFunc(Ceil.Func(nil, []*block.Block{block.New("2.9")})))
 	require.Equal(t, "-2", mustFunc(Ceil.Func(nil, []*block.Block{block.New("-2.7")})))
-	require.Equal(t, "2", mustFunc(Ceil.Func(nil, []*block.Block{block.New("-2")})))
-}
-
-func TestFloor(t *testing.T) {
-	require.Error(t, getError(Floor.Func(nil, []*block.Block{})))
-	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2")})))
-	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2.4")})))
-	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("2.9")})))
-	require.Equal(t, "-3", mustFunc(Floor.Func(nil, []*block.Block{block.New("-2.7")})))
-	require.Equal(t, "2", mustFunc(Floor.Func(nil, []*block.Block{block.New("-2")})))
+	require.Equal(t, "-2", mustFunc(Ceil.Func(nil, []*block.Block{block.New("-2")})))
 }
 
 func TestAllOperations(t *testing.T) {
 	AllOperations()
+}
+
+func TestStdFloor(t *testing.T) {
+	require.Equal(t, float64(2), math.Floor(2))
+	require.Equal(t, float64(2), math.Floor(2.4))
+	require.Equal(t, float64(2), math.Floor(2.5))
+	require.Equal(t, float64(2), math.Floor(2.9))
+	require.Equal(t, float64(-3), math.Floor(-2.7))
+	require.Equal(t, float64(-2), math.Floor(-2))
+}
+
+func TestStdCeil(t *testing.T) {
+	require.Equal(t, float64(2), math.Ceil(2))
+	require.Equal(t, float64(3), math.Ceil(2.4))
+	require.Equal(t, float64(3), math.Ceil(2.5))
+	require.Equal(t, float64(3), math.Ceil(2.9))
+	require.Equal(t, float64(-2), math.Ceil(-2.7))
+	require.Equal(t, float64(-2), math.Ceil(-2))
 }
