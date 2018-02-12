@@ -8,6 +8,7 @@ import (
 	"github.com/talon-one/talang/interpreter/corefn/cmp"
 	"github.com/talon-one/talang/interpreter/corefn/math"
 	"github.com/talon-one/talang/interpreter/corefn/misc"
+	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
@@ -56,6 +57,9 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.functions = append(interp.functions, math.AllOperations()...)
 	// compare functions
 	interp.functions = append(interp.functions, cmp.AllOperations()...)
+
+	// string functions
+	interp.functions = append(interp.functions, stringpkg.AllOperations()...)
 
 	interp.functions = append(interp.functions, misc.Misc)
 
