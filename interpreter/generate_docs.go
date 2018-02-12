@@ -53,12 +53,6 @@ const htmlTemplate string = `
 `
 
 const markdownTemplate string = `# Embedded Functions
-
-{{ range $index, $element := . }}- [{{ $element.Name -}}](/#{{ $element.Name -}})
-{{ end }}
-
-----
-
 {{ range $index, $element := . }}
 ### {{ $element.Name -}}
 (

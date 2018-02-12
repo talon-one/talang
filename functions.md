@@ -1,36 +1,5 @@
 # Embedded Functions
 
-- [!=](/#!=)
-- [*](/#*)
-- [+](/#+)
-- [-](/#-)
-- [.](/#.)
-- [/](/#/)
-- [<](/#<)
-- [<](/#<)
-- [<=](/#<=)
-- [<=](/#<=)
-- [=](/#=)
-- [>](/#>)
-- [>](/#>)
-- [>=](/#>=)
-- [>=](/#>=)
-- [between](/#between)
-- [between](/#between)
-- [ceil](/#ceil)
-- [contains](/#contains)
-- [endsWith](/#endsWith)
-- [floor](/#floor)
-- [misc](/#misc)
-- [mod](/#mod)
-- [notContains](/#notContains)
-- [startsWith](/#startsWith)
-- [~](/#~)
-
-
-----
-
-
 ### !=(Any...)Bool
     Tests if the arguments are not the same
 
@@ -44,7 +13,7 @@
     Substracts the arguments
 
 ### .(Atom...)Block
-    
+    Access a variable in the binding
 
 ### /(Decimal...)Decimal
     Divides the arguments
