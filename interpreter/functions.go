@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/corefn/cmp"
+	"github.com/talon-one/talang/interpreter/corefn/list"
 	"github.com/talon-one/talang/interpreter/corefn/math"
 	"github.com/talon-one/talang/interpreter/corefn/misc"
 	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
@@ -70,6 +71,9 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.functions = append(interp.functions, stringpkg.AllOperations()...)
 
 	interp.functions = append(interp.functions, misc.Misc)
+
+	// list functions
+	interp.functions = append(interp.functions, list.AllOperations()...)
 
 	// binding
 	interp.functions = append(interp.functions, bindingFunc)

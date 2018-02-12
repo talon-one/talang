@@ -148,3 +148,37 @@ func TestLists(t *testing.T) {
 	require.Equal(t, "", result.Text)
 	require.Equal(t, 3, len(result.Children))
 }
+
+func TestDoubleFuncCall(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+
+	fn1Runned := false
+	fn2Runned := false
+	interp.RegisterFunction(shared.TaSignature{
+		Name: "fn1",
+		Arguments: []block.Kind{
+			block.AtomKind,
+			block.AtomKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			fn1Runned = true
+			return block.NewString("A"), nil
+		},
+	})
+	interp.RegisterFunction(shared.TaSignature{
+		Name: "fn2",
+		Arguments: []block.Kind{
+			block.AtomKind,
+			block.AtomKind,
+		},
+		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+			fn2Runned = true
+			return block.NewString("B"), nil
+		},
+	})
+	interp.MustLexAndEvaluate("fn1 fn2 1 2")
+	require.Equal(t, true, fn1Runned)
+	require.Equal(t, false, fn2Runned)
+
+}
