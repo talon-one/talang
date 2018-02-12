@@ -1,21 +1,21 @@
 
-Functions
+# Functions
 
     !=(Any...)Bool
     *(Decimal...)Decimal
-    &#43;(Decimal...)Decimal
+    +(Decimal...)Decimal
     -(Decimal...)Decimal
     .(Atom...)Block
     /(Decimal...)Decimal
-    &lt;(Decimal...)Bool
-    &lt;(Time...)Bool
-    &lt;=(Time...)Bool
-    &lt;=(Decimal...)Bool
+    <(Decimal...)Bool
+    <(Time...)Bool
+    <=(Time...)Bool
+    <=(Decimal...)Bool
     =(Any...)Bool
-    &gt;(Time...)Bool
-    &gt;(Decimal...)Bool
-    &gt;=(Decimal...)Bool
-    &gt;=(Time...)Bool
+    >(Time...)Bool
+    >(Decimal...)Bool
+    >=(Decimal...)Bool
+    >=(Time...)Bool
     between(Time...)Bool
     between(Decimal...)Bool
     ceil(Decimal)Decimal

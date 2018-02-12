@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"html/template"
+	texttemplate "text/template"
 
 	"github.com/talon-one/talang/interpreter"
 )
@@ -41,7 +42,7 @@ const htmlTemplate string = `
 `
 
 const markdownTemplate string = `
-Functions
+# Functions
 {{ range $index, $element := . }}
     {{ $element.Name -}}
 (
@@ -126,7 +127,7 @@ func main() {
 		}
 		defer f.Close()
 
-		t, err := template.New("html").Parse(markdownTemplate)
+		t, err := texttemplate.New("html").Parse(markdownTemplate)
 		if err != nil {
 			panic(err)
 		}
