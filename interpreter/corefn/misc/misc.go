@@ -1,3 +1,5 @@
+//go:generate go run ../generate_allop.go -pkg=misc
+
 package misc
 
 import (
@@ -12,5 +14,13 @@ var Misc = shared.TaSignature{
 	},
 	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 		return args[0], nil
+	},
+}
+
+var Noop = shared.TaSignature{
+	Name:      "noop",
+	Arguments: []block.Kind{},
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		return nil, nil
 	},
 }
