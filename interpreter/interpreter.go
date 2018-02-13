@@ -85,7 +85,7 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 				// evaluate children if needed to
 				i := 0
 				for ; i < len(fn.Arguments) && i < len(children); i++ {
-					if fn.Arguments[i] != block.BlockKind {
+					if fn.Arguments[i]&block.AtomKind != 0 && children[i].IsBlock() {
 						if err := interp.Evaluate(children[i]); err != nil {
 							return errors.Errorf("Error in child %s: %v", children[i].Text, err)
 						}
@@ -95,7 +95,7 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 					lastArgumentIndex := len(fn.Arguments) - 1
 					// evaluate the rest
 					for ; i < len(children); i++ {
-						if fn.Arguments[lastArgumentIndex] != block.BlockKind {
+						if fn.Arguments[lastArgumentIndex]&block.AtomKind != 0 && children[i].IsBlock() {
 							if err := interp.Evaluate(children[i]); err != nil {
 								return errors.Errorf("Error in child %s: %v", children[i].Text, err)
 							}

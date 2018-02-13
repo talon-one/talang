@@ -110,6 +110,18 @@ func TestLexer(t *testing.T) {
 				),
 			),
 		},
+		{
+			"(fn (A) B)",
+			block.New("",
+				block.New("fn",
+					&block.Block{
+						Text: "A",
+						Kind: block.BlockKind,
+					},
+					block.New("B"),
+				),
+			),
+		},
 	}
 
 	for i := 0; i < len(tests); i++ {

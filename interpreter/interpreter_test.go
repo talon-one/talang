@@ -97,10 +97,9 @@ func TestOverloading(t *testing.T) {
 func TestOverloadingNested(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-	require.NoError(t, interp.RemoveAllFunctions())
 
 	interp.RegisterFunction(shared.TaSignature{
-		Name:       "+",
+		Name:       "fn1",
 		IsVariadic: false,
 		Arguments: []block.Kind{
 			block.DecimalKind,
@@ -112,7 +111,7 @@ func TestOverloadingNested(t *testing.T) {
 	})
 
 	interp.RegisterFunction(shared.TaSignature{
-		Name:       "+",
+		Name:       "fn1",
 		IsVariadic: false,
 		Arguments: []block.Kind{
 			block.StringKind,
@@ -125,7 +124,7 @@ func TestOverloadingNested(t *testing.T) {
 
 	nestedFuncCounter := 0
 	interp.RegisterFunction(shared.TaSignature{
-		Name:       "nestedfunc",
+		Name:       "fn2",
 		IsVariadic: true,
 		Arguments: []block.Kind{
 			block.AnyKind,
@@ -136,7 +135,7 @@ func TestOverloadingNested(t *testing.T) {
 		},
 	})
 
-	require.Equal(t, "2C", interp.MustLexAndEvaluate("(+ (nestedfunc) C)").String())
+	require.Equal(t, "2C", interp.MustLexAndEvaluate("(fn1 (fn2) C)").String())
 	require.Equal(t, 2, nestedFuncCounter)
 }
 
@@ -170,14 +169,13 @@ func TestDoubleFuncCall(t *testing.T) {
 		Name: "fn2",
 		Arguments: []block.Kind{
 			block.AtomKind,
-			block.AtomKind,
 		},
 		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
 			fn2Runned = true
 			return block.NewString("B"), nil
 		},
 	})
-	interp.MustLexAndEvaluate("fn1 fn2 1 2")
+	interp.MustLexAndEvaluate("fn1 fn2 1")
 	require.Equal(t, true, fn1Runned)
 	require.Equal(t, false, fn2Runned)
 

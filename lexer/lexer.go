@@ -76,6 +76,7 @@ parse:
 				return nil, err
 			}
 			if !nestedScope.IsEmpty() {
+				nestedScope.Kind = block.BlockKind
 				children = append(children, nestedScope)
 			}
 

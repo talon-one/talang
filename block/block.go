@@ -148,14 +148,18 @@ func (b *Block) Update(source *Block) {
 }
 
 func (b *Block) String() string {
+	text := b.Text
 	if l := len(b.Children); l > 0 {
 		items := make([]string, l)
 		for i, item := range b.Children {
 			items[i] = item.String()
 		}
-		return fmt.Sprintf("(%s %s)", b.Text, strings.Join(items, " "))
+		text = fmt.Sprintf("%s %s", b.Text, strings.Join(items, " "))
 	}
-	return b.Text
+	if b.IsBlock() {
+		return fmt.Sprintf("(%s)", text)
+	}
+	return text
 
 }
 
