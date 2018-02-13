@@ -70,7 +70,8 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	// string functions
 	interp.functions = append(interp.functions, stringpkg.AllOperations()...)
 
-	interp.functions = append(interp.functions, misc.Misc)
+	// misc functions
+	interp.functions = append(interp.functions, misc.AllOperations()...)
 
 	// list functions
 	interp.functions = append(interp.functions, list.AllOperations()...)

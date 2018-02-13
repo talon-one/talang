@@ -42,16 +42,16 @@
 ### >(Time...)Bool
     Tests if the first argument is greather then the following
 
-### >=(Time...)Bool
-    Tests if the first argument is greather or equal then the following
-
 ### >=(Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
-### between(Time...)Bool
-    Tests if the arguments are between the second last and the last argument
+### >=(Time...)Bool
+    Tests if the first argument is greather or equal then the following
 
 ### between(Decimal...)Bool
+    Tests if the arguments are between the second last and the last argument
+
+### between(Time...)Bool
     Tests if the arguments are between the second last and the last argument
 
 ### ceil(Decimal)Decimal
@@ -77,6 +77,9 @@
 
 ### mod(Decimal...)Decimal
     Modulo the arguments
+
+### noop()Kind(0)
+    
 
 ### notContains(String...)Bool
     Returns wether the first argument does not exist in the following arguments
