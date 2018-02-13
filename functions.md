@@ -21,10 +21,10 @@
 ### /(Decimal...)Decimal
     Divides the arguments
 
-### <(Decimal...)Bool
+### <(Time...)Bool
     Tests if the first argument is less then the following
 
-### <(Time...)Bool
+### <(Decimal...)Bool
     Tests if the first argument is less then the following
 
 ### <=(Decimal...)Bool
@@ -42,10 +42,10 @@
 ### >(Time...)Bool
     Tests if the first argument is greather then the following
 
-### >=(Decimal...)Bool
+### >=(Time...)Bool
     Tests if the first argument is greather or equal then the following
 
-### >=(Time...)Bool
+### >=(Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
 ### between(Time...)Bool
@@ -62,6 +62,9 @@
 
 ### contains(String...)Bool
     Returns wether the first argument exists in the following arguments
+
+### drop(Block)Block
+    Create a list containing all but the last item in the input list
 
 ### endsWith(String...)Bool
     Returns wether the first argument is the suffix of the following arguments
@@ -84,8 +87,8 @@
 ### mod(Decimal...)Decimal
     Modulo the arguments
 
-### noop()Kind(0)
-    
+### noop()Any
+    No operation
 
 ### notContains(String...)Bool
     Returns wether the first argument does not exist in the following arguments
@@ -95,6 +98,9 @@
 
 ### tail(Block)Block
     Returns list without the first item
+
+### toString(Any)String
+    Converts the parameter to a string
 
 ### ~(String, String)Bool
     Returns wether the first argument matches the regular expression in the second argument

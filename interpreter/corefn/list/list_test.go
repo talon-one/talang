@@ -33,16 +33,17 @@ func TestTail(t *testing.T) {
 	require.Equal(t, block.New("", block.NewString("World"), block.NewString("and"), block.NewString("Universe")), mustFunc(Tail.Func(nil, []*block.Block{block.NewString("Hello"), block.NewString("World"), block.NewString("and"), block.NewString("Universe")})))
 }
 
+func TestDrop(t *testing.T) {
+	require.Error(t, getError(Drop.Func(nil, []*block.Block{})))
+	require.Equal(t, block.New("", block.NewString("Hello"), block.NewString("World"), block.NewString("and")), mustFunc(Drop.Func(nil, []*block.Block{block.NewString("Hello"), block.NewString("World"), block.NewString("and"), block.NewString("Universe")})))
+}
+
 func TestItem(t *testing.T) {
 	require.Error(t, getError(Item.Func(nil, []*block.Block{})))
-	require.Equal(t, block.NewString("Hello"), mustFunc(Item.Func(nil, []*block.Block{
-		block.New("", block.NewString("Hello"), block.NewString("World")),
-		block.New("0"),
-	})))
-	require.Equal(t, block.NewString("World"), mustFunc(Item.Func(nil, []*block.Block{
-		block.New("", block.NewString("Hello"), block.NewString("World")),
-		block.New("1"),
-	})))
+	require.Error(t, getError(Item.Func(nil, []*block.Block{block.New("", block.NewString("Hello"), block.NewString("World")), block.New("A")})))
+	require.Error(t, getError(Item.Func(nil, []*block.Block{block.New("", block.NewString("Hello"), block.NewString("World")), block.New("-1")})))
+	require.Equal(t, block.NewString("Hello"), mustFunc(Item.Func(nil, []*block.Block{block.New("", block.NewString("Hello"), block.NewString("World")), block.New("0")})))
+	require.Equal(t, block.NewString("World"), mustFunc(Item.Func(nil, []*block.Block{block.New("", block.NewString("Hello"), block.NewString("World")), block.New("1")})))
 }
 
 func TestAllOperations(t *testing.T) {

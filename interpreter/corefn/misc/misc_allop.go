@@ -6,5 +6,6 @@ func AllOperations() []shared.TaSignature {
 	return []shared.TaSignature{
 		Misc,
 		Noop,
+		ToString,
 	}
 }

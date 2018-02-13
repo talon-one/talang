@@ -53,6 +53,23 @@ var Tail = shared.TaSignature{
 	},
 }
 
+var Drop = shared.TaSignature{
+	Name:       "drop",
+	IsVariadic: false,
+	Arguments: []block.Kind{
+		block.BlockKind,
+	},
+	Returns:     block.BlockKind,
+	Description: "Create a list containing all but the last item in the input list",
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 1 {
+			return nil, errors.New("invalid or missing arguments")
+		}
+		return block.New("", args[:argc-1]...), nil
+	},
+}
+
 var Item = shared.TaSignature{
 	Name:       "item",
 	IsVariadic: false,
@@ -66,6 +83,10 @@ var Item = shared.TaSignature{
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
+		}
+
+		if !args[1].IsDecimal() {
+			return nil, errors.Errorf("`%s' is not an int", args[1].Text)
 		}
 
 		i, ok := args[1].Decimal.Int64()
