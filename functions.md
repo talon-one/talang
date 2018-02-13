@@ -69,6 +69,9 @@
 ### floor(Decimal)Decimal
     Floor the decimal argument
 
+### list(Atom...)Block
+    Create a list out of the children
+
 ### misc(Block)Kind(0)
     
 
