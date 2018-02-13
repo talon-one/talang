@@ -34,7 +34,11 @@ type Block struct {
 func New(text string, children ...*Block) *Block {
 	var b Block
 	b.Text = text
-	b.Children = children
+	if children == nil {
+		b.Children = []*Block{}
+	} else {
+		b.Children = children
+	}
 	b.initValue(text)
 	return &b
 }

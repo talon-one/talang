@@ -72,6 +72,9 @@
 ### head(Block)Block
     Returns the first item in the list
 
+### item(Block, Decimal)Block
+    Returns a specific item from a list
+
 ### list(Atom...)Block
     Create a list out of the children
 

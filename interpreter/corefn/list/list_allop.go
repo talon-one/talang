@@ -7,5 +7,6 @@ func AllOperations() []shared.TaSignature {
 		List,
 		Head,
 		Tail,
+		Item,
 	}
 }

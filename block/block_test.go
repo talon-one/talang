@@ -67,7 +67,7 @@ func mustDecimal(d *decimal.Big, ok bool) *decimal.Big {
 }
 func TestNew(t *testing.T) {
 	for _, test := range validDecimalFormats {
-		require.EqualValues(t, &Block{Text: test, Kind: DecimalKind, Decimal: mustDecimal(decimal.New(0, 0).SetString(test))}, New(test), "Failed at %s", test)
+		require.EqualValues(t, &Block{Text: test, Kind: DecimalKind, Decimal: mustDecimal(decimal.New(0, 0).SetString(test)), Children: []*Block{}}, New(test), "Failed at %s", test)
 	}
 	/*for _, test := range invalidDecimalFormats {
 		require.EqualValues(t, &Block{Text: test, Kind: StringKind}, New(test), "Failed at %s", test)

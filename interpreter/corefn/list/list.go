@@ -2,7 +2,7 @@
 package list
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
@@ -50,5 +50,33 @@ var Tail = shared.TaSignature{
 			return nil, errors.New("invalid or missing arguments")
 		}
 		return block.New("", args[1:]...), nil
+	},
+}
+
+var Item = shared.TaSignature{
+	Name:       "item",
+	IsVariadic: false,
+	Arguments: []block.Kind{
+		block.BlockKind,
+		block.DecimalKind,
+	},
+	Returns:     block.BlockKind,
+	Description: "Returns a specific item from a list",
+	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		argc := len(args)
+		if argc < 2 {
+			return nil, errors.New("invalid or missing arguments")
+		}
+
+		i, ok := args[1].Decimal.Int64()
+		if !ok {
+			return nil, errors.Errorf("`%s' is not an int", args[1].Text)
+		}
+		index := int(i)
+		if index < 0 || index >= argc {
+			return nil, errors.New("Out of bounds")
+		}
+
+		return args[0].Children[index], nil
 	},
 }
