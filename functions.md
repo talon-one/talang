@@ -72,7 +72,7 @@
 ### list(Atom...)Block
     Create a list out of the children
 
-### misc(Block)Kind(0)
+### misc2(Block)Kind(0)
     
 
 ### mod(Decimal...)Decimal

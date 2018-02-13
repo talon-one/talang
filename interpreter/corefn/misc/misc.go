@@ -6,7 +6,7 @@ import (
 )
 
 var Misc = shared.TaSignature{
-	Name: "misc",
+	Name: "misc2",
 	Arguments: []block.Kind{
 		block.BlockKind,
 	},
