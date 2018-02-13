@@ -32,6 +32,23 @@ func TestList(t *testing.T) {
 	}, mustFunc(List.Func(nil, []*block.Block{block.NewString("Hello"), block.NewString("World")})))
 }
 
+func TestHead(t *testing.T) {
+	require.Error(t, getError(Head.Func(nil, []*block.Block{})))
+	require.Equal(t, block.NewString("Hello"), mustFunc(Head.Func(nil, []*block.Block{block.NewString("Hello"), block.NewString("World")})))
+}
+
+func TestTail(t *testing.T) {
+	require.Error(t, getError(Tail.Func(nil, []*block.Block{})))
+	require.Equal(t, &block.Block{
+		Children: []*block.Block{
+			block.NewString("World"),
+			block.NewString("and"),
+			block.NewString("Universe"),
+		},
+		Kind: block.BlockKind,
+	}, mustFunc(Tail.Func(nil, []*block.Block{block.NewString("Hello"), block.NewString("World"), block.NewString("and"), block.NewString("Universe")})))
+}
+
 func TestAllOperations(t *testing.T) {
 	AllOperations()
 }

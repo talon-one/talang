@@ -21,10 +21,10 @@
 ### /(Decimal...)Decimal
     Divides the arguments
 
-### <(Time...)Bool
+### <(Decimal...)Bool
     Tests if the first argument is less then the following
 
-### <(Decimal...)Bool
+### <(Time...)Bool
     Tests if the first argument is less then the following
 
 ### <=(Decimal...)Bool
@@ -48,10 +48,10 @@
 ### >=(Time...)Bool
     Tests if the first argument is greather or equal then the following
 
-### between(Decimal...)Bool
+### between(Time...)Bool
     Tests if the arguments are between the second last and the last argument
 
-### between(Time...)Bool
+### between(Decimal...)Bool
     Tests if the arguments are between the second last and the last argument
 
 ### ceil(Decimal)Decimal
@@ -68,6 +68,9 @@
 
 ### floor(Decimal)Decimal
     Floor the decimal argument
+
+### head(Block)Block
+    Returns the first item in the list
 
 ### list(Atom...)Block
     Create a list out of the children
@@ -86,6 +89,9 @@
 
 ### startsWith(String...)Bool
     Returns wether the first argument is the prefix of the following arguments
+
+### tail(Block)Block
+    Returns list without the first item
 
 ### ~(String, String)Bool
     Returns wether the first argument matches the regular expression in the second argument
