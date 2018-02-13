@@ -37,27 +37,6 @@ func TestInterpreterInvalidTerm(t *testing.T) {
 	require.Error(t, interp.Evaluate(&block.Block{}))
 }
 
-func BenchmarkInterpreter(b *testing.B) {
-	tests := []struct {
-		input    string
-		expected string
-	}{
-		{"(+ 1 1)", "2"},
-		{"(* (+ 1 2) 3)", "9"},
-		{"(/ (+ 1 2) 3)", "1"},
-		{"(/ (- 6 1) 2)", "2.5"},
-		{"(= 1 1)", "true"},
-	}
-
-	interp := MustNewInterpreter()
-
-	for i := 0; i < b.N; i++ {
-		for _, test := range tests {
-			require.Equal(b, test.expected, interp.MustLexAndEvaluate(test.input).Text)
-		}
-	}
-}
-
 func TestOverloading(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
@@ -179,4 +158,25 @@ func TestDoubleFuncCall(t *testing.T) {
 	require.Equal(t, true, fn1Runned)
 	require.Equal(t, false, fn2Runned)
 
+}
+
+func BenchmarkInterpreter(b *testing.B) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"(+ 1 1)", "2"},
+		{"(* (+ 1 2) 3)", "9"},
+		{"(/ (+ 1 2) 3)", "1"},
+		{"(/ (- 6 1) 2)", "2.5"},
+		{"(= 1 1)", "true"},
+	}
+
+	interp := MustNewInterpreter()
+
+	for i := 0; i < b.N; i++ {
+		for _, test := range tests {
+			require.Equal(b, test.expected, interp.MustLexAndEvaluate(test.input).Text)
+		}
+	}
 }

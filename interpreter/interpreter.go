@@ -104,7 +104,11 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 				}
 				if fn.MatchesArguments(block.Arguments(children)) {
 					if interp.Logger != nil {
-						interp.Logger.Printf("Running fn `%s'\n", fn.String())
+						humanReadableArguments := make([]string, len(children))
+						for i, arg := range children {
+							humanReadableArguments[i] = arg.String()
+						}
+						interp.Logger.Printf("Running fn `%s' with `%v'\n", fn.String(), strings.Join(humanReadableArguments, ", "))
 					}
 					result, err := fn.Func(&interp.Interpreter, children)
 					if err != nil {
