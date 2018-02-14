@@ -58,10 +58,7 @@ func (a *TaSignature) Equal(b *TaSignature) bool {
 			return false
 		}
 	}
-	if a.Name != b.Name {
-		return false
-	}
-	return true
+	return a.Name == b.Name
 }
 
 func (sig *TaSignature) MatchesArguments(args []block.Kind) bool {

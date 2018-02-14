@@ -5,5 +5,5 @@ build:
 test: build
 	go test -cover ./...
 
-check: build
+check: test
 	gometalinter --vendor --enable-all --disable=lll ./...

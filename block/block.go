@@ -131,7 +131,7 @@ func (b *Block) initValue(text string) {
 		var ok bool
 		// try to parse it as a decimal
 		b.Decimal, ok = decimal.New(0, 0).SetString(text)
-		if ok == true {
+		if ok {
 			b.Kind = DecimalKind
 			return
 		}

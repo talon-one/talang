@@ -31,7 +31,6 @@ func MustParse(str string) *block.Block {
 
 func NewInterpreter() (*Interpreter, error) {
 	interp, err := interpreter.NewInterpreter()
-	var i Interpreter
-	i = Interpreter(*interp)
+	i := Interpreter(*interp)
 	return &i, err
 }

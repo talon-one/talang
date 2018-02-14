@@ -56,9 +56,7 @@ func (interp *Interpreter) GetFunction(signature shared.TaSignature) *shared.TaS
 
 func (interp *Interpreter) Functions() []shared.TaSignature {
 	fns := make([]shared.TaSignature, len(interp.functions))
-	for i, fn := range interp.functions {
-		fns[i] = fn
-	}
+	copy(fns, interp.functions)
 	return fns
 }
 

@@ -60,7 +60,7 @@ var invalidDecimalFormats = []string{
 }
 
 func mustDecimal(d *decimal.Big, ok bool) *decimal.Big {
-	if ok != true {
+	if !ok {
 		panic("Not a decimal")
 	}
 	return d
