@@ -26,4 +26,9 @@ func TestTemplateBasic(t *testing.T) {
 	require.NoError(t, getError(SetTemplate.Func(&interp, block.NewString("Template2"), block.NewString("Hello Universe"))))
 	require.Equal(t, "Hello World", mustFunc(GetTemplate.Func(&interp, block.NewString("Template1"))))
 	require.Equal(t, "Hello Universe", mustFunc(GetTemplate.Func(&interp, block.NewString("Template2"))))
+	require.Error(t, getError(GetTemplate.Func(&interp, block.NewString("Template3"))))
+	require.Error(t, getError(SetTemplate.Func(&interp, block.NewString("Template4"))))
+}
+func TestAllOperations(t *testing.T) {
+	AllOperations()
 }
