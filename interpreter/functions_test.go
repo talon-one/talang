@@ -67,6 +67,16 @@ func TestBinding(t *testing.T) {
 			"List": shared.Binding{
 				Value: block.New("", block.NewString("Item1"), block.NewString("Item2")),
 			},
+			"Map": shared.Binding{
+				Children: map[string]shared.Binding{
+					"Decimal": shared.Binding{
+						Value: block.New("2"),
+					},
+					"String": shared.Binding{
+						Value: block.New("Hello"),
+					},
+				},
+			},
 		},
 	}
 	interp.Binding["Root2"] = shared.Binding{}
@@ -84,6 +94,14 @@ func TestBinding(t *testing.T) {
 
 	b = interp.MustLexAndEvaluate("(. Root1 List)")
 	require.Equal(t, true, b.IsBlock())
+
+	b = interp.MustLexAndEvaluate("(. Root1 Map)")
+	require.Equal(t, true, b.IsString())
+	require.Equal(t, "", b.Text)
+
+	b = interp.MustLexAndEvaluate("(. Root1 Map String)")
+	require.Equal(t, true, b.IsString())
+	require.Equal(t, "Hello", b.Text)
 
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Unknown)")))
 

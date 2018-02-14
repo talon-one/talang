@@ -48,6 +48,7 @@ func NewDecimal(decimal *decimal.Big) *Block {
 	b.Decimal = decimal
 	b.Kind = DecimalKind
 	b.Text = b.Decimal.String()
+	b.Children = []*Block{}
 	return &b
 }
 
@@ -60,6 +61,7 @@ func NewBool(boolean bool) *Block {
 	} else {
 		b.Text = "false"
 	}
+	b.Children = []*Block{}
 	return &b
 }
 
@@ -68,6 +70,7 @@ func NewTime(t time.Time) *Block {
 	b.Time = t
 	b.Kind = TimeKind
 	b.Text = b.Time.Format(time.RFC3339)
+	b.Children = []*Block{}
 	return &b
 }
 
@@ -75,6 +78,7 @@ func NewString(str string) *Block {
 	var b Block
 	b.Text = str
 	b.Kind = StringKind
+	b.Children = []*Block{}
 	return &b
 }
 

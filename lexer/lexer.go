@@ -1,4 +1,4 @@
-package talang
+package lexer
 
 import (
 	"strings"
@@ -7,7 +7,13 @@ import (
 	"github.com/talon-one/talang/block"
 )
 
-// (= 1 2)
+func MustLex(str string) *block.Block {
+	block, err := Lex(str)
+	if err != nil {
+		panic(err)
+	}
+	return block
+}
 
 func Lex(str string) (*block.Block, error) {
 	// the first word is always the operation

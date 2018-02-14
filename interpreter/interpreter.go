@@ -1,8 +1,12 @@
 package interpreter
 
 import (
+	"fmt"
+	"go/ast"
 	"log"
 	"strings"
+
+	"reflect"
 
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
@@ -133,5 +137,72 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 
 	}
 
+	return nil
+}
+
+func (interp *Interpreter) Set(key string, value shared.Binding) {
+	interp.Binding[key] = value
+}
+
+func genericSetConv(value interface{}) (*shared.Binding, error) {
+	fmt.Printf("genericSetConv: %v\n", value)
+	reflectValue := reflect.ValueOf(value)
+	reflectType := reflectValue.Type()
+	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
+		reflectType = reflectType.Elem()
+	}
+
+	switch reflectType.Kind() {
+	case reflect.Struct:
+		var bind shared.Binding
+		bind.Children = make(map[string]shared.Binding)
+		for i := 0; i < reflectType.NumField(); i++ {
+			if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
+				structValue, err := genericSetConv(reflectValue.Field(i).Interface())
+				if err != nil {
+					return nil, err
+				}
+				bind.Children[fieldStruct.Name] = *structValue
+			}
+		}
+		return &bind, nil
+	case reflect.Int:
+		fallthrough
+	case reflect.Int8:
+		fallthrough
+	case reflect.Int16:
+		fallthrough
+	case reflect.Int32:
+		fallthrough
+	case reflect.Int64:
+		fallthrough
+	case reflect.Uint:
+		fallthrough
+	case reflect.Uint8:
+		fallthrough
+	case reflect.Uint16:
+		fallthrough
+	case reflect.Uint32:
+		fallthrough
+	case reflect.Uint64:
+		return &shared.Binding{
+			Value: block.New(fmt.Sprintf("%v", value)),
+		}, nil
+	case reflect.String:
+		return &shared.Binding{
+			Value: block.NewString(value.(string)),
+		}, nil
+	}
+	return nil, errors.Errorf("Unknown type `%T'", value)
+}
+
+func (interp *Interpreter) GenericSet(key string, value interface{}) error {
+
+	binding, err := genericSetConv(value)
+	if err != nil {
+		return err
+	}
+
+	interp.Binding[key] = *binding
 	return nil
 }

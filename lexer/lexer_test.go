@@ -1,4 +1,4 @@
-package talang
+package lexer
 
 import (
 	"testing"
@@ -115,8 +115,9 @@ func TestLexer(t *testing.T) {
 			block.New("",
 				block.New("fn",
 					&block.Block{
-						Text: "A",
-						Kind: block.BlockKind,
+						Text:     "A",
+						Kind:     block.BlockKind,
+						Children: []*block.Block{},
 					},
 					block.New("B"),
 				),

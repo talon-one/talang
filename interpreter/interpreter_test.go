@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ericlagergren/decimal"
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
@@ -157,6 +158,30 @@ func TestDoubleFuncCall(t *testing.T) {
 	interp.MustLexAndEvaluate("fn1 fn2 1")
 	require.Equal(t, true, fn1Runned)
 	require.Equal(t, false, fn2Runned)
+}
+
+func TestGenericSet(t *testing.T) {
+	interp := MustNewInterpreter()
+
+	tests := []struct {
+		input    interface{}
+		expected *block.Block
+	}{
+		{"String", block.NewString("String")},
+		{123, block.NewDecimal(decimal.New(123, 0))},
+		{struct {
+			Str1 string
+			Int2 int
+		}{
+			Str1: "Test",
+			Int2: 1,
+		}, block.NewString("")},
+	}
+
+	for _, test := range tests {
+		require.NoError(t, interp.GenericSet("Key", test.input), "Failed for %v", test.input)
+		require.Equal(t, test.expected, interp.MustLexAndEvaluate(". Key"), "Failed for %v", test.input)
+	}
 
 }
 
