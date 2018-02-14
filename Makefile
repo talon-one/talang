@@ -4,3 +4,6 @@ build:
 
 test: build
 	go test -cover ./...
+
+check: build
+	gometalinter --vendor --enable-all ./...
