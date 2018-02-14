@@ -16,7 +16,7 @@ var List = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Create a list out of the children",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return block.New("", args...), nil
 	},
 }
@@ -29,7 +29,7 @@ var Head = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Returns the first item in the list",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 1 {
 			return nil, errors.New("invalid or missing arguments")
 		}
@@ -45,7 +45,7 @@ var Tail = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Returns list without the first item",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 1 {
 			return nil, errors.New("invalid or missing arguments")
 		}
@@ -61,7 +61,7 @@ var Drop = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Create a list containing all but the last item in the input list",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -79,7 +79,7 @@ var Item = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Returns a specific item from a list",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")

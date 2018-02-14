@@ -18,7 +18,7 @@ var Add = shared.TaSignature{
 	},
 	Returns:     block.StringKind,
 	Description: "Concat strings",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		values := make([]string, argc)
 		for i := 0; i < argc; i++ {
@@ -46,7 +46,7 @@ var Contains = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument exists in the following arguments",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -70,7 +70,7 @@ var NotContains = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument does not exist in the following arguments",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -94,7 +94,7 @@ var StartsWith = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument is the prefix of the following arguments",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -117,7 +117,7 @@ var EndsWith = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument is the suffix of the following arguments",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -141,7 +141,7 @@ var Regexp = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument matches the regular expression in the second argument",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")

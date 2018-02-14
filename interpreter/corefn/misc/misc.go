@@ -14,7 +14,7 @@ var Misc = shared.TaSignature{
 	Arguments: []block.Kind{
 		block.BlockKind,
 	},
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return args[0], nil
 	},
 }
@@ -24,7 +24,7 @@ var Noop = shared.TaSignature{
 	Arguments:   []block.Kind{},
 	Returns:     block.AnyKind,
 	Description: "No operation",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return nil, nil
 	},
 }
@@ -36,7 +36,7 @@ var ToString = shared.TaSignature{
 	},
 	Returns:     block.StringKind,
 	Description: "Converts the parameter to a string",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 1 {
 			return nil, errors.New("invalid or missing arguments")
 		}

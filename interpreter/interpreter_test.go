@@ -52,7 +52,7 @@ func TestOverloading(t *testing.T) {
 			block.DecimalKind,
 			block.DecimalKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
@@ -66,7 +66,7 @@ func TestOverloading(t *testing.T) {
 			block.StringKind,
 			block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.New(args[0].String() + args[1].String()), nil
 		},
 	})
@@ -85,7 +85,7 @@ func TestOverloadingNested(t *testing.T) {
 			block.DecimalKind,
 			block.DecimalKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
@@ -97,7 +97,7 @@ func TestOverloadingNested(t *testing.T) {
 			block.StringKind,
 			block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.New(args[0].String() + args[1].String()), nil
 		},
 	})
@@ -109,7 +109,7 @@ func TestOverloadingNested(t *testing.T) {
 		Arguments: []block.Kind{
 			block.AnyKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			nestedFuncCounter++
 			return block.NewString(fmt.Sprintf("%d", nestedFuncCounter)), nil
 		},
@@ -140,7 +140,7 @@ func TestDoubleFuncCall(t *testing.T) {
 			block.AtomKind,
 			block.AtomKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			fn1Runned = true
 			return block.NewString("A"), nil
 		},
@@ -150,7 +150,7 @@ func TestDoubleFuncCall(t *testing.T) {
 		Arguments: []block.Kind{
 			block.AtomKind,
 		},
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			fn2Runned = true
 			return block.NewString("B"), nil
 		},

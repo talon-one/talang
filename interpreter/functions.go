@@ -10,6 +10,7 @@ import (
 	"github.com/talon-one/talang/interpreter/corefn/math"
 	"github.com/talon-one/talang/interpreter/corefn/misc"
 	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
+	"github.com/talon-one/talang/interpreter/corefn/template"
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
@@ -78,6 +79,9 @@ func (interp *Interpreter) registerCoreFunctions() error {
 
 	// binding
 	interp.functions = append(interp.functions, bindingFunc)
+
+	// template
+	interp.functions = append(interp.functions, template.AllOperations()...)
 	return nil
 }
 
@@ -94,7 +98,7 @@ var bindingFunc = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Access a variable in the binding",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		bindMap := interp.Binding
 		var value *block.Block
 		for i := 0; i < len(args); i++ {

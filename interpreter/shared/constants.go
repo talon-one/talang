@@ -1,6 +1,7 @@
 package shared
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -14,9 +15,10 @@ type Binding struct {
 
 type Interpreter struct {
 	Binding map[string]Binding
+	Context context.Context
 }
 
-type TaFunc func(*Interpreter, []*block.Block) (*block.Block, error)
+type TaFunc func(*Interpreter, ...*block.Block) (*block.Block, error)
 
 type TaSignature struct {
 	IsVariadic  bool

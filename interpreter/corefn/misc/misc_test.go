@@ -19,10 +19,10 @@ func getError(result interface{}, err error) error {
 }
 
 func TestNoop(t *testing.T) {
-	require.NoError(t, getError(Noop.Func(nil, []*block.Block{})))
+	require.NoError(t, getError(Noop.Func(nil)))
 }
 
 func TestToString(t *testing.T) {
-	require.Error(t, getError(ToString.Func(nil, []*block.Block{})))
-	require.Equal(t, block.NewString("1"), mustFunc(ToString.Func(nil, []*block.Block{block.New("1")})))
+	require.Error(t, getError(ToString.Func(nil)))
+	require.Equal(t, block.NewString("1"), mustFunc(ToString.Func(nil, block.New("1"))))
 }

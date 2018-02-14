@@ -16,7 +16,7 @@ var Equal = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the arguments are the same",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -39,7 +39,7 @@ var NotEqual = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the arguments are not the same",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -62,7 +62,7 @@ var GreaterThanDecimal = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is greather then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -86,7 +86,7 @@ var GreaterThanTime = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is greather then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -110,7 +110,7 @@ var LessThanDecimal = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is less then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -134,7 +134,7 @@ var LessThanTime = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is less then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -158,7 +158,7 @@ var GreaterThanOrEqualDecimal = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is greather or equal then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -182,7 +182,7 @@ var GreaterThanOrEqualTime = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is greather or equal then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -206,7 +206,7 @@ var LessThanOrEqualDecimal = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is less or equal then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -230,7 +230,7 @@ var LessThanOrEqualTime = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the first argument is less or equal then the following",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -254,7 +254,7 @@ var BetweenDecimal = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the arguments are between the second last and the last argument",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")
@@ -282,7 +282,7 @@ var BetweenTime = shared.TaSignature{
 	},
 	Returns:     block.BoolKind,
 	Description: "Tests if the arguments are between the second last and the last argument",
-	Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {
 			return block.NewBool(false), errors.New("invalid or missing arguments")

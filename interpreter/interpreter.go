@@ -114,7 +114,7 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 						}
 						interp.Logger.Printf("Running fn `%s' with `%v'\n", fn.String(), strings.Join(humanReadableArguments, ", "))
 					}
-					result, err := fn.Func(&interp.Interpreter, children)
+					result, err := fn.Func(&interp.Interpreter, children...)
 					if err != nil {
 						return errors.Errorf("Error in function %s: %v", fn.Name, err)
 					}
@@ -145,7 +145,6 @@ func (interp *Interpreter) Set(key string, value shared.Binding) {
 }
 
 func genericSetConv(value interface{}) (*shared.Binding, error) {
-	fmt.Printf("genericSetConv: %v\n", value)
 	reflectValue := reflect.ValueOf(value)
 	reflectType := reflectValue.Type()
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {

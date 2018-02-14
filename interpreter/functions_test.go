@@ -20,7 +20,7 @@ func TestRegisterFunction(t *testing.T) {
 	// register a function
 	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
 		Name: "MyFN",
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello World"), nil
 		},
 	}))
@@ -30,7 +30,7 @@ func TestRegisterFunction(t *testing.T) {
 	// try to register an already registered function
 	require.Error(t, interp.RegisterFunction(shared.TaSignature{
 		Name: "myfn",
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello Universe"), nil
 		}}))
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
@@ -38,7 +38,7 @@ func TestRegisterFunction(t *testing.T) {
 	// update the function
 	require.NoError(t, interp.UpdateFunction(shared.TaSignature{
 		Name: "MyFn",
-		Func: func(interp *shared.Interpreter, args []*block.Block) (*block.Block, error) {
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello Galaxy"), nil
 		}}))
 	require.Equal(t, "Hello Galaxy", interp.MustLexAndEvaluate("myfn").Text)
