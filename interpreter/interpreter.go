@@ -10,6 +10,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
+
 	"github.com/talon-one/talang/interpreter/shared"
 	lexer "github.com/talon-one/talang/lexer"
 )
@@ -136,8 +137,13 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 		}
 
 	}
-
 	return nil
+}
+
+func (interp *Interpreter) MustEvaluate(b *block.Block) {
+	if err := interp.Evaluate(b); err != nil {
+		panic(err)
+	}
 }
 
 func (interp *Interpreter) Set(key string, value shared.Binding) {

@@ -12,6 +12,7 @@ import (
 	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
 	"github.com/talon-one/talang/interpreter/corefn/template"
 	"github.com/talon-one/talang/interpreter/shared"
+	lexer "github.com/talon-one/talang/lexer"
 )
 
 func (interp *Interpreter) RegisterFunction(signature shared.TaSignature) error {
@@ -115,4 +116,12 @@ var bindingFunc = shared.TaSignature{
 		//
 		return value, nil
 	},
+}
+
+func (interp *Interpreter) SetTemplate(name string, str string) error {
+	block, err := lexer.Lex(str)
+	if err != nil {
+		return err
+	}
+	return template.Set(&interp.Interpreter, name, *block)
 }
