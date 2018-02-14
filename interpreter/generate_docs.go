@@ -116,7 +116,10 @@ func main() {
 		encoder := json.NewEncoder(f)
 		encoder.SetIndent("", "    ")
 		encoder.SetEscapeHTML(false)
-		encoder.Encode(fns)
+		err = encoder.Encode(fns)
+		if err != nil {
+			panic(err)
+		}
 	case "html":
 		f, err := os.Create("functions.html")
 		if err != nil {
@@ -128,7 +131,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		t.Execute(f, fns)
+		err = t.Execute(f, fns)
+		if err != nil {
+			panic(err)
+		}
 	case "md":
 		f, err := os.Create("functions.md")
 		if err != nil {
@@ -140,7 +146,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		t.Execute(f, fns)
+		err = t.Execute(f, fns)
+		if err != nil {
+			panic(err)
+		}
 	default:
 		panic("Unknown output format")
 	}
