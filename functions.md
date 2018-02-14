@@ -1,16 +1,19 @@
 # Embedded Functions
 
+### !(String...)Block
+    Resolve a template
+
 ### !=(Any...)Bool
     Tests if the arguments are not the same
 
 ### *(Decimal...)Decimal
     Multiplies the arguments
 
-### +(String...)String
-    Concat strings
-
 ### +(Decimal...)Decimal
     Adds the arguments
+
+### +(String...)String
+    Concat strings
 
 ### -(Decimal...)Decimal
     Substracts the arguments
@@ -48,10 +51,10 @@
 ### >=(Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
-### between(Time...)Bool
+### between(Decimal...)Bool
     Tests if the arguments are between the second last and the last argument
 
-### between(Decimal...)Bool
+### between(Time...)Bool
     Tests if the arguments are between the second last and the last argument
 
 ### ceil(Decimal)Decimal
@@ -60,13 +63,13 @@
 ### concat(String...)String
     Concat strings
 
-### contains(String...)Bool
+### contains(String, String...)Bool
     Returns wether the first argument exists in the following arguments
 
 ### drop(Block)Block
     Create a list containing all but the last item in the input list
 
-### endsWith(String...)Bool
+### endsWith(String, String...)Bool
     Returns wether the first argument is the suffix of the following arguments
 
 ### floor(Decimal)Decimal
@@ -90,10 +93,13 @@
 ### noop()Any
     No operation
 
-### notContains(String...)Bool
+### notContains(String, String...)Bool
     Returns wether the first argument does not exist in the following arguments
 
-### startsWith(String...)Bool
+### setTemplate(String, Block)Block
+    Set a template
+
+### startsWith(String, String...)Bool
     Returns wether the first argument is the prefix of the following arguments
 
 ### tail(Block)Block

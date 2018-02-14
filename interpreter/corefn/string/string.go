@@ -42,6 +42,7 @@ var Contains = shared.TaSignature{
 	IsVariadic: true,
 	Arguments: []block.Kind{
 		block.StringKind,
+		block.StringKind,
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument exists in the following arguments",
@@ -64,6 +65,7 @@ var NotContains = shared.TaSignature{
 	Name:       "notContains",
 	IsVariadic: true,
 	Arguments: []block.Kind{
+		block.StringKind,
 		block.StringKind,
 	},
 	Returns:     block.BoolKind,
@@ -88,6 +90,7 @@ var StartsWith = shared.TaSignature{
 	IsVariadic: true,
 	Arguments: []block.Kind{
 		block.StringKind,
+		block.StringKind,
 	},
 	Returns:     block.BoolKind,
 	Description: "Returns wether the first argument is the prefix of the following arguments",
@@ -109,6 +112,7 @@ var EndsWith = shared.TaSignature{
 	Name:       "endsWith",
 	IsVariadic: true,
 	Arguments: []block.Kind{
+		block.StringKind,
 		block.StringKind,
 	},
 	Returns:     block.BoolKind,
