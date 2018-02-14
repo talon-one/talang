@@ -16,7 +16,7 @@
     Concat strings
 
 ### -(Decimal...)Decimal
-    Substracts the arguments
+    Subtracts the arguments
 
 ### .(Atom...)Block
     Access a variable in the binding

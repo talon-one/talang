@@ -40,7 +40,7 @@ var Sub = shared.TaSignature{
 		block.DecimalKind,
 	},
 	Returns:     block.DecimalKind,
-	Description: "Substracts the arguments",
+	Description: "Subtracts the arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")

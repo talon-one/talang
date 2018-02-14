@@ -296,7 +296,7 @@ func BenchmarkParse(b *testing.B) {
 			`(-of-course this-is-allowed)`,
 			block.New("",
 				block.New("-of-course",
-					block.New("this-is-alowed"),
+					block.New("this-is-allowed"),
 				),
 			),
 		},
