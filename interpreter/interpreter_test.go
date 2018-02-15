@@ -182,7 +182,6 @@ func TestGenericSet(t *testing.T) {
 		require.NoError(t, interp.GenericSet("Key", test.input), "Failed for %v", test.input)
 		require.Equal(t, test.expected, interp.MustLexAndEvaluate(". Key"), "Failed for %v", test.input)
 	}
-
 }
 
 func BenchmarkInterpreter(b *testing.B) {

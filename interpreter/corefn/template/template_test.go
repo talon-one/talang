@@ -29,6 +29,17 @@ func TestTemplateBasic(t *testing.T) {
 	require.Error(t, getError(GetTemplate.Func(&interp, block.NewString("Template3"))))
 	require.Error(t, getError(SetTemplate.Func(&interp, block.NewString("Template4"))))
 }
+
+func TestReplaceVariables(t *testing.T) {
+	b := block.New("+", block.New("#", block.New("1")), block.New("#", block.New("0")))
+
+	getCount := func(n int, err error) int {
+		return n
+	}
+
+	require.Equal(t, 2, getCount(replaceVariables(b, block.New("B"), block.New("A"))))
+}
+
 func TestAllOperations(t *testing.T) {
 	AllOperations()
 }

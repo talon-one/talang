@@ -3,6 +3,7 @@ package template
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -22,6 +23,7 @@ var GetTemplate = shared.TaSignature{
 	IsVariadic: true,
 	Arguments: []block.Kind{
 		block.StringKind,
+		block.AnyKind,
 	},
 	Returns:     block.BlockKind,
 	Description: "Resolve a template",
@@ -33,14 +35,45 @@ var GetTemplate = shared.TaSignature{
 		m := getMap(interp)
 		if b, ok := m[strings.ToLower(args[0].Text)]; ok {
 
-			for i := 1; i < argc; i++ {
-
+			// the template has arguments
+			// replace all variables in the block
+			if argc > 1 {
+				if _, err := replaceVariables(&b, args[1:]...); err != nil {
+					return nil, err
+				}
 			}
 
 			return &b, nil
 		}
 		return nil, errors.Errorf("template `%s' not found", args[0].Text)
 	},
+}
+
+func replaceVariables(b *block.Block, args ...*block.Block) (int, error) {
+	replaced := 0
+	for i := 0; i < len(args); i++ {
+		replaced += replaceVariable(b, strconv.Itoa(i), args[i])
+	}
+	return replaced, nil
+}
+
+func replaceVariable(source *block.Block, name string, replace *block.Block) (replaced int) {
+	if len(source.Children) <= 0 {
+		return replaced
+	}
+
+	if source.Text == "#" {
+		if strings.EqualFold(source.Children[0].Text, name) {
+			*source = *replace
+			replaced++
+		}
+	}
+
+	for i := 0; i < len(source.Children); i++ {
+		replaced += replaceVariable(source.Children[i], name, replace)
+	}
+
+	return replaced
 }
 
 var SetTemplate = shared.TaSignature{

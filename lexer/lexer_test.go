@@ -132,7 +132,6 @@ func TestLexer(t *testing.T) {
 		}
 		require.EqualValues(t, tests[i].expected, s, "Input `%s' failed", tests[i].input)
 	}
-
 }
 
 func TestUnquote(t *testing.T) {

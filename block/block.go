@@ -168,7 +168,6 @@ func (b *Block) String() string {
 		return fmt.Sprintf("(%s)", text)
 	}
 	return text
-
 }
 
 func Arguments(children []*Block) []Kind {

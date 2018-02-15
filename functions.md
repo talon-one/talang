@@ -1,6 +1,6 @@
 # Embedded Functions
 
-### !(String...)Block
+### !(String, Any...)Block
     Resolve a template
 
 ### !=(Any...)Bool

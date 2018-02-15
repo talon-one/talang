@@ -48,7 +48,47 @@ func TestRegisterFunction(t *testing.T) {
 		Name: "MyFN",
 	}))
 	require.Equal(t, "myfn", interp.MustLexAndEvaluate("myfn").Text)
+}
 
+func TestVariadicFunctionWith0Parameters(t *testing.T) {
+	interp := MustNewInterpreter()
+	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
+		Name:       "MyFN1",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AnyKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Hello World"), nil
+		},
+	}))
+
+	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn1").Text)
+
+	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
+		Name:       "MyFN2",
+		IsVariadic: true,
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Hello World"), nil
+		},
+	}))
+
+	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn2").Text)
+}
+
+func TestFunctionWithWrongParamter(t *testing.T) {
+	interp := MustNewInterpreter()
+	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
+		Name: "MyFN1",
+		Arguments: []block.Kind{
+			block.AnyKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Hello World"), nil
+		},
+	}))
+
+	require.Equal(t, "myfn1", interp.MustLexAndEvaluate("myfn1").Text)
 }
 
 func TestBinding(t *testing.T) {
