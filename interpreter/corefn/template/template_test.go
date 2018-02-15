@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/lexer"
 )
 
 func mustFunc(result *block.Block, err error) string {
@@ -31,13 +32,26 @@ func TestTemplateBasic(t *testing.T) {
 }
 
 func TestReplaceVariables(t *testing.T) {
-	b := block.New("+", block.New("#", block.New("1")), block.New("#", block.New("0")))
-
 	getCount := func(n int, err error) int {
 		return n
 	}
+	require.Equal(t, 2, getCount(replaceVariables(lexer.MustLex("+ (# 1) (# 0)"), block.New("B"), block.New("A"))))
+}
 
-	require.Equal(t, 2, getCount(replaceVariables(b, block.New("B"), block.New("A"))))
+func TestReplaceVariablesInVariables(t *testing.T) {
+
+	// getCount := func(n int, err error) int {
+	// 	return n
+	// }
+
+	b := lexer.MustLex("+ (# 1) D")
+	n, err := replaceVariables(b, lexer.MustLex("+ A B"), lexer.MustLex("+ (# 0) C"))
+	if err != nil {
+		panic(err)
+	}
+
+	require.Equal(t, 1, n)
+	require.Equal(t, lexer.MustLex("+ (+ (+ A B) C)"), b)
 }
 
 func TestAllOperations(t *testing.T) {
