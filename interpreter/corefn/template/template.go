@@ -51,9 +51,15 @@ var GetTemplate = shared.TaSignature{
 
 func replaceVariables(b *block.Block, args ...*block.Block) (int, error) {
 	replaced := 0
+
+	// replace:
 	for i := 0; i < len(args); i++ {
 		replaced += replaceVariable(b, strconv.Itoa(i), args[i])
 	}
+
+	// if areThereMoreVariables(b, i) {
+	// 	goto replace
+	// }
 	return replaced, nil
 }
 
