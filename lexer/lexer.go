@@ -171,7 +171,6 @@ func unquote(str string, start, end, escape rune) (string, string) {
 				parts = append(parts, str[i:nextQuotePos])
 				break
 			}
-
 		}
 
 		i = nextQuotePos

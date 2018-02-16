@@ -39,7 +39,6 @@ func TestReplaceVariables(t *testing.T) {
 }
 
 func TestReplaceVariablesInVariables(t *testing.T) {
-
 	// getCount := func(n int, err error) int {
 	// 	return n
 	// }

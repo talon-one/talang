@@ -135,7 +135,6 @@ func TestLexer(t *testing.T) {
 }
 
 func TestUnquote(t *testing.T) {
-
 	doubleQuote := func(extracted string, rest string, str string) {
 		a, b := unquote(str, '"', '"', '\\')
 		require.Equal(t, extracted, a)
@@ -211,7 +210,6 @@ func TestUnquote(t *testing.T) {
 	curlyBrackets(`Token2 Token3 {Token4 Token5} Token6`, ` Token7`, `{Token2 Token3 {Token4 Token5} Token6} Token7`)
 
 	curlyBrackets(``, `{Token`, `{Token`)
-
 }
 
 func BenchmarkParse(b *testing.B) {

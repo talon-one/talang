@@ -135,7 +135,6 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 				}
 			}
 		}
-
 	}
 	return nil
 }
@@ -202,7 +201,6 @@ func genericSetConv(value interface{}) (*shared.Binding, error) {
 }
 
 func (interp *Interpreter) GenericSet(key string, value interface{}) error {
-
 	binding, err := genericSetConv(value)
 	if err != nil {
 		return err
