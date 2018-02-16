@@ -39,18 +39,14 @@ func TestReplaceVariables(t *testing.T) {
 }
 
 func TestReplaceVariablesInVariables(t *testing.T) {
-	// getCount := func(n int, err error) int {
-	// 	return n
-	// }
-
 	b := lexer.MustLex("+ (# 1) D")
 	n, err := replaceVariables(b, lexer.MustLex("+ A B"), lexer.MustLex("+ (# 0) C"))
 	if err != nil {
 		panic(err)
 	}
 
-	require.Equal(t, 1, n)
-	require.Equal(t, lexer.MustLex("+ (+ (+ A B) C)"), b)
+	require.Equal(t, 2, n)
+	require.Equal(t, lexer.MustLex("+ (+ (+ A B) C) D"), b)
 }
 
 func TestAllOperations(t *testing.T) {
