@@ -169,19 +169,22 @@ func TestGenericSet(t *testing.T) {
 	}{
 		{"String", block.NewString("String")},
 		{123, block.NewDecimal(decimal.New(123, 0))},
-		{struct {
-			Str1 string
-			Int2 int
-		}{
-			Str1: "Test",
-			Int2: 1,
-		}, block.NewString("")},
 	}
 
 	for _, test := range tests {
 		require.NoError(t, interp.GenericSet("Key", test.input), "Failed for %v", test.input)
 		require.Equal(t, test.expected, interp.MustLexAndEvaluate(". Key"), "Failed for %v", test.input)
 	}
+
+	require.NoError(t, interp.GenericSet("Key", struct {
+		Str1 string
+		Int2 int
+	}{
+		Str1: "Test",
+		Int2: 1,
+	}))
+	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").Text)
+	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").Text)
 }
 
 func BenchmarkInterpreter(b *testing.B) {

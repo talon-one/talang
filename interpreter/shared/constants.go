@@ -3,6 +3,7 @@ package shared
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/talon-one/talang/block"
@@ -14,8 +15,11 @@ type Binding struct {
 }
 
 type Interpreter struct {
-	Binding map[string]Binding
-	Context context.Context
+	Binding   map[string]Binding
+	Context   context.Context
+	Parent    *Interpreter
+	Functions []TaSignature
+	Logger    *log.Logger
 }
 
 type TaFunc func(*Interpreter, ...*block.Block) (*block.Block, error)

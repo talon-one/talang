@@ -135,9 +135,7 @@ func TestBinding(t *testing.T) {
 	b = interp.MustLexAndEvaluate("(. Root1 List)")
 	require.Equal(t, true, b.IsBlock())
 
-	b = interp.MustLexAndEvaluate("(. Root1 Map)")
-	require.Equal(t, true, b.IsString())
-	require.Equal(t, "", b.Text)
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Map)")))
 
 	b = interp.MustLexAndEvaluate("(. Root1 Map String)")
 	require.Equal(t, true, b.IsString())
@@ -145,7 +143,7 @@ func TestBinding(t *testing.T) {
 
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Unknown)")))
 
-	require.Equal(t, "", interp.MustLexAndEvaluate("(. Root2)").Text)
+	require.Error(t, getError(interp.LexAndEvaluate("(. Root2)")))
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root2 Decimal)")))
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root3)")))
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root3 Decimal)")))

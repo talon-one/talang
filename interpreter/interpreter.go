@@ -3,7 +3,6 @@ package interpreter
 import (
 	"fmt"
 	"go/ast"
-	"log"
 	"strings"
 
 	"reflect"
@@ -17,8 +16,6 @@ import (
 
 type Interpreter struct {
 	shared.Interpreter
-	functions []shared.TaSignature
-	Logger    *log.Logger
 }
 
 func NewInterpreter() (*Interpreter, error) {
@@ -74,10 +71,10 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 		}
 		blockText := strings.ToLower(b.Text)
 		// iterate trough all functions
-		for n := 0; n < len(interp.functions); n++ {
+		for n := 0; n < len(interp.Functions); n++ {
 			// if we have found a function that matches the name
-			if interp.functions[n].Name == blockText {
-				fn := interp.functions[n]
+			if interp.Functions[n].Name == blockText {
+				fn := interp.Functions[n]
 
 				// make a copy of the children
 
@@ -135,6 +132,13 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 				}
 			}
 		}
+	}
+
+	if interp.Parent != nil {
+		sharedInterp := Interpreter{
+			Interpreter: *interp.Parent,
+		}
+		return sharedInterp.Evaluate(b)
 	}
 	return nil
 }
@@ -208,4 +212,12 @@ func (interp *Interpreter) GenericSet(key string, value interface{}) error {
 
 	interp.Binding[key] = *binding
 	return nil
+}
+
+func (interp *Interpreter) NewScope() *Interpreter {
+	i := Interpreter{}
+	i.Binding = make(map[string]shared.Binding)
+	i.Parent = &interp.Interpreter
+	i.Functions = []shared.TaSignature{bindingSignature}
+	return &i
 }
