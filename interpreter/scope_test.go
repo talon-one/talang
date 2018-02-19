@@ -8,7 +8,7 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
-func TestScope(t *testing.T) {
+func TestScopeBinding(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Set("RootKey", shared.Binding{
 		Value: block.NewString("Root"),
@@ -25,4 +25,28 @@ func TestScope(t *testing.T) {
 	_, err := interp.LexAndEvaluate("(. ScopeKey)")
 	require.Error(t, err)
 	require.Equal(t, "Scope", scope.MustLexAndEvaluate("(. ScopeKey)").Text)
+}
+
+func TestScopeFunctions(t *testing.T) {
+	interp := MustNewInterpreter()
+	interp.RegisterFunction(shared.TaSignature{
+		Name: "fn1",
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Hello"), nil
+		},
+	})
+
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("fn1").Text)
+
+	scope := interp.NewScope()
+	scope.RegisterFunction(shared.TaSignature{
+		Name: "fn2",
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Bye"), nil
+		},
+	})
+	require.Equal(t, "Hello", scope.MustLexAndEvaluate("fn1").Text)
+
+	require.Equal(t, "fn2", interp.MustLexAndEvaluate("fn2").Text)
+	require.Equal(t, "Bye", scope.MustLexAndEvaluate("fn2").Text)
 }
