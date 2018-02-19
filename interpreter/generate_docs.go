@@ -77,9 +77,9 @@ func main() {
 		shared.TaSignature
 	}
 
-	fns := make([]fn, len(interp.Functions()))
+	fns := make([]fn, len(interp.Functions))
 
-	for i, f := range interp.Functions() {
+	for i, f := range interp.Functions {
 		arguments := make([]string, len(f.Arguments))
 		for j, a := range f.Arguments {
 			arg := a.String()
