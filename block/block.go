@@ -90,6 +90,10 @@ func (b *Block) IsDecimal() bool {
 	return b.Kind == DecimalKind
 }
 
+func (b *Block) IsBool() bool {
+	return b.Kind == BoolKind
+}
+
 func (b *Block) IsBlock() bool {
 	return b.Kind == BlockKind
 }

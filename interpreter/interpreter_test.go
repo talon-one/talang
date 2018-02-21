@@ -168,6 +168,7 @@ func TestGenericSet(t *testing.T) {
 		expected *block.Block
 	}{
 		{"String", block.NewString("String")},
+		{false, block.NewBool(false)},
 		{123, block.NewDecimal(decimal.New(123, 0))},
 	}
 
@@ -183,6 +184,17 @@ func TestGenericSet(t *testing.T) {
 		Str1: "Test",
 		Int2: 1,
 	}))
+	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").Text)
+	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").Text)
+
+	st := struct {
+		Str1 string
+		Int2 int
+	}{
+		Str1: "Test",
+		Int2: 1,
+	}
+	require.NoError(t, interp.GenericSet("Key", &st))
 	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").Text)
 	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").Text)
 }

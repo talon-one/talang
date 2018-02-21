@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
 
+	"github.com/talon-one/talang/interpreter/corefn/template"
 	"github.com/talon-one/talang/interpreter/shared"
 	lexer "github.com/talon-one/talang/lexer"
 )
@@ -158,6 +159,7 @@ func genericSetConv(value interface{}) (*shared.Binding, error) {
 	reflectType := reflectValue.Type()
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
 		reflectType = reflectType.Elem()
+		reflectValue = reflectValue.Elem()
 	}
 
 	switch reflectType.Kind() {
@@ -200,6 +202,10 @@ func genericSetConv(value interface{}) (*shared.Binding, error) {
 		return &shared.Binding{
 			Value: block.NewString(value.(string)),
 		}, nil
+	case reflect.Bool:
+		return &shared.Binding{
+			Value: block.NewBool(value.(bool)),
+		}, nil
 	}
 	return nil, errors.Errorf("Unknown type `%T'", value)
 }
@@ -218,6 +224,7 @@ func (interp *Interpreter) NewScope() *Interpreter {
 	i := Interpreter{}
 	i.Binding = make(map[string]shared.Binding)
 	i.Parent = &interp.Interpreter
-	i.Functions = []shared.TaSignature{bindingSignature}
+	// we need to register binding and template on this scope, because it uses its own scopes
+	i.Functions = append(template.AllOperations(), bindingSignature)
 	return &i
 }

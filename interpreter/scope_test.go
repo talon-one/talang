@@ -9,18 +9,29 @@ import (
 )
 
 func TestScopeBinding(t *testing.T) {
+	// create an interpreter and set a binding
 	interp := MustNewInterpreter()
 	interp.Set("RootKey", shared.Binding{
 		Value: block.NewString("Root"),
 	})
 
+	// get the binding
 	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").Text)
 
+	// create a scope and set a binding ON the scope
 	scope := interp.NewScope()
 	scope.Set("ScopeKey", shared.Binding{
 		Value: block.NewString("Scope"),
 	})
+	// check if the scope has the same binding as the root
 	require.Equal(t, "Root", scope.MustLexAndEvaluate("(. RootKey)").Text)
+
+	// overwrite the binding on scope level
+	scope.Set("RootKey", shared.Binding{
+		Value: block.NewBool(true),
+	})
+	require.Equal(t, "true", scope.MustLexAndEvaluate("(. RootKey)").Text)
+	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").Text)
 
 	_, err := interp.LexAndEvaluate("(. ScopeKey)")
 	require.Error(t, err)
@@ -49,4 +60,17 @@ func TestScopeFunctions(t *testing.T) {
 
 	require.Equal(t, "fn2", interp.MustLexAndEvaluate("fn2").Text)
 	require.Equal(t, "Bye", scope.MustLexAndEvaluate("fn2").Text)
+}
+
+func TestScopeTemplates(t *testing.T) {
+	interp := MustNewInterpreter()
+	require.NoError(t, interp.SetTemplate("Template1", "Hello"))
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("! Template1").Text)
+
+	scope := interp.NewScope()
+
+	require.NoError(t, scope.SetTemplate("Template2", "World"))
+	require.Equal(t, "Hello World", scope.MustLexAndEvaluate(`+ (! Template1) " " (! Template2)`).Text)
+
+	require.Error(t, getError(interp.LexAndEvaluate("! Template2")))
 }

@@ -27,26 +27,29 @@ var GetTemplate = shared.TaSignature{
 	},
 	Returns:     block.BlockKind,
 	Description: "Resolve a template",
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 1 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-		m := getMap(interp)
-		if b, ok := m[strings.ToLower(args[0].Text)]; ok {
+	Func:        getTemplateFunc,
+}
 
-			// the template has arguments
-			// replace all variables in the block
-			if argc > 1 {
-				if _, err := replaceVariables(&b, args[1:]...); err != nil {
-					return nil, err
-				}
+func getTemplateFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+	argc := len(args)
+	if argc < 1 {
+		return nil, errors.New("invalid or missing arguments")
+	}
+	m := getMap(interp)
+	if b, ok := m[strings.ToLower(args[0].Text)]; ok {
+		// the template has arguments
+		// replace all variables in the block
+		if argc > 1 {
+			if _, err := replaceVariables(&b, args[1:]...); err != nil {
+				return nil, err
 			}
-
-			return &b, nil
 		}
-		return nil, errors.Errorf("template `%s' not found", args[0].Text)
-	},
+		return &b, nil
+	}
+	if interp.Parent != nil {
+		return getTemplateFunc(interp.Parent, args...)
+	}
+	return nil, errors.Errorf("template `%s' not found", args[0].Text)
 }
 
 func replaceVariables(b *block.Block, args ...*block.Block) (int, error) {
