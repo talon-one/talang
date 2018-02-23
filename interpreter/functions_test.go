@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -91,7 +92,7 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn2").Text)
 }
 
-func TestFunctionWithWrongParamter(t *testing.T) {
+func TestFuncWithWrongParameter(t *testing.T) {
 	interp := mustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
@@ -180,4 +181,91 @@ func TestFuncInBinding(t *testing.T) {
 	b := interp.MustLexAndEvaluate("(+ (. Root (+ 1 1)) 2)")
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "4", b.Text)
+}
+
+func TestFuncErrorInChild(t *testing.T) {
+	interp := mustNewInterpreterWithLogger()
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "fn1",
+			Arguments: []block.Kind{
+				block.StringKind,
+			},
+			Returns: block.StringKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Test1"), nil
+		},
+	})
+
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "fn2",
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, errors.New("SomeError")
+		},
+	})
+
+	require.Error(t, getError(interp.LexAndEvaluate("fn1 (fn2)")))
+}
+
+func TestVariadicFunctionErrorInChild(t *testing.T) {
+	interp := mustNewInterpreterWithLogger()
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "fn1",
+			IsVariadic: true,
+			Arguments: []block.Kind{
+				block.StringKind,
+			},
+			Returns: block.StringKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Test1"), nil
+		},
+	})
+
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "fn2",
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, errors.New("SomeError")
+		},
+	})
+
+	require.Error(t, getError(interp.LexAndEvaluate("fn1 A (fn2)")))
+}
+
+// a function does not returns the correct type
+func TestFunctionUnexpectedReturn(t *testing.T) {
+	interp := mustNewInterpreterWithLogger()
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "fn1",
+			Returns: block.StringKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewBool(true), nil
+		},
+	})
+
+	require.Error(t, getError(interp.LexAndEvaluate("fn1")))
+}
+
+//  a function does not return a value and error
+func TestFunctionNoReturnValue(t *testing.T) {
+	interp := mustNewInterpreterWithLogger()
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "fn1",
+			Returns: block.AnyKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, nil
+		},
+	})
+
+	require.Equal(t, block.NullKind, interp.MustLexAndEvaluate("fn1").Kind)
 }

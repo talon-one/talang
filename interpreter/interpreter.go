@@ -145,9 +145,7 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 	for n := 0; n < len(functions); n++ {
 		fn := functions[n]
 		run, notMatchingDetail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children)
-		if err != nil {
-			return false, err
-		}
+
 		if !run {
 			if interp.Logger != nil {
 				switch notMatchingDetail {
@@ -157,7 +155,14 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 					interp.Logger.Printf("NOT Running function `%s' (errors in child evaluation)\n", fn.String())
 				}
 			}
+			if err != nil {
+				return false, err
+			}
 			continue
+		}
+		// paranoid check
+		if err != nil {
+			return false, err
 		}
 		if interp.Logger != nil {
 			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), block.BlockArguments(children).ToHumanReadable())
@@ -169,15 +174,14 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 			}
 			return false, errors.Errorf("Error in function %s: %v", fn.Name, err)
 		}
-
+		if result == nil {
+			result = block.NewNull()
+		}
 		if fn.CommonSignature.Returns&result.Kind != result.Kind {
 			if interp.Logger != nil {
 				interp.Logger.Printf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
 			}
 			return false, errors.Errorf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
-		}
-		if result == nil {
-			result = block.NewString("")
 		}
 		if interp.Logger != nil {
 			interp.Logger.Printf("Updating value to `%s'\n", result)

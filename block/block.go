@@ -18,7 +18,8 @@ const (
 	BoolKind    Kind = 1 << iota
 	TimeKind    Kind = 1 << iota
 	BlockKind   Kind = 1 << iota
-	AtomKind    Kind = DecimalKind | StringKind | BoolKind | TimeKind
+	NullKind    Kind = 1 << iota
+	AtomKind    Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind
 	AnyKind     Kind = AtomKind | BlockKind
 )
 
@@ -82,6 +83,13 @@ func NewString(str string) *Block {
 	return &b
 }
 
+func NewNull() *Block {
+	var b Block
+	b.Kind = NullKind
+	b.Children = []*Block{}
+	return &b
+}
+
 func (b *Block) IsEmpty() bool {
 	return len(b.Children) == 0 && len(b.Text) == 0
 }
@@ -104,6 +112,10 @@ func (b *Block) IsTime() bool {
 
 func (b *Block) IsString() bool {
 	return b.Kind == StringKind
+}
+
+func (b *Block) IsNull() bool {
+	return b.Kind == NullKind
 }
 
 func (b *Block) initValue(text string) {

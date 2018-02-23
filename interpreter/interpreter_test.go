@@ -1,8 +1,11 @@
 package interpreter
 
 import (
+	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/talon-one/talang/lexer"
 
 	"github.com/ericlagergren/decimal"
 	"github.com/stretchr/testify/require"
@@ -207,6 +210,32 @@ func TestGenericSet(t *testing.T) {
 	require.NoError(t, interp.GenericSet("Key", &st))
 	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").Text)
 	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").Text)
+}
+
+func TestMustEvaluate(t *testing.T) {
+	interp := mustNewInterpreterWithLogger()
+	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "panic",
+			Returns: block.AnyKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, errors.New("panic")
+		}}))
+	b := lexer.MustLex("panic")
+	require.Panics(t, func() { interp.MustEvaluate(b) })
+}
+func TestMustLexAndEvaluate(t *testing.T) {
+	interp := mustNewInterpreterWithLogger()
+	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "panic",
+			Returns: block.AnyKind,
+		},
+		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, errors.New("panic")
+		}}))
+	require.Panics(t, func() { interp.MustLexAndEvaluate("panic") })
 }
 
 func BenchmarkInterpreter(b *testing.B) {

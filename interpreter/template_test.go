@@ -1,7 +1,6 @@
 package interpreter
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -74,28 +73,28 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 	require.Error(t, getError(interp.LexAndEvaluate("! MultiplyWith2 A")))
 }
 
-// test if children got an error
-func TestInvalidTemplateArguments(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
-		CommonSignature: shared.CommonSignature{
-			Name: "MultiplyWith2",
-			Arguments: []block.Kind{
-				block.DecimalKind,
-			},
-			Returns: block.DecimalKind,
-		},
-		Template: *lexer.MustLex("(* 2 (# 0))"),
-	}))
+// // test if children got an error
+// func TestInvalidTemplateArguments(t *testing.T) {
+// 	interp := mustNewInterpreterWithLogger()
+// 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
+// 		CommonSignature: shared.CommonSignature{
+// 			Name: "MultiplyWith2",
+// 			Arguments: []block.Kind{
+// 				block.DecimalKind,
+// 			},
+// 			Returns: block.DecimalKind,
+// 		},
+// 		Template: *lexer.MustLex("(* 2 (# 0))"),
+// 	}))
 
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
-			Name: "FN",
-		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-			return nil, errors.New("SomeError")
-		},
-	})
+// 	interp.RegisterFunction(shared.TaFunction{
+// 		CommonSignature: shared.CommonSignature{
+// 			Name: "FN",
+// 		},
+// 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+// 			return nil, errors.New("SomeError")
+// 		},
+// 	})
 
-	require.Error(t, getError(interp.LexAndEvaluate("! MultiplyWith2 (FN)")))
-}
+// 	require.Error(t, getError(interp.LexAndEvaluate("! MultiplyWith2 (FN)")))
+// }
