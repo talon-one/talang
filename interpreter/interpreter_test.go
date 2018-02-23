@@ -2,8 +2,6 @@ package interpreter
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"testing"
 
 	"github.com/ericlagergren/decimal"
@@ -24,8 +22,7 @@ func TestInterpreter(t *testing.T) {
 		{"= 1 1", "true"},
 	}
 
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 
 	for _, test := range tests {
 		require.Equal(t, test.expected, interp.MustLexAndEvaluate(test.input).Text, "Error in test `%s'", test.input)
@@ -33,81 +30,90 @@ func TestInterpreter(t *testing.T) {
 }
 
 func TestInterpreterInvalidTerm(t *testing.T) {
-	interp := MustNewInterpreter()
+	interp := mustNewInterpreterWithLogger()
 	require.Error(t, interp.Evaluate(nil))
 	require.Error(t, interp.Evaluate(&block.Block{}))
 }
 
 func TestOverloading(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 	require.NoError(t, interp.RemoveAllFunctions())
-	require.Equal(t, "(+ 1 2)", interp.MustLexAndEvaluate("(+ 1 2)").String())
-	require.Equal(t, "(+ A B)", interp.MustLexAndEvaluate("(+ A B)").String())
+	require.Equal(t, "(FN 1 2)", interp.MustLexAndEvaluate("(FN 1 2)").String())
+	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").String())
 
-	interp.RegisterFunction(shared.TaSignature{
-		Name:       "+",
-		IsVariadic: false,
-		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "FN",
+			IsVariadic: false,
+			Arguments: []block.Kind{
+				block.DecimalKind,
+				block.DecimalKind,
+			},
+			Returns: block.DecimalKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
-	require.Equal(t, "3", interp.MustLexAndEvaluate("(+ 1 2)").String())
-	require.Equal(t, "(+ A B)", interp.MustLexAndEvaluate("(+ A B)").String())
+	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").String())
+	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").String())
 
-	interp.RegisterFunction(shared.TaSignature{
-		Name:       "+",
-		IsVariadic: false,
-		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "FN",
+			IsVariadic: false,
+			Arguments: []block.Kind{
+				block.StringKind,
+				block.StringKind,
+			},
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.New(args[0].String() + args[1].String()), nil
 		},
 	})
-	require.Equal(t, "3", interp.MustLexAndEvaluate("(+ 1 2)").String())
-	require.Equal(t, "AB", interp.MustLexAndEvaluate("(+ A B)").String())
+	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").String())
+	require.Equal(t, "AB", interp.MustLexAndEvaluate("(FN A B)").String())
 }
 
 func TestOverloadingNested(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 
-	interp.RegisterFunction(shared.TaSignature{
-		Name:       "fn1",
-		IsVariadic: false,
-		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "fn1",
+			IsVariadic: false,
+			Arguments: []block.Kind{
+				block.DecimalKind,
+				block.DecimalKind,
+			},
+			Returns: block.DecimalKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
 
-	interp.RegisterFunction(shared.TaSignature{
-		Name:       "fn1",
-		IsVariadic: false,
-		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "fn1",
+			IsVariadic: false,
+			Arguments: []block.Kind{
+				block.StringKind,
+				block.StringKind,
+			},
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-			return block.New(args[0].String() + args[1].String()), nil
+			return block.NewString(args[0].String() + args[1].String()), nil
 		},
 	})
 
 	nestedFuncCounter := 0
-	interp.RegisterFunction(shared.TaSignature{
-		Name:       "fn2",
-		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.AnyKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "fn2",
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			nestedFuncCounter++
@@ -120,8 +126,7 @@ func TestOverloadingNested(t *testing.T) {
 }
 
 func TestLists(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 	result := interp.MustLexAndEvaluate("list 1 2 3")
 	require.Equal(t, true, result.IsBlock())
 	require.Equal(t, "", result.Text)
@@ -129,26 +134,31 @@ func TestLists(t *testing.T) {
 }
 
 func TestDoubleFuncCall(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 
 	fn1Runned := false
 	fn2Runned := false
-	interp.RegisterFunction(shared.TaSignature{
-		Name: "fn1",
-		Arguments: []block.Kind{
-			block.AtomKind,
-			block.AtomKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "fn1",
+			Arguments: []block.Kind{
+				block.AtomKind,
+				block.AtomKind,
+			},
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			fn1Runned = true
 			return block.NewString("A"), nil
 		},
 	})
-	interp.RegisterFunction(shared.TaSignature{
-		Name: "fn2",
-		Arguments: []block.Kind{
-			block.AtomKind,
+	interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "fn2",
+			Arguments: []block.Kind{
+				block.AtomKind,
+			},
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			fn2Runned = true
@@ -161,7 +171,7 @@ func TestDoubleFuncCall(t *testing.T) {
 }
 
 func TestGenericSet(t *testing.T) {
-	interp := MustNewInterpreter()
+	interp := mustNewInterpreterWithLogger()
 
 	tests := []struct {
 		input    interface{}
@@ -211,7 +221,7 @@ func BenchmarkInterpreter(b *testing.B) {
 		{"(= 1 1)", "true"},
 	}
 
-	interp := MustNewInterpreter()
+	interp := mustNewInterpreterWithLogger()
 
 	for i := 0; i < b.N; i++ {
 		for _, test := range tests {

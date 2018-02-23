@@ -27,7 +27,7 @@ func createDirtyFile(buf *bytes.Buffer, astFile *ast.File) {
 	mustPrint(fmt.Fprintf(buf, "package %s\n", *pkg))
 	mustPrint(io.WriteString(buf, "import \"github.com/talon-one/talang/interpreter/shared\"\n"))
 
-	mustPrint(io.WriteString(buf, "func AllOperations() []shared.TaSignature {\nreturn []shared.TaSignature{\n"))
+	mustPrint(io.WriteString(buf, "func AllOperations() []shared.TaFunction {\nreturn []shared.TaFunction{\n"))
 	for _, d := range astFile.Decls {
 		if g, ok := d.(*ast.GenDecl); ok {
 			if strings.EqualFold(g.Tok.String(), "var") && len(g.Specs) > 0 {

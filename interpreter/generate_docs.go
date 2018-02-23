@@ -74,7 +74,7 @@ func main() {
 	type fn struct {
 		Arguments []string
 		Returns   string
-		shared.TaSignature
+		shared.TaFunction
 	}
 
 	fns := make([]fn, len(interp.Functions))
@@ -96,9 +96,9 @@ func main() {
 		}
 
 		fns[i] = fn{
-			Arguments:   arguments,
-			Returns:     returns,
-			TaSignature: f,
+			Arguments:  arguments,
+			Returns:    returns,
+			TaFunction: f,
 		}
 	}
 

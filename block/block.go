@@ -181,3 +181,13 @@ func Arguments(children []*Block) []Kind {
 	}
 	return types
 }
+
+type BlockArguments []*Block
+
+func (b BlockArguments) ToHumanReadable() string {
+	arr := make([]string, len(b))
+	for i, arg := range b {
+		arr[i] = arg.String()
+	}
+	return strings.Join(arr, ", ")
+}

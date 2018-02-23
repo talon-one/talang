@@ -1,8 +1,6 @@
 package interpreter
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -15,11 +13,14 @@ func getError(result interface{}, err error) error {
 }
 
 func TestRegisterFunction(t *testing.T) {
-	interp := MustNewInterpreter()
+	interp := mustNewInterpreterWithLogger()
 	require.NoError(t, interp.RemoveAllFunctions())
 	// register a function
-	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
-		Name: "MyFN",
+	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "MyFN",
+			Returns: block.StringKind,
+		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello World"), nil
 		},
@@ -28,35 +29,46 @@ func TestRegisterFunction(t *testing.T) {
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
 
 	// try to register an already registered function
-	require.Error(t, interp.RegisterFunction(shared.TaSignature{
-		Name: "myfn",
+	require.Error(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "myfn",
+			Returns: block.StringKind,
+		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello Universe"), nil
 		}}))
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
 
 	// update the function
-	require.NoError(t, interp.UpdateFunction(shared.TaSignature{
-		Name: "MyFn",
+	require.NoError(t, interp.UpdateFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:    "MyFn",
+			Returns: block.StringKind,
+		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello Galaxy"), nil
 		}}))
 	require.Equal(t, "Hello Galaxy", interp.MustLexAndEvaluate("myfn").Text)
 
 	// delete the function
-	require.NoError(t, interp.RemoveFunction(shared.TaSignature{
-		Name: "MyFN",
+	require.NoError(t, interp.RemoveFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "MyFN",
+		},
 	}))
 	require.Equal(t, "myfn", interp.MustLexAndEvaluate("myfn").Text)
 }
 
 func TestVariadicFunctionWith0Parameters(t *testing.T) {
-	interp := MustNewInterpreter()
-	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
-		Name:       "MyFN1",
-		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.AnyKind,
+	interp := mustNewInterpreterWithLogger()
+	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "MyFN1",
+			IsVariadic: true,
+			Arguments: []block.Kind{
+				block.AnyKind,
+			},
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello World"), nil
@@ -65,9 +77,12 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn1").Text)
 
-	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
-		Name:       "MyFN2",
-		IsVariadic: true,
+	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name:       "MyFN2",
+			IsVariadic: true,
+			Returns:    block.StringKind,
+		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello World"), nil
 		},
@@ -77,11 +92,14 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 }
 
 func TestFunctionWithWrongParamter(t *testing.T) {
-	interp := MustNewInterpreter()
-	require.NoError(t, interp.RegisterFunction(shared.TaSignature{
-		Name: "MyFN1",
-		Arguments: []block.Kind{
-			block.AnyKind,
+	interp := mustNewInterpreterWithLogger()
+	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
+		CommonSignature: shared.CommonSignature{
+			Name: "MyFN1",
+			Arguments: []block.Kind{
+				block.AnyKind,
+			},
+			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello World"), nil
@@ -92,8 +110,7 @@ func TestFunctionWithWrongParamter(t *testing.T) {
 }
 
 func TestBinding(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 
 	interp.Binding["Root1"] = shared.Binding{
 		Value: block.New("1"),
@@ -150,8 +167,7 @@ func TestBinding(t *testing.T) {
 }
 
 func TestFuncInBinding(t *testing.T) {
-	interp := MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp := mustNewInterpreterWithLogger()
 
 	interp.Binding["Root"] = shared.Binding{
 		Children: map[string]shared.Binding{

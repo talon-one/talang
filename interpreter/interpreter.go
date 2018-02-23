@@ -10,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
 
-	"github.com/talon-one/talang/interpreter/corefn/template"
 	"github.com/talon-one/talang/interpreter/shared"
 	lexer "github.com/talon-one/talang/lexer"
 )
@@ -70,68 +69,12 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 		if interp.Logger != nil {
 			interp.Logger.Printf("Evaluating `%s'\n", b.String())
 		}
-		blockText := strings.ToLower(b.Text)
-		// iterate trough all functions
-		for n := 0; n < len(interp.Functions); n++ {
-			// if we have found a function that matches the name
-			if interp.Functions[n].Name == blockText {
-				fn := interp.Functions[n]
-
-				// make a copy of the children
-
-				children := make([]*block.Block, len(b.Children))
-				for i, child := range b.Children {
-					children[i] = new(block.Block)
-					*children[i] = *child
-				}
-
-				// evaluate children if needed to
-				i := 0
-				for ; i < len(fn.Arguments) && i < len(children); i++ {
-					if fn.Arguments[i]&block.AtomKind != 0 && children[i].IsBlock() {
-						if err := interp.Evaluate(children[i]); err != nil {
-							return errors.Errorf("Error in child %s: %v", children[i].Text, err)
-						}
-					}
-				}
-				if fn.IsVariadic {
-					lastArgumentIndex := len(fn.Arguments) - 1
-					// evaluate the rest
-					for ; i < len(children); i++ {
-						if fn.Arguments[lastArgumentIndex]&block.AtomKind != 0 && children[i].IsBlock() {
-							if err := interp.Evaluate(children[i]); err != nil {
-								return errors.Errorf("Error in child %s: %v", children[i].Text, err)
-							}
-						}
-					}
-				}
-				if fn.MatchesArguments(block.Arguments(children)) {
-					if interp.Logger != nil {
-						humanReadableArguments := make([]string, len(children))
-						for i, arg := range children {
-							humanReadableArguments[i] = arg.String()
-						}
-						interp.Logger.Printf("Running fn `%s' with `%v'\n", fn.String(), strings.Join(humanReadableArguments, ", "))
-					}
-					result, err := fn.Func(&interp.Interpreter, children...)
-					if err != nil {
-						return errors.Errorf("Error in function %s: %v", fn.Name, err)
-					}
-					if result == nil {
-						result = block.NewString("")
-					}
-					if interp.Logger != nil {
-						interp.Logger.Printf("Updating value to `%s'\n", result)
-					}
-					b.Update(result)
-					if b.IsBlock() {
-						return interp.Evaluate(b)
-					}
-					break
-				} else if interp.Logger != nil {
-					interp.Logger.Printf("NOT Running fn `%s' (not matching signature)\n", fn.String())
-				}
-			}
+		stopProcessing, err := interp.callFunc(b)
+		if err != nil {
+			return err
+		}
+		if stopProcessing {
+			return nil
 		}
 	}
 
@@ -148,6 +91,104 @@ func (interp *Interpreter) MustEvaluate(b *block.Block) {
 	if err := interp.Evaluate(b); err != nil {
 		panic(err)
 	}
+}
+
+type notMatchingDetail int
+
+const (
+	invalidName               notMatchingDetail = iota
+	invalidSignature          notMatchingDetail = iota
+	errorInChildrenEvaluation notMatchingDetail = iota
+)
+
+func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerName string, args []*block.Block) (bool, notMatchingDetail, []*block.Block, error) {
+	if sig.Name != lowerName {
+		return false, invalidName, nil, nil
+	}
+	// make a copy of the children
+	children := make([]*block.Block, len(args))
+	for i, child := range args {
+		children[i] = new(block.Block)
+		*children[i] = *child
+	}
+
+	// evaluate children if needed to
+	i := 0
+	for ; i < len(sig.Arguments) && i < len(children); i++ {
+		if sig.Arguments[i]&block.AtomKind != 0 && children[i].IsBlock() {
+			if err := interp.Evaluate(children[i]); err != nil {
+				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].Text, err)
+			}
+		}
+	}
+	if sig.IsVariadic {
+		lastArgumentIndex := len(sig.Arguments) - 1
+		// evaluate the rest
+		for ; i < len(children); i++ {
+			if sig.Arguments[lastArgumentIndex]&block.AtomKind != 0 && children[i].IsBlock() {
+				if err := interp.Evaluate(children[i]); err != nil {
+					return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].Text, err)
+				}
+			}
+		}
+	}
+	if sig.MatchesArguments(block.Arguments(children)) {
+		return true, 0, children, nil
+	}
+	return false, invalidSignature, nil, nil
+}
+
+func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
+	functions := interp.AllFunctions()
+	blockText := strings.ToLower(b.Text)
+	// iterate trough all functions
+	for n := 0; n < len(functions); n++ {
+		fn := functions[n]
+		run, notMatchingDetail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children)
+		if err != nil {
+			return false, err
+		}
+		if !run {
+			if interp.Logger != nil {
+				switch notMatchingDetail {
+				case invalidSignature:
+					interp.Logger.Printf("NOT Running function `%s' (not matching signature)\n", fn.String())
+				case errorInChildrenEvaluation:
+					interp.Logger.Printf("NOT Running function `%s' (errors in child evaluation)\n", fn.String())
+				}
+			}
+			continue
+		}
+		if interp.Logger != nil {
+			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), block.BlockArguments(children).ToHumanReadable())
+		}
+		result, err := fn.Func(&interp.Interpreter, children...)
+		if err != nil {
+			if interp.Logger != nil {
+				interp.Logger.Printf("Error in function %s: %v", fn.Name, err)
+			}
+			return false, errors.Errorf("Error in function %s: %v", fn.Name, err)
+		}
+
+		if fn.CommonSignature.Returns&result.Kind != result.Kind {
+			if interp.Logger != nil {
+				interp.Logger.Printf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
+			}
+			return false, errors.Errorf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
+		}
+		if result == nil {
+			result = block.NewString("")
+		}
+		if interp.Logger != nil {
+			interp.Logger.Printf("Updating value to `%s'\n", result)
+		}
+		b.Update(result)
+		if b.IsBlock() {
+			return true, interp.Evaluate(b)
+		}
+		break
+	}
+	return false, nil
 }
 
 func (interp *Interpreter) Set(key string, value shared.Binding) {
@@ -225,6 +266,6 @@ func (interp *Interpreter) NewScope() *Interpreter {
 	i.Binding = make(map[string]shared.Binding)
 	i.Parent = &interp.Interpreter
 	// we need to register binding and template on this scope, because it uses its own scopes
-	i.Functions = append(template.AllOperations(), bindingSignature)
+	i.Functions = []shared.TaFunction{templateSignature(&i), bindingSignature}
 	return &i
 }

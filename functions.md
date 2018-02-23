@@ -1,6 +1,6 @@
 # Embedded Functions
 
-### !(String, Any...)Block
+### !(String, Any...)Any
     Resolve a template
 
 ### !=(Any...)Bool
@@ -9,31 +9,31 @@
 ### *(Decimal...)Decimal
     Multiplies the arguments
 
-### +(Decimal...)Decimal
-    Adds the arguments
-
 ### +(String...)String
     Concat strings
+
+### +(Decimal...)Decimal
+    Adds the arguments
 
 ### -(Decimal...)Decimal
     Subtracts the arguments
 
-### .(Atom...)Block
+### .(Atom...)Any
     Access a variable in the binding
 
 ### /(Decimal...)Decimal
     Divides the arguments
 
-### <(Time...)Bool
-    Tests if the first argument is less then the following
-
 ### <(Decimal...)Bool
     Tests if the first argument is less then the following
 
-### <=(Decimal...)Bool
-    Tests if the first argument is less or equal then the following
+### <(Time...)Bool
+    Tests if the first argument is less then the following
 
 ### <=(Time...)Bool
+    Tests if the first argument is less or equal then the following
+
+### <=(Decimal...)Bool
     Tests if the first argument is less or equal then the following
 
 ### =(Any...)Bool
@@ -45,10 +45,10 @@
 ### >(Time...)Bool
     Tests if the first argument is greather then the following
 
-### >=(Time...)Bool
+### >=(Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
-### >=(Decimal...)Bool
+### >=(Time...)Bool
     Tests if the first argument is greather or equal then the following
 
 ### between(Decimal...)Bool
@@ -95,9 +95,6 @@
 
 ### notContains(String, String...)Bool
     Returns wether the first argument does not exist in the following arguments
-
-### setTemplate(String, Block)Block
-    Set a template
 
 ### startsWith(String, String...)Bool
     Returns wether the first argument is the prefix of the following arguments

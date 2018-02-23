@@ -8,14 +8,16 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
-var Equal = shared.TaSignature{
-	Name:       "=",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.AnyKind,
+var Equal = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "=",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AnyKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the arguments are the same",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the arguments are the same",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -31,14 +33,16 @@ var Equal = shared.TaSignature{
 	},
 }
 
-var NotEqual = shared.TaSignature{
-	Name:       "!=",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.AnyKind,
+var NotEqual = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "!=",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AnyKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the arguments are not the same",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the arguments are not the same",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -54,14 +58,16 @@ var NotEqual = shared.TaSignature{
 	},
 }
 
-var GreaterThanDecimal = shared.TaSignature{
-	Name:       ">",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var GreaterThanDecimal = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       ">",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is greather then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is greather then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -78,14 +84,16 @@ var GreaterThanDecimal = shared.TaSignature{
 	},
 }
 
-var GreaterThanTime = shared.TaSignature{
-	Name:       ">",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.TimeKind,
+var GreaterThanTime = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       ">",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is greather then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is greather then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -102,14 +110,16 @@ var GreaterThanTime = shared.TaSignature{
 	},
 }
 
-var LessThanDecimal = shared.TaSignature{
-	Name:       "<",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var LessThanDecimal = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "<",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is less then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is less then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -126,14 +136,16 @@ var LessThanDecimal = shared.TaSignature{
 	},
 }
 
-var LessThanTime = shared.TaSignature{
-	Name:       "<",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.TimeKind,
+var LessThanTime = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "<",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is less then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is less then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -150,14 +162,16 @@ var LessThanTime = shared.TaSignature{
 	},
 }
 
-var GreaterThanOrEqualDecimal = shared.TaSignature{
-	Name:       ">=",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var GreaterThanOrEqualDecimal = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       ">=",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is greather or equal then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is greather or equal then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -174,14 +188,16 @@ var GreaterThanOrEqualDecimal = shared.TaSignature{
 	},
 }
 
-var GreaterThanOrEqualTime = shared.TaSignature{
-	Name:       ">=",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.TimeKind,
+var GreaterThanOrEqualTime = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       ">=",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is greather or equal then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is greather or equal then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -198,14 +214,16 @@ var GreaterThanOrEqualTime = shared.TaSignature{
 	},
 }
 
-var LessThanOrEqualDecimal = shared.TaSignature{
-	Name:       "<=",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var LessThanOrEqualDecimal = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "<=",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is less or equal then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is less or equal then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -222,14 +240,16 @@ var LessThanOrEqualDecimal = shared.TaSignature{
 	},
 }
 
-var LessThanOrEqualTime = shared.TaSignature{
-	Name:       "<=",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.TimeKind,
+var LessThanOrEqualTime = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "<=",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the first argument is less or equal then the following",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the first argument is less or equal then the following",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -246,14 +266,16 @@ var LessThanOrEqualTime = shared.TaSignature{
 	},
 }
 
-var BetweenDecimal = shared.TaSignature{
-	Name:       "between",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var BetweenDecimal = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "between",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the arguments are between the second last and the last argument",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the arguments are between the second last and the last argument",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {
@@ -274,14 +296,16 @@ var BetweenDecimal = shared.TaSignature{
 	},
 }
 
-var BetweenTime = shared.TaSignature{
-	Name:       "between",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.TimeKind,
+var BetweenTime = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "between",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Tests if the arguments are between the second last and the last argument",
 	},
-	Returns:     block.BoolKind,
-	Description: "Tests if the arguments are between the second last and the last argument",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 3 {

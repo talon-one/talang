@@ -10,12 +10,10 @@ import (
 	"github.com/talon-one/talang/interpreter/corefn/math"
 	"github.com/talon-one/talang/interpreter/corefn/misc"
 	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
-	"github.com/talon-one/talang/interpreter/corefn/template"
 	"github.com/talon-one/talang/interpreter/shared"
-	lexer "github.com/talon-one/talang/lexer"
 )
 
-func (interp *Interpreter) RegisterFunction(signature shared.TaSignature) error {
+func (interp *Interpreter) RegisterFunction(signature shared.TaFunction) error {
 	signature.Name = strings.ToLower(signature.Name)
 	if interp.GetFunction(signature) != nil {
 		return errors.Errorf("Function `%s' is already registered", signature.Name)
@@ -24,7 +22,7 @@ func (interp *Interpreter) RegisterFunction(signature shared.TaSignature) error 
 	return nil
 }
 
-func (interp *Interpreter) UpdateFunction(signature shared.TaSignature) error {
+func (interp *Interpreter) UpdateFunction(signature shared.TaFunction) error {
 	signature.Name = strings.ToLower(signature.Name)
 	if s := interp.GetFunction(signature); s != nil {
 		*s = signature
@@ -33,7 +31,7 @@ func (interp *Interpreter) UpdateFunction(signature shared.TaSignature) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) RemoveFunction(signature shared.TaSignature) error {
+func (interp *Interpreter) RemoveFunction(signature shared.TaFunction) error {
 	signature.Name = strings.ToLower(signature.Name)
 	for i := 0; i < len(interp.Functions); i++ {
 		if interp.Functions[i].Equal(&signature) {
@@ -45,7 +43,7 @@ func (interp *Interpreter) RemoveFunction(signature shared.TaSignature) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) GetFunction(signature shared.TaSignature) *shared.TaSignature {
+func (interp *Interpreter) GetFunction(signature shared.TaFunction) *shared.TaFunction {
 	signature.Name = strings.ToLower(signature.Name)
 	for i := 0; i < len(interp.Functions); i++ {
 		if interp.Functions[i].Equal(&signature) {
@@ -74,24 +72,26 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.Functions = append(interp.Functions, bindingSignature)
 
 	// template
-	interp.Functions = append(interp.Functions, template.AllOperations()...)
+	interp.Functions = append(interp.Functions, templateSignature(interp))
 	return nil
 }
 
 func (interp *Interpreter) RemoveAllFunctions() error {
-	interp.Functions = []shared.TaSignature{}
+	interp.Functions = []shared.TaFunction{}
 	return nil
 }
 
-var bindingSignature = shared.TaSignature{
-	Name:       ".",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.AtomKind,
+var bindingSignature = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       ".",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AtomKind,
+		},
+		Returns:     block.AnyKind,
+		Description: "Access a variable in the binding",
 	},
-	Returns:     block.BlockKind,
-	Description: "Access a variable in the binding",
-	Func:        bindingFunc,
+	Func: bindingFunc,
 }
 
 func bindingFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -122,12 +122,4 @@ func bindingFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block
 		return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
 	}
 	return value, nil
-}
-
-func (interp *Interpreter) SetTemplate(name string, str string) error {
-	block, err := lexer.Lex(str)
-	if err != nil {
-		return err
-	}
-	return template.Set(&interp.Interpreter, name, *block)
 }

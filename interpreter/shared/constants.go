@@ -18,22 +18,32 @@ type Interpreter struct {
 	Binding   map[string]Binding
 	Context   context.Context
 	Parent    *Interpreter
-	Functions []TaSignature
+	Functions []TaFunction
+	Templates []TaTemplate
 	Logger    *log.Logger
 }
 
 type TaFunc func(*Interpreter, ...*block.Block) (*block.Block, error)
 
-type TaSignature struct {
+type CommonSignature struct {
 	IsVariadic  bool
 	Arguments   []block.Kind
 	Name        string
-	Func        TaFunc `json:"-"`
 	Returns     block.Kind
 	Description string
 }
 
-func (s *TaSignature) String() string {
+type TaFunction struct {
+	CommonSignature
+	Func TaFunc `json:"-"`
+}
+
+type TaTemplate struct {
+	CommonSignature
+	Template block.Block `json:"-"`
+}
+
+func (s *CommonSignature) String() string {
 	var args string
 	if argc := len(s.Arguments); argc > 0 {
 		argv := make([]string, argc)
@@ -50,7 +60,7 @@ func (s *TaSignature) String() string {
 	return fmt.Sprintf("%s(%s)%s", s.Name, args, variadic)
 }
 
-func (a *TaSignature) Equal(b *TaSignature) bool {
+func (a *CommonSignature) Equal(b *CommonSignature) bool {
 	if a.IsVariadic != b.IsVariadic {
 		return false
 	}
@@ -65,7 +75,7 @@ func (a *TaSignature) Equal(b *TaSignature) bool {
 	return a.Name == b.Name
 }
 
-func (sig *TaSignature) MatchesArguments(args []block.Kind) bool {
+func (sig *CommonSignature) MatchesArguments(args []block.Kind) bool {
 	if !sig.IsVariadic {
 		if len(args) != len(sig.Arguments) {
 			return false
@@ -87,4 +97,48 @@ func (sig *TaSignature) MatchesArguments(args []block.Kind) bool {
 		}
 	}
 	return true
+}
+
+func (s *TaFunction) String() string {
+	return s.CommonSignature.String()
+}
+
+func (a *TaFunction) Equal(b *TaFunction) bool {
+	return a.CommonSignature.Equal(&b.CommonSignature)
+}
+
+func (s *TaFunction) MatchesArguments(args []block.Kind) bool {
+	return s.CommonSignature.MatchesArguments(args)
+}
+
+func (s *TaTemplate) String() string {
+	return s.CommonSignature.String()
+}
+
+func (a *TaTemplate) Equal(b *TaTemplate) bool {
+	return a.CommonSignature.Equal(&b.CommonSignature)
+}
+
+func (s *TaTemplate) MatchesArguments(args []block.Kind) bool {
+	return s.CommonSignature.MatchesArguments(args)
+}
+
+func (interp *Interpreter) AllFunctions() (functions []TaFunction) {
+	if len(interp.Functions) > 0 {
+		functions = append(functions, interp.Functions...)
+	}
+	if interp.Parent != nil {
+		functions = append(functions, interp.Parent.AllFunctions()...)
+	}
+	return functions
+}
+
+func (interp *Interpreter) AllTemplates() (templates []TaTemplate) {
+	if len(interp.Templates) > 0 {
+		templates = append(templates, interp.Templates...)
+	}
+	if interp.Parent != nil {
+		templates = append(templates, interp.Parent.AllTemplates()...)
+	}
+	return templates
 }

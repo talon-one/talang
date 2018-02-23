@@ -8,14 +8,16 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
-var Add = shared.TaSignature{
-	Name:       "+",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Add = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "+",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Adds the arguments",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Adds the arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -33,14 +35,16 @@ var Add = shared.TaSignature{
 	},
 }
 
-var Sub = shared.TaSignature{
-	Name:       "-",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Sub = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "-",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Subtracts the arguments",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Subtracts the arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -57,14 +61,16 @@ var Sub = shared.TaSignature{
 	},
 }
 
-var Mul = shared.TaSignature{
-	Name:       "*",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Mul = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "*",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Multiplies the arguments",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Multiplies the arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -81,14 +87,16 @@ var Mul = shared.TaSignature{
 	},
 }
 
-var Div = shared.TaSignature{
-	Name:       "/",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Div = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "/",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Divides the arguments",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Divides the arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -105,14 +113,16 @@ var Div = shared.TaSignature{
 	},
 }
 
-var Mod = shared.TaSignature{
-	Name:       "mod",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Mod = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "mod",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Modulo the arguments",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Modulo the arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 2 {
 			return nil, errors.New("invalid or missing arguments")
@@ -129,13 +139,15 @@ var Mod = shared.TaSignature{
 	},
 }
 
-var Floor = shared.TaSignature{
-	Name: "floor",
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Floor = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name: "floor",
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Floor the decimal argument",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Floor the decimal argument",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -150,13 +162,15 @@ var Floor = shared.TaSignature{
 	},
 }
 
-var Ceil = shared.TaSignature{
-	Name: "ceil",
-	Arguments: []block.Kind{
-		block.DecimalKind,
+var Ceil = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name: "ceil",
+		Arguments: []block.Kind{
+			block.DecimalKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Ceil the decimal argument",
 	},
-	Returns:     block.DecimalKind,
-	Description: "Ceil the decimal argument",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) != 1 {
 			return nil, errors.New("invalid or missing arguments")

@@ -8,27 +8,31 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
-var List = shared.TaSignature{
-	Name:       "list",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.AtomKind,
+var List = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "list",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.AtomKind,
+		},
+		Returns:     block.BlockKind,
+		Description: "Create a list out of the children",
 	},
-	Returns:     block.BlockKind,
-	Description: "Create a list out of the children",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return block.New("", args...), nil
 	},
 }
 
-var Head = shared.TaSignature{
-	Name:       "head",
-	IsVariadic: false,
-	Arguments: []block.Kind{
-		block.BlockKind,
+var Head = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "head",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.BlockKind,
+		},
+		Returns:     block.BlockKind,
+		Description: "Returns the first item in the list",
 	},
-	Returns:     block.BlockKind,
-	Description: "Returns the first item in the list",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -37,14 +41,16 @@ var Head = shared.TaSignature{
 	},
 }
 
-var Tail = shared.TaSignature{
-	Name:       "tail",
-	IsVariadic: false,
-	Arguments: []block.Kind{
-		block.BlockKind,
+var Tail = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "tail",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.BlockKind,
+		},
+		Returns:     block.BlockKind,
+		Description: "Returns list without the first item",
 	},
-	Returns:     block.BlockKind,
-	Description: "Returns list without the first item",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args) < 1 {
 			return nil, errors.New("invalid or missing arguments")
@@ -53,14 +59,16 @@ var Tail = shared.TaSignature{
 	},
 }
 
-var Drop = shared.TaSignature{
-	Name:       "drop",
-	IsVariadic: false,
-	Arguments: []block.Kind{
-		block.BlockKind,
+var Drop = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "drop",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.BlockKind,
+		},
+		Returns:     block.BlockKind,
+		Description: "Create a list containing all but the last item in the input list",
 	},
-	Returns:     block.BlockKind,
-	Description: "Create a list containing all but the last item in the input list",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 1 {
@@ -70,15 +78,17 @@ var Drop = shared.TaSignature{
 	},
 }
 
-var Item = shared.TaSignature{
-	Name:       "item",
-	IsVariadic: false,
-	Arguments: []block.Kind{
-		block.BlockKind,
-		block.DecimalKind,
+var Item = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "item",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.BlockKind,
+			block.DecimalKind,
+		},
+		Returns:     block.BlockKind,
+		Description: "Returns a specific item from a list",
 	},
-	Returns:     block.BlockKind,
-	Description: "Returns a specific item from a list",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {

@@ -10,14 +10,16 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
-var Add = shared.TaSignature{
-	Name:       "+",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.StringKind,
+var Add = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "+",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Concat strings",
 	},
-	Returns:     block.StringKind,
-	Description: "Concat strings",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		values := make([]string, argc)
@@ -28,24 +30,28 @@ var Add = shared.TaSignature{
 	},
 }
 
-var Concat = shared.TaSignature{
-	Name:        "concat",
-	IsVariadic:  Add.IsVariadic,
-	Arguments:   Add.Arguments,
-	Returns:     Add.Returns,
-	Description: Add.Description,
-	Func:        Add.Func,
+var Concat = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:        "concat",
+		IsVariadic:  Add.IsVariadic,
+		Arguments:   Add.Arguments,
+		Returns:     Add.Returns,
+		Description: Add.Description,
+	},
+	Func: Add.Func,
 }
 
-var Contains = shared.TaSignature{
-	Name:       "contains",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.StringKind,
-		block.StringKind,
+var Contains = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "contains",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Returns wether the first argument exists in the following arguments",
 	},
-	Returns:     block.BoolKind,
-	Description: "Returns wether the first argument exists in the following arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -61,15 +67,17 @@ var Contains = shared.TaSignature{
 	},
 }
 
-var NotContains = shared.TaSignature{
-	Name:       "notContains",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.StringKind,
-		block.StringKind,
+var NotContains = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "notContains",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Returns wether the first argument does not exist in the following arguments",
 	},
-	Returns:     block.BoolKind,
-	Description: "Returns wether the first argument does not exist in the following arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -85,15 +93,17 @@ var NotContains = shared.TaSignature{
 	},
 }
 
-var StartsWith = shared.TaSignature{
-	Name:       "startsWith",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.StringKind,
-		block.StringKind,
+var StartsWith = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "startsWith",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Returns wether the first argument is the prefix of the following arguments",
 	},
-	Returns:     block.BoolKind,
-	Description: "Returns wether the first argument is the prefix of the following arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -108,15 +118,17 @@ var StartsWith = shared.TaSignature{
 		return block.NewBool(true), nil
 	},
 }
-var EndsWith = shared.TaSignature{
-	Name:       "endsWith",
-	IsVariadic: true,
-	Arguments: []block.Kind{
-		block.StringKind,
-		block.StringKind,
+var EndsWith = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "endsWith",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Returns wether the first argument is the suffix of the following arguments",
 	},
-	Returns:     block.BoolKind,
-	Description: "Returns wether the first argument is the suffix of the following arguments",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
@@ -132,15 +144,17 @@ var EndsWith = shared.TaSignature{
 	},
 }
 
-var Regexp = shared.TaSignature{
-	Name:       "~",
-	IsVariadic: false,
-	Arguments: []block.Kind{
-		block.StringKind,
-		block.StringKind,
+var Regexp = shared.TaFunction{
+	CommonSignature: shared.CommonSignature{
+		Name:       "~",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Returns wether the first argument matches the regular expression in the second argument",
 	},
-	Returns:     block.BoolKind,
-	Description: "Returns wether the first argument matches the regular expression in the second argument",
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
