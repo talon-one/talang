@@ -8,7 +8,7 @@ precommithook: build
 	git add functions.md
 	find . -name '*_allop.go' | xargs git add
 
-	@go test -coverprofile cover.prof ./...; if [ $$? == 0 ]; then curl -o "build.svg" "https://img.shields.io/badge/build-passing-green.svg"; else curl -o "build.svg" "https://img.shields.io/badge/build-failing-red.svg"; fi;
+	@go test -coverprofile cover.prof ./...; if [ $$? == 0 ]; then curl -o "build.svg" "https://img.shields.io/badge/build-passing-brightgreen.svg"; else curl -o "build.svg" "https://img.shields.io/badge/build-failing-red.svg"; fi;
 	
 	curl -o "coverage.svg" $(shell go run generate_badges.go -profile cover.prof)
 
