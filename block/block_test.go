@@ -2,6 +2,7 @@ package block
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ericlagergren/decimal"
 	"github.com/stretchr/testify/require"
@@ -74,6 +75,33 @@ func TestNew(t *testing.T) {
 	}*/
 }
 
+func TestNewTyped(t *testing.T) {
+	time, err := time.Parse(time.UnixDate, "Mon Jan 2 15:04:05 MST 2006")
+	if err != nil {
+		panic(err)
+	}
+	tests := []struct {
+		expectedKind Kind
+		expectedText string
+		input        *Block
+	}{
+		{BoolKind, "false", NewBool(false)},
+		{BoolKind, "true", NewBool(true)},
+
+		{StringKind, "Hallo", NewString("Hallo")},
+
+		{DecimalKind, "1", NewDecimal(decimal.New(1, 0))},
+
+		{TimeKind, "2006-01-02T15:04:05Z", NewTime(time)},
+
+		{NullKind, "", NewNull()},
+	}
+	for _, test := range tests {
+		require.Equal(t, test.expectedKind, test.input.Kind)
+		require.Equal(t, test.expectedText, test.input.Text)
+	}
+}
+
 func TestIsDecimal(t *testing.T) {
 	block := New(validDecimalFormats[0])
 	require.Equal(t, true, block.IsDecimal())
@@ -89,36 +117,58 @@ func TestIsString(t *testing.T) {
 	require.Equal(t, true, block.IsString())
 }
 
+func TestIsBool(t *testing.T) {
+	block := New("false")
+	require.Equal(t, true, block.IsBool())
+	block = New("true")
+	require.Equal(t, true, block.IsBool())
+}
+
+func TestIsNull(t *testing.T) {
+	block := NewNull()
+	require.Equal(t, true, block.IsNull())
+}
+
 func TestIsEmpty(t *testing.T) {
 	var block Block
 	require.Equal(t, true, block.IsEmpty())
 }
 
-// func TestUpdate(t *testing.T) {
-// 	// create a simple block
-// 	block := New(validDecimalFormats[0])
-// 	require.Equal(t, validDecimalFormats[0], block.Text)
-// 	require.Equal(t, true, block.isDecimal)
-// 	require.Equal(t, 0, len(block.Children))
+func TestIsBlock(t *testing.T) {
+	b := New("Hello", NewString("World"))
+	require.Equal(t, true, b.IsBlock())
+	b = New("")
+	require.Equal(t, true, b.IsBlock())
+}
 
-// 	// update the text
-// 	block.Update(validDecimalFormats[1])
-// 	require.Equal(t, validDecimalFormats[1], block.Text)
-// 	require.Equal(t, true, block.isDecimal)
-// 	require.Equal(t, 0, len(block.Children))
+func TestUpdate(t *testing.T) {
+	// create a simple block
+	var b Block
+	b.Update(NewString("Hello"))
+	require.Equal(t, true, b.IsString())
+	require.Equal(t, "Hello", b.Text)
 
-// 	// update the text and their children
-// 	block.Update(validDecimalFormats[2], New(validDecimalFormats[1]))
-// 	require.Equal(t, validDecimalFormats[2], block.Text)
-// 	require.Equal(t, true, block.isDecimal)
-// 	require.Equal(t, 1, len(block.Children))
+	b.Update(NewBool(false))
+	require.Equal(t, true, b.IsBool())
+	require.Equal(t, "false", b.Text)
 
-// 	// update to an invalid format
-// 	block.Update(invalidDecimalFormats[0])
-// 	require.Equal(t, invalidDecimalFormats[0], block.Text)
-// 	require.Equal(t, false, block.isDecimal)
-// 	require.Equal(t, 0, len(block.Children))
-// }
+	time, err := time.Parse(time.UnixDate, "Mon Jan 2 15:04:05 MST 2006")
+	if err != nil {
+		panic(err)
+	}
+
+	b.Update(NewTime(time))
+	require.Equal(t, true, b.IsTime())
+	require.Equal(t, "2006-01-02T15:04:05Z", b.Text)
+
+	b.Update(NewDecimal(decimal.New(1, 0)))
+	require.Equal(t, true, b.IsDecimal())
+	require.Equal(t, "1", b.Text)
+
+	b.Update(NewNull())
+	require.Equal(t, true, b.IsNull())
+	require.Equal(t, "", b.Text)
+}
 
 func TestString(t *testing.T) {
 	block := New("+", New("1"), New("2"))
@@ -134,4 +184,9 @@ func TestArguments(t *testing.T) {
 
 	block = New("+", New("Hello"), New("1"))
 	require.EqualValues(t, []Kind{StringKind, DecimalKind}, Arguments(block.Children))
+}
+
+func TestToHumanReadable(t *testing.T) {
+	block := New("+", New("1"), New("2"))
+	require.Equal(t, "1, 2", BlockArguments(block.Children).ToHumanReadable())
 }
