@@ -10,7 +10,7 @@ precommithook: build
 
 	@go test -coverprofile cover.prof ./...; if [ $$? == 0 ]; then curl -o "build.svg" "https://img.shields.io/badge/build-passing-brightgreen.svg"; else curl -o "build.svg" "https://img.shields.io/badge/build-failing-red.svg"; fi;
 	
-	curl -o "coverage.svg" $(shell go run generate_badges.go -profile cover.prof)
+	curl -o "coverage.svg" $(shell go run generate_coverage_badge.go -profile cover.prof)
 
 	git add build.svg coverage.svg
 
