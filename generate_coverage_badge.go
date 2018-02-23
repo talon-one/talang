@@ -30,11 +30,15 @@ func main() {
 		log.Fatalf("No profiles present")
 	}
 
-	percentCovered := percentCovered(profs[0])
+	var percent float64
+	for i := 0; i < len(profs); i++ {
+		percent += percentCovered(profs[i])
+	}
+	percent = percent / float64(len(profs))
 
-	roundedFloat := fmt.Sprintf("%.0f", percentCovered)
+	roundedFloat := fmt.Sprintf("%.0f", percent)
 
-	fmt.Printf("https://img.shields.io/badge/coverage-%.0f%%25-%s.svg", percentCovered, statusColor(roundedFloat))
+	fmt.Printf("https://img.shields.io/badge/coverage-%s%%25-%s.svg", roundedFloat, statusColor(roundedFloat))
 }
 
 func statusColor(coveragePct string) string {
