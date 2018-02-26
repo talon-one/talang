@@ -115,7 +115,7 @@ func TestLexer(t *testing.T) {
 			block.New("",
 				block.New("fn",
 					&block.Block{
-						Text:     "A",
+						String:   "A",
 						Kind:     block.BlockKind,
 						Children: []*block.Block{},
 					},

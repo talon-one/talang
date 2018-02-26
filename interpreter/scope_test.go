@@ -17,7 +17,7 @@ func TestScopeBinding(t *testing.T) {
 	})
 
 	// get the binding
-	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").Text)
+	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").String)
 
 	// create a scope and set a binding ON the scope
 	scope := interp.NewScope()
@@ -25,18 +25,18 @@ func TestScopeBinding(t *testing.T) {
 		Value: block.NewString("Scope"),
 	})
 	// check if the scope has the same binding as the root
-	require.Equal(t, "Root", scope.MustLexAndEvaluate("(. RootKey)").Text)
+	require.Equal(t, "Root", scope.MustLexAndEvaluate("(. RootKey)").String)
 
 	// overwrite the binding on scope level
 	scope.Set("RootKey", shared.Binding{
 		Value: block.NewBool(true),
 	})
-	require.Equal(t, "true", scope.MustLexAndEvaluate("(. RootKey)").Text)
-	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").Text)
+	require.Equal(t, "true", scope.MustLexAndEvaluate("(. RootKey)").String)
+	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").String)
 
 	_, err := interp.LexAndEvaluate("(. ScopeKey)")
 	require.Error(t, err)
-	require.Equal(t, "Scope", scope.MustLexAndEvaluate("(. ScopeKey)").Text)
+	require.Equal(t, "Scope", scope.MustLexAndEvaluate("(. ScopeKey)").String)
 }
 
 func TestScopeFunctions(t *testing.T) {
@@ -51,7 +51,7 @@ func TestScopeFunctions(t *testing.T) {
 		},
 	})
 
-	require.Equal(t, "Hello", interp.MustLexAndEvaluate("fn1").Text)
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("fn1").String)
 
 	scope := interp.NewScope()
 	scope.RegisterFunction(shared.TaFunction{
@@ -63,10 +63,10 @@ func TestScopeFunctions(t *testing.T) {
 			return block.NewString("Bye"), nil
 		},
 	})
-	require.Equal(t, "Hello", scope.MustLexAndEvaluate("fn1").Text)
+	require.Equal(t, "Hello", scope.MustLexAndEvaluate("fn1").String)
 
-	require.Equal(t, "fn2", interp.MustLexAndEvaluate("fn2").Text)
-	require.Equal(t, "Bye", scope.MustLexAndEvaluate("fn2").Text)
+	require.Equal(t, "fn2", interp.MustLexAndEvaluate("fn2").String)
+	require.Equal(t, "Bye", scope.MustLexAndEvaluate("fn2").String)
 }
 
 func TestScopeTemplates(t *testing.T) {
@@ -78,7 +78,7 @@ func TestScopeTemplates(t *testing.T) {
 		},
 		Template: *lexer.MustLex("Hello"),
 	}))
-	require.Equal(t, "Hello", interp.MustLexAndEvaluate("! Template1").Text)
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("! Template1").String)
 
 	scope := interp.NewScope()
 
@@ -89,7 +89,7 @@ func TestScopeTemplates(t *testing.T) {
 		},
 		Template: *lexer.MustLex("World"),
 	}))
-	require.Equal(t, "Hello World", scope.MustLexAndEvaluate(`+ (! Template1) " " (! Template2)`).Text)
+	require.Equal(t, "Hello World", scope.MustLexAndEvaluate(`+ (! Template1) " " (! Template2)`).String)
 
 	require.Error(t, getError(interp.LexAndEvaluate("! Template2")))
 }

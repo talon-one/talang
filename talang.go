@@ -8,7 +8,9 @@ import (
 	"github.com/talon-one/talang/lexer"
 )
 
-type Interpreter interpreter.Interpreter
+type Interpreter struct {
+	interpreter.Interpreter
+}
 
 func Lex(str string) (*block.Block, error) {
 	return lexer.Lex(str)
@@ -31,6 +33,26 @@ func MustParse(str string) *block.Block {
 
 func NewInterpreter() (*Interpreter, error) {
 	interp, err := interpreter.NewInterpreter()
-	i := Interpreter(*interp)
-	return &i, err
+	return &Interpreter{*interp}, err
+}
+
+func MustNewInterpreter() *Interpreter {
+	interp := interpreter.MustNewInterpreter()
+	return &Interpreter{*interp}
+}
+
+func (interp *Interpreter) LexAndEvaluate(str string) (*block.Block, error) {
+	return interp.Interpreter.LexAndEvaluate(str)
+}
+
+func (interp *Interpreter) MustLexAndEvaluate(str string) *block.Block {
+	return interp.Interpreter.MustLexAndEvaluate(str)
+}
+
+func (interp *Interpreter) Evaluate(b *block.Block) error {
+	return interp.Interpreter.Evaluate(b)
+}
+
+func (interp *Interpreter) MustEvaluate(b *block.Block) {
+	interp.Interpreter.MustEvaluate(b)
 }

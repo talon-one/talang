@@ -25,12 +25,12 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, interp.GenericSet("Variable1", 1))
 	result = interp.MustLexAndEvaluate("(+ 1 (! Template1))")
 	require.Equal(t, true, result.IsDecimal())
-	require.Equal(t, "3", result.Text)
+	require.Equal(t, "3", result.String)
 
 	require.NoError(t, interp.GenericSet("Variable1", 2))
 	result = interp.MustLexAndEvaluate("(+ 1 (! Template1))")
 	require.Equal(t, true, result.IsDecimal())
-	require.Equal(t, "5", result.Text)
+	require.Equal(t, "5", result.String)
 }
 
 func TestFormatedTemplate(t *testing.T) {
@@ -50,11 +50,11 @@ func TestFormatedTemplate(t *testing.T) {
 
 	result = interp.MustLexAndEvaluate("(+ 1 (! MultiplyWith2 2))")
 	require.Equal(t, true, result.IsDecimal())
-	require.Equal(t, "5", result.Text)
+	require.Equal(t, "5", result.String)
 
 	result = interp.MustLexAndEvaluate("(+ 1 (! MultiplyWith2 4))")
 	require.Equal(t, true, result.IsDecimal())
-	require.Equal(t, "9", result.Text)
+	require.Equal(t, "9", result.String)
 }
 
 func TestInvalidTemplateArgumentTypes(t *testing.T) {

@@ -60,14 +60,14 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 	childCount := len(b.Children)
 
 	// term has just one child, and no operation
-	if childCount == 1 && len(b.Text) == 0 {
+	if childCount == 1 && len(b.String) == 0 {
 		*b = *b.Children[0]
 		return interp.Evaluate(b)
 	}
 
-	if len(b.Text) > 0 {
+	if len(b.String) > 0 {
 		if interp.Logger != nil {
-			interp.Logger.Printf("Evaluating `%s'\n", b.String())
+			interp.Logger.Printf("Evaluating `%s'\n", b.Stringify())
 		}
 		stopProcessing, err := interp.callFunc(b)
 		if err != nil {
@@ -117,7 +117,7 @@ func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerNa
 	for ; i < len(sig.Arguments) && i < len(children); i++ {
 		if sig.Arguments[i]&block.AtomKind != 0 && children[i].IsBlock() {
 			if err := interp.Evaluate(children[i]); err != nil {
-				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].Text, err)
+				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 			}
 		}
 	}
@@ -127,7 +127,7 @@ func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerNa
 		for ; i < len(children); i++ {
 			if sig.Arguments[lastArgumentIndex]&block.AtomKind != 0 && children[i].IsBlock() {
 				if err := interp.Evaluate(children[i]); err != nil {
-					return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].Text, err)
+					return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 				}
 			}
 		}
@@ -140,7 +140,7 @@ func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerNa
 
 func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 	functions := interp.AllFunctions()
-	blockText := strings.ToLower(b.Text)
+	blockText := strings.ToLower(b.String)
 	// iterate trough all functions
 	for n := 0; n < len(functions); n++ {
 		fn := functions[n]
@@ -184,7 +184,7 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 			return false, errors.Errorf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
 		}
 		if interp.Logger != nil {
-			interp.Logger.Printf("Updating value to `%s'\n", result)
+			interp.Logger.Printf("Updating value to `%s'\n", result.String)
 		}
 		b.Update(result)
 		if b.IsBlock() {

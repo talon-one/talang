@@ -46,6 +46,6 @@ var ToString = shared.TaFunction{
 		if len(args) < 1 {
 			return nil, errors.New("invalid or missing arguments")
 		}
-		return block.NewString(args[0].String()), nil
+		return block.NewString(args[0].String), nil
 	},
 }

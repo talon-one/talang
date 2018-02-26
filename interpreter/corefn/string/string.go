@@ -24,7 +24,7 @@ var Add = shared.TaFunction{
 		argc := len(args)
 		values := make([]string, argc)
 		for i := 0; i < argc; i++ {
-			values[i] = args[i].Text
+			values[i] = args[i].String
 		}
 		return block.NewString(strings.Join(values, "")), nil
 	},
@@ -59,7 +59,7 @@ var Contains = shared.TaFunction{
 		}
 
 		for i := 1; i < argc; i++ {
-			if !strings.Contains(args[0].Text, args[i].Text) {
+			if !strings.Contains(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
 		}
@@ -85,7 +85,7 @@ var NotContains = shared.TaFunction{
 		}
 
 		for i := 1; i < argc; i++ {
-			if strings.Contains(args[0].Text, args[i].Text) {
+			if strings.Contains(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
 		}
@@ -111,7 +111,7 @@ var StartsWith = shared.TaFunction{
 		}
 
 		for i := 1; i < argc; i++ {
-			if !strings.HasPrefix(args[0].Text, args[i].Text) {
+			if !strings.HasPrefix(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
 		}
@@ -136,7 +136,7 @@ var EndsWith = shared.TaFunction{
 		}
 
 		for i := 1; i < argc; i++ {
-			if !strings.HasSuffix(args[0].Text, args[i].Text) {
+			if !strings.HasSuffix(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
 		}
@@ -160,10 +160,10 @@ var Regexp = shared.TaFunction{
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
 		}
-		re, err := regexp.Compile(args[1].String())
+		re, err := regexp.Compile(args[1].String)
 		if err != nil {
 			return block.NewBool(false), err
 		}
-		return block.NewBool(re.MatchString(args[0].String())), nil
+		return block.NewBool(re.MatchString(args[0].String)), nil
 	},
 }

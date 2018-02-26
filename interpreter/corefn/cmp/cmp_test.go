@@ -12,7 +12,7 @@ func mustFunc(result *block.Block, err error) string {
 	if err != nil {
 		panic(err)
 	}
-	return result.String()
+	return result.String
 }
 
 func getError(result interface{}, err error) error {

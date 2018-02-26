@@ -98,7 +98,7 @@ func bindingFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block
 	bindMap := interp.Binding
 	var value *block.Block
 	for i := 0; i < len(args); i++ {
-		if binding, ok := bindMap[args[i].Text]; ok {
+		if binding, ok := bindMap[args[i].String]; ok {
 			bindMap = binding.Children
 			value = binding.Value
 		} else {
@@ -117,7 +117,7 @@ func bindingFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block
 		// join args
 		qualifiers := make([]string, len(args))
 		for j, arg := range args {
-			qualifiers[j] = arg.Text
+			qualifiers[j] = arg.String
 		}
 		return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
 	}

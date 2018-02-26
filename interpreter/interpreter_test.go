@@ -28,7 +28,7 @@ func TestInterpreter(t *testing.T) {
 	interp := mustNewInterpreterWithLogger()
 
 	for _, test := range tests {
-		require.Equal(t, test.expected, interp.MustLexAndEvaluate(test.input).Text, "Error in test `%s'", test.input)
+		require.Equal(t, test.expected, interp.MustLexAndEvaluate(test.input).String, "Error in test `%s'", test.input)
 	}
 }
 
@@ -41,8 +41,8 @@ func TestInterpreterInvalidTerm(t *testing.T) {
 func TestOverloading(t *testing.T) {
 	interp := mustNewInterpreterWithLogger()
 	require.NoError(t, interp.RemoveAllFunctions())
-	require.Equal(t, "(FN 1 2)", interp.MustLexAndEvaluate("(FN 1 2)").String())
-	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").String())
+	require.Equal(t, "(FN 1 2)", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
+	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
 
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
@@ -58,8 +58,8 @@ func TestOverloading(t *testing.T) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
-	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").String())
-	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").String())
+	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
+	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
 
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
@@ -72,11 +72,11 @@ func TestOverloading(t *testing.T) {
 			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-			return block.New(args[0].String() + args[1].String()), nil
+			return block.New(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
-	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").String())
-	require.Equal(t, "AB", interp.MustLexAndEvaluate("(FN A B)").String())
+	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
+	require.Equal(t, "AB", interp.MustLexAndEvaluate("(FN A B)").Stringify())
 }
 
 func TestOverloadingNested(t *testing.T) {
@@ -108,7 +108,7 @@ func TestOverloadingNested(t *testing.T) {
 			Returns: block.StringKind,
 		},
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-			return block.NewString(args[0].String() + args[1].String()), nil
+			return block.NewString(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
 
@@ -124,7 +124,7 @@ func TestOverloadingNested(t *testing.T) {
 		},
 	})
 
-	require.Equal(t, "2C", interp.MustLexAndEvaluate("(fn1 (fn2) C)").String())
+	require.Equal(t, "2C", interp.MustLexAndEvaluate("(fn1 (fn2) C)").Stringify())
 	require.Equal(t, 2, nestedFuncCounter)
 }
 
@@ -132,7 +132,7 @@ func TestLists(t *testing.T) {
 	interp := mustNewInterpreterWithLogger()
 	result := interp.MustLexAndEvaluate("list 1 2 3")
 	require.Equal(t, true, result.IsBlock())
-	require.Equal(t, "", result.Text)
+	require.Equal(t, "", result.String)
 	require.Equal(t, 3, len(result.Children))
 }
 
@@ -197,8 +197,8 @@ func TestGenericSet(t *testing.T) {
 		Str1: "Test",
 		Int2: 1,
 	}))
-	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").Text)
-	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").Text)
+	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
+	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
 
 	st := struct {
 		Str1 string
@@ -208,8 +208,8 @@ func TestGenericSet(t *testing.T) {
 		Int2: 1,
 	}
 	require.NoError(t, interp.GenericSet("Key", &st))
-	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").Text)
-	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").Text)
+	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
+	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
 }
 
 func TestMustEvaluate(t *testing.T) {
@@ -254,7 +254,7 @@ func BenchmarkInterpreter(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		for _, test := range tests {
-			require.Equal(b, test.expected, interp.MustLexAndEvaluate(test.input).Text)
+			require.Equal(b, test.expected, interp.MustLexAndEvaluate(test.input).String)
 		}
 	}
 }

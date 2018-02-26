@@ -25,7 +25,7 @@ var Equal = shared.TaFunction{
 		}
 
 		for i := 1; i < argc; i++ {
-			if args[0].Text != args[i].Text {
+			if args[0].String != args[i].String {
 				return block.NewBool(false), nil
 			}
 		}
@@ -50,7 +50,7 @@ var NotEqual = shared.TaFunction{
 		}
 
 		for i := 1; i < argc; i++ {
-			if args[0].Text == args[i].Text {
+			if args[0].String == args[i].String {
 				return block.NewBool(false), nil
 			}
 		}

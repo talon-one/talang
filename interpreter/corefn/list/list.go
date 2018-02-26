@@ -96,12 +96,12 @@ var Item = shared.TaFunction{
 		}
 
 		if !args[1].IsDecimal() {
-			return nil, errors.Errorf("`%s' is not an int", args[1].Text)
+			return nil, errors.Errorf("`%s' is not an int", args[1].String)
 		}
 
 		i, ok := args[1].Decimal.Int64()
 		if !ok {
-			return nil, errors.Errorf("`%s' is not an int", args[1].Text)
+			return nil, errors.Errorf("`%s' is not an int", args[1].String)
 		}
 		index := int(i)
 		if index < 0 || index >= argc {

@@ -81,7 +81,7 @@ func templateFunc(interp *Interpreter) func(_ *shared.Interpreter, args ...*bloc
 			return nil, errors.New("invalid or missing arguments")
 		}
 		templates := interp.AllTemplates()
-		blockText := strings.ToLower(args[0].Text)
+		blockText := strings.ToLower(args[0].String)
 		// iterate trough all functions
 		for n := 0; n < len(templates); n++ {
 			template := templates[n]
@@ -111,7 +111,7 @@ func templateFunc(interp *Interpreter) func(_ *shared.Interpreter, args ...*bloc
 			}
 			return &b, nil
 		}
-		return nil, errors.Errorf("template `%s' not found", args[0].Text)
+		return nil, errors.Errorf("template `%s' not found", args[0].String)
 	}
 }
 
@@ -139,8 +139,8 @@ func replaceVariable(source *block.Block, name string, replace *block.Block) (re
 		return replaced
 	}
 
-	if source.Text == "#" {
-		if strings.EqualFold(source.Children[0].Text, name) {
+	if source.String == "#" {
+		if strings.EqualFold(source.Children[0].String, name) {
 			*source = *replace
 			replaced++
 		}

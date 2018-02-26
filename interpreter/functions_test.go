@@ -27,7 +27,7 @@ func TestRegisterFunction(t *testing.T) {
 		},
 	}))
 
-	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
+	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").String)
 
 	// try to register an already registered function
 	require.Error(t, interp.RegisterFunction(shared.TaFunction{
@@ -38,7 +38,7 @@ func TestRegisterFunction(t *testing.T) {
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello Universe"), nil
 		}}))
-	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").Text)
+	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").String)
 
 	// update the function
 	require.NoError(t, interp.UpdateFunction(shared.TaFunction{
@@ -49,7 +49,7 @@ func TestRegisterFunction(t *testing.T) {
 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello Galaxy"), nil
 		}}))
-	require.Equal(t, "Hello Galaxy", interp.MustLexAndEvaluate("myfn").Text)
+	require.Equal(t, "Hello Galaxy", interp.MustLexAndEvaluate("myfn").String)
 
 	// delete the function
 	require.NoError(t, interp.RemoveFunction(shared.TaFunction{
@@ -57,7 +57,7 @@ func TestRegisterFunction(t *testing.T) {
 			Name: "MyFN",
 		},
 	}))
-	require.Equal(t, "myfn", interp.MustLexAndEvaluate("myfn").Text)
+	require.Equal(t, "myfn", interp.MustLexAndEvaluate("myfn").String)
 }
 
 func TestVariadicFunctionWith0Parameters(t *testing.T) {
@@ -76,7 +76,7 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 		},
 	}))
 
-	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn1").Text)
+	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn1").String)
 
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
@@ -89,7 +89,7 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 		},
 	}))
 
-	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn2").Text)
+	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn2").String)
 }
 
 func TestFuncWithWrongParameter(t *testing.T) {
@@ -107,7 +107,7 @@ func TestFuncWithWrongParameter(t *testing.T) {
 		},
 	}))
 
-	require.Equal(t, "myfn1", interp.MustLexAndEvaluate("myfn1").Text)
+	require.Equal(t, "myfn1", interp.MustLexAndEvaluate("myfn1").String)
 }
 
 func TestBinding(t *testing.T) {
@@ -141,14 +141,14 @@ func TestBinding(t *testing.T) {
 
 	b := interp.MustLexAndEvaluate("(+ (. Root1) 2)")
 	require.Equal(t, true, b.IsDecimal())
-	require.Equal(t, "3", b.Text)
+	require.Equal(t, "3", b.String)
 	b = interp.MustLexAndEvaluate("(+ (. Root1 Decimal) 2)")
 	require.Equal(t, true, b.IsDecimal())
-	require.Equal(t, "4", b.Text)
+	require.Equal(t, "4", b.String)
 
 	b = interp.MustLexAndEvaluate("(. Root1 String)")
 	require.Equal(t, true, b.IsString())
-	require.Equal(t, "Hello", b.Text)
+	require.Equal(t, "Hello", b.String)
 
 	b = interp.MustLexAndEvaluate("(. Root1 List)")
 	require.Equal(t, true, b.IsBlock())
@@ -157,7 +157,7 @@ func TestBinding(t *testing.T) {
 
 	b = interp.MustLexAndEvaluate("(. Root1 Map String)")
 	require.Equal(t, true, b.IsString())
-	require.Equal(t, "Hello", b.Text)
+	require.Equal(t, "Hello", b.String)
 
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Unknown)")))
 
@@ -180,7 +180,7 @@ func TestFuncInBinding(t *testing.T) {
 
 	b := interp.MustLexAndEvaluate("(+ (. Root (+ 1 1)) 2)")
 	require.Equal(t, true, b.IsDecimal())
-	require.Equal(t, "4", b.Text)
+	require.Equal(t, "4", b.String)
 }
 
 func TestFuncErrorInChild(t *testing.T) {

@@ -68,7 +68,7 @@ func mustDecimal(d *decimal.Big, ok bool) *decimal.Big {
 }
 func TestNew(t *testing.T) {
 	for _, test := range validDecimalFormats {
-		require.EqualValues(t, &Block{Text: test, Kind: DecimalKind, Decimal: mustDecimal(decimal.New(0, 0).SetString(test)), Children: []*Block{}}, New(test), "Failed at %s", test)
+		require.EqualValues(t, &Block{String: test, Kind: DecimalKind, Decimal: mustDecimal(decimal.New(0, 0).SetString(test)), Children: []*Block{}}, New(test), "Failed at %s", test)
 	}
 	/*for _, test := range invalidDecimalFormats {
 		require.EqualValues(t, &Block{Text: test, Kind: StringKind}, New(test), "Failed at %s", test)
@@ -98,7 +98,7 @@ func TestNewTyped(t *testing.T) {
 	}
 	for _, test := range tests {
 		require.Equal(t, test.expectedKind, test.input.Kind)
-		require.Equal(t, test.expectedText, test.input.Text)
+		require.Equal(t, test.expectedText, test.input.String)
 	}
 }
 
@@ -146,11 +146,11 @@ func TestUpdate(t *testing.T) {
 	var b Block
 	b.Update(NewString("Hello"))
 	require.Equal(t, true, b.IsString())
-	require.Equal(t, "Hello", b.Text)
+	require.Equal(t, "Hello", b.String)
 
 	b.Update(NewBool(false))
 	require.Equal(t, true, b.IsBool())
-	require.Equal(t, "false", b.Text)
+	require.Equal(t, "false", b.String)
 
 	time, err := time.Parse(time.UnixDate, "Mon Jan 2 15:04:05 MST 2006")
 	if err != nil {
@@ -159,23 +159,23 @@ func TestUpdate(t *testing.T) {
 
 	b.Update(NewTime(time))
 	require.Equal(t, true, b.IsTime())
-	require.Equal(t, "2006-01-02T15:04:05Z", b.Text)
+	require.Equal(t, "2006-01-02T15:04:05Z", b.String)
 
 	b.Update(NewDecimal(decimal.New(1, 0)))
 	require.Equal(t, true, b.IsDecimal())
-	require.Equal(t, "1", b.Text)
+	require.Equal(t, "1", b.String)
 
 	b.Update(NewNull())
 	require.Equal(t, true, b.IsNull())
-	require.Equal(t, "", b.Text)
+	require.Equal(t, "", b.String)
 }
 
 func TestString(t *testing.T) {
 	block := New("+", New("1"), New("2"))
-	require.Equal(t, "(+ 1 2)", block.String())
+	require.Equal(t, "(+ 1 2)", block.Stringify())
 
 	block = New("+", New("-", New("1"), New("2")), New("3"))
-	require.Equal(t, "(+ (- 1 2) 3)", block.String())
+	require.Equal(t, "(+ (- 1 2) 3)", block.Stringify())
 }
 
 func TestArguments(t *testing.T) {

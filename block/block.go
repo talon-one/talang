@@ -24,7 +24,7 @@ const (
 )
 
 type Block struct {
-	Text     string
+	String   string
 	Decimal  *decimal.Big
 	Bool     bool
 	Time     time.Time
@@ -34,7 +34,7 @@ type Block struct {
 
 func New(text string, children ...*Block) *Block {
 	var b Block
-	b.Text = text
+	b.String = text
 	if children == nil {
 		b.Children = []*Block{}
 	} else {
@@ -48,7 +48,7 @@ func NewDecimal(decimal *decimal.Big) *Block {
 	var b Block
 	b.Decimal = decimal
 	b.Kind = DecimalKind
-	b.Text = b.Decimal.String()
+	b.String = b.Decimal.String()
 	b.Children = []*Block{}
 	return &b
 }
@@ -58,9 +58,9 @@ func NewBool(boolean bool) *Block {
 	b.Bool = boolean
 	b.Kind = BoolKind
 	if boolean {
-		b.Text = "true"
+		b.String = "true"
 	} else {
-		b.Text = "false"
+		b.String = "false"
 	}
 	b.Children = []*Block{}
 	return &b
@@ -70,14 +70,14 @@ func NewTime(t time.Time) *Block {
 	var b Block
 	b.Time = t
 	b.Kind = TimeKind
-	b.Text = b.Time.Format(time.RFC3339)
+	b.String = b.Time.Format(time.RFC3339)
 	b.Children = []*Block{}
 	return &b
 }
 
 func NewString(str string) *Block {
 	var b Block
-	b.Text = str
+	b.String = str
 	b.Kind = StringKind
 	b.Children = []*Block{}
 	return &b
@@ -91,7 +91,7 @@ func NewNull() *Block {
 }
 
 func (b *Block) IsEmpty() bool {
-	return len(b.Children) == 0 && len(b.Text) == 0
+	return len(b.Children) == 0 && len(b.String) == 0
 }
 
 func (b *Block) IsDecimal() bool {
@@ -125,7 +125,7 @@ func (b *Block) initValue(text string) {
 		return
 	}
 
-	if len(b.Text) > 0 {
+	if len(b.String) > 0 {
 		// is it a bool?
 		if strings.EqualFold("true", text) {
 			b.Bool = true
@@ -167,18 +167,18 @@ func (b *Block) Update(source *Block) {
 	case TimeKind:
 		b.Time = source.Time
 	}
-	b.Text = source.Text
+	b.String = source.String
 	b.Children = source.Children
 }
 
-func (b *Block) String() string {
-	text := b.Text
+func (b *Block) Stringify() string {
+	text := b.String
 	if l := len(b.Children); l > 0 {
 		items := make([]string, l)
 		for i, item := range b.Children {
-			items[i] = item.String()
+			items[i] = item.Stringify()
 		}
-		text = fmt.Sprintf("%s %s", b.Text, strings.Join(items, " "))
+		text = fmt.Sprintf("%s %s", b.String, strings.Join(items, " "))
 	}
 	if b.IsBlock() {
 		return fmt.Sprintf("(%s)", text)
@@ -199,7 +199,7 @@ type BlockArguments []*Block
 func (b BlockArguments) ToHumanReadable() string {
 	arr := make([]string, len(b))
 	for i, arg := range b {
-		arr[i] = arg.String()
+		arr[i] = arg.Stringify()
 	}
 	return strings.Join(arr, ", ")
 }
