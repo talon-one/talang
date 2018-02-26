@@ -66,7 +66,7 @@
 ### contains(String, String...)Bool
     Returns wether the first argument exists in the following arguments
 
-### drop(Block)Block
+### drop(List)List
     Create a list containing all but the last item in the input list
 
 ### endsWith(String, String...)Bool
@@ -75,13 +75,13 @@
 ### floor(Decimal)Decimal
     Floor the decimal argument
 
-### head(Block)Block
+### head(List)Any
     Returns the first item in the list
 
-### item(Block, Decimal)Block
+### item(List, Decimal)Any
     Returns a specific item from a list
 
-### list(Atom...)Block
+### list(Atom...)List
     Create a list out of the children
 
 ### misc3(Block)Kind(0)
@@ -99,7 +99,7 @@
 ### startsWith(String, String...)Bool
     Returns wether the first argument is the prefix of the following arguments
 
-### tail(Block)Block
+### tail(List)List
     Returns list without the first item
 
 ### toString(Any)String

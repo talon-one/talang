@@ -19,7 +19,8 @@ const (
 	TimeKind    Kind = 1 << iota
 	BlockKind   Kind = 1 << iota
 	NullKind    Kind = 1 << iota
-	AtomKind    Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind
+	ListKind    Kind = 1 << iota
+	AtomKind    Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind | ListKind
 	AnyKind     Kind = AtomKind | BlockKind
 )
 
@@ -100,6 +101,17 @@ func NewNull() *Block {
 	return &b
 }
 
+func NewList(children ...*Block) *Block {
+	var b Block
+	if children == nil {
+		b.Children = []*Block{}
+	} else {
+		b.Children = children
+	}
+	b.Kind = ListKind
+	return &b
+}
+
 func (b *Block) IsEmpty() bool {
 	return len(b.Children) == 0 && len(b.String) == 0
 }
@@ -128,6 +140,11 @@ func (b *Block) IsNull() bool {
 	return b.Kind == NullKind
 }
 
+func (b *Block) IsList() bool {
+	return b.Kind == ListKind
+}
+
+// todo: filterout invalid decimal types
 func (b *Block) initValue(text string) {
 	// only blocks could have children
 	if len(b.Children) > 0 {

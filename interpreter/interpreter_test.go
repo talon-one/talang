@@ -131,7 +131,7 @@ func TestOverloadingNested(t *testing.T) {
 func TestLists(t *testing.T) {
 	interp := mustNewInterpreterWithLogger()
 	result := interp.MustLexAndEvaluate("list 1 2 3")
-	require.Equal(t, true, result.IsBlock())
+	require.Equal(t, true, result.IsList())
 	require.Equal(t, "", result.String)
 	require.Equal(t, 3, len(result.Children))
 }

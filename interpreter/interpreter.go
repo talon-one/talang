@@ -184,13 +184,13 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 			return false, errors.Errorf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
 		}
 		if interp.Logger != nil {
-			interp.Logger.Printf("Updating value to `%s'\n", result.String)
+			interp.Logger.Printf("Updating value to `%s' (%s)\n", result.String, result.Kind.String())
 		}
 		b.Update(result)
 		if b.IsBlock() {
 			return true, interp.Evaluate(b)
 		}
-		break
+		return true, nil
 	}
 	return false, nil
 }
@@ -269,6 +269,7 @@ func (interp *Interpreter) NewScope() *Interpreter {
 	i := Interpreter{}
 	i.Binding = make(map[string]shared.Binding)
 	i.Parent = &interp.Interpreter
+	i.Logger = interp.Logger
 	// we need to register binding and template on this scope, because it uses its own scopes
 	i.Functions = []shared.TaFunction{templateSignature(&i), bindingSignature}
 	return &i

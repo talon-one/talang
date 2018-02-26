@@ -13,12 +13,15 @@ import (
 	"github.com/talon-one/talang/interpreter/shared"
 )
 
-func (interp *Interpreter) RegisterFunction(signature shared.TaFunction) error {
-	signature.Name = strings.ToLower(signature.Name)
-	if interp.GetFunction(signature) != nil {
-		return errors.Errorf("Function `%s' is already registered", signature.Name)
+func (interp *Interpreter) RegisterFunction(signatures ...shared.TaFunction) error {
+	for i := 0; i < len(signatures); i++ {
+		signature := signatures[i]
+		signature.Name = strings.ToLower(signature.Name)
+		if interp.GetFunction(signature) != nil {
+			return errors.Errorf("Function `%s' is already registered", signature.Name)
+		}
+		interp.Functions = append(interp.Functions, signature)
 	}
-	interp.Functions = append(interp.Functions, signature)
 	return nil
 }
 

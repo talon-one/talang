@@ -15,11 +15,11 @@ var List = shared.TaFunction{
 		Arguments: []block.Kind{
 			block.AtomKind,
 		},
-		Returns:     block.BlockKind,
+		Returns:     block.ListKind,
 		Description: "Create a list out of the children",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		return block.New("", args...), nil
+		return block.NewList(args...), nil
 	},
 }
 
@@ -28,16 +28,16 @@ var Head = shared.TaFunction{
 		Name:       "head",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.BlockKind,
+			block.ListKind,
 		},
-		Returns:     block.BlockKind,
+		Returns:     block.AnyKind,
 		Description: "Returns the first item in the list",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) < 1 {
-			return nil, errors.New("invalid or missing arguments")
+		if len(args[0].Children) > 0 {
+			return args[0].Children[0], nil
 		}
-		return args[0], nil
+		return block.NewNull(), nil
 	},
 }
 
@@ -46,16 +46,16 @@ var Tail = shared.TaFunction{
 		Name:       "tail",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.BlockKind,
+			block.ListKind,
 		},
-		Returns:     block.BlockKind,
+		Returns:     block.ListKind,
 		Description: "Returns list without the first item",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) < 1 {
-			return nil, errors.New("invalid or missing arguments")
+		if len(args[0].Children) <= 0 {
+			return block.NewList(), nil
 		}
-		return block.New("", args[1:]...), nil
+		return block.NewList(args[0].Children[1:]...), nil
 	},
 }
 
@@ -64,17 +64,16 @@ var Drop = shared.TaFunction{
 		Name:       "drop",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.BlockKind,
+			block.ListKind,
 		},
-		Returns:     block.BlockKind,
+		Returns:     block.ListKind,
 		Description: "Create a list containing all but the last item in the input list",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 1 {
-			return nil, errors.New("invalid or missing arguments")
+		if l := len(args[0].Children); l > 0 {
+			return block.NewList(args[0].Children[:l-1]...), nil
 		}
-		return block.New("", args[:argc-1]...), nil
+		return block.NewList(), nil
 	},
 }
 
@@ -83,28 +82,20 @@ var Item = shared.TaFunction{
 		Name:       "item",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.BlockKind,
+			block.ListKind,
 			block.DecimalKind,
 		},
-		Returns:     block.BlockKind,
+		Returns:     block.AnyKind,
 		Description: "Returns a specific item from a list",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-
-		if !args[1].IsDecimal() {
-			return nil, errors.Errorf("`%s' is not an int", args[1].String)
-		}
-
 		i, ok := args[1].Decimal.Int64()
 		if !ok {
 			return nil, errors.Errorf("`%s' is not an int", args[1].String)
 		}
 		index := int(i)
-		if index < 0 || index >= argc {
+		l := len(args[0].Children)
+		if index < 0 || index >= l {
 			return nil, errors.New("Out of bounds")
 		}
 

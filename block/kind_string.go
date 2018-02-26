@@ -10,8 +10,9 @@ const (
 	_Kind_name_2 = "TimeKind"
 	_Kind_name_3 = "BlockKind"
 	_Kind_name_4 = "NullKind"
-	_Kind_name_5 = "AtomKind"
-	_Kind_name_6 = "AnyKind"
+	_Kind_name_5 = "ListKind"
+	_Kind_name_6 = "AtomKind"
+	_Kind_name_7 = "AnyKind"
 )
 
 var (
@@ -31,10 +32,12 @@ func (i Kind) String() string {
 		return _Kind_name_3
 	case i == 32:
 		return _Kind_name_4
-	case i == 47:
+	case i == 64:
 		return _Kind_name_5
-	case i == 63:
+	case i == 111:
 		return _Kind_name_6
+	case i == 127:
+		return _Kind_name_7
 	default:
 		return "Kind(" + strconv.FormatInt(int64(i), 10) + ")"
 	}
