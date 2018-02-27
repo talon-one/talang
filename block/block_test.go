@@ -91,7 +91,9 @@ func TestNewTyped(t *testing.T) {
 		{StringKind, "Hallo", NewString("Hallo")},
 
 		{DecimalKind, "1", NewDecimal(decimal.New(1, 0))},
-		{DecimalKind, "6", NewDecimalFromInt(6)},
+		{DecimalKind, "2", NewDecimalFromInt(2)},
+		{DecimalKind, "3", NewDecimalFromString("3")},
+		{NullKind, "", NewDecimalFromString("HELLO3HELLO")},
 
 		{TimeKind, "2006-01-02T15:04:05Z", NewTime(time)},
 
