@@ -1,4 +1,4 @@
-package interpreter
+package interpreter_test
 
 import (
 	"testing"
@@ -7,11 +7,12 @@ import (
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
 	"github.com/talon-one/talang/lexer"
+	helpers "github.com/talon-one/talang/testhelpers"
 )
 
 func TestScopeBinding(t *testing.T) {
 	// create an interpreter and set a binding
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	interp.Set("RootKey", shared.Binding{
 		Value: block.NewString("Root"),
 	})
@@ -40,7 +41,7 @@ func TestScopeBinding(t *testing.T) {
 }
 
 func TestScopeFunctions(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:    "fn1",
@@ -70,7 +71,7 @@ func TestScopeFunctions(t *testing.T) {
 }
 
 func TestScopeTemplates(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
 		CommonSignature: shared.CommonSignature{
 			Name:    "Template1",

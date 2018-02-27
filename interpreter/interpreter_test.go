@@ -1,4 +1,4 @@
-package interpreter
+package interpreter_test
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
+	helpers "github.com/talon-one/talang/testhelpers"
 )
 
 func TestInterpreter(t *testing.T) {
@@ -25,7 +26,7 @@ func TestInterpreter(t *testing.T) {
 		{"= 1 1", "true"},
 	}
 
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	for _, test := range tests {
 		require.Equal(t, test.expected, interp.MustLexAndEvaluate(test.input).String, "Error in test `%s'", test.input)
@@ -33,13 +34,13 @@ func TestInterpreter(t *testing.T) {
 }
 
 func TestInterpreterInvalidTerm(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.Error(t, interp.Evaluate(nil))
 	require.Error(t, interp.Evaluate(&block.Block{}))
 }
 
 func TestOverloading(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RemoveAllFunctions())
 	require.Equal(t, "(FN 1 2)", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
 	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
@@ -80,7 +81,7 @@ func TestOverloading(t *testing.T) {
 }
 
 func TestOverloadingNested(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
@@ -129,7 +130,7 @@ func TestOverloadingNested(t *testing.T) {
 }
 
 func TestLists(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	result := interp.MustLexAndEvaluate("list 1 2 3")
 	require.Equal(t, true, result.IsList())
 	require.Equal(t, "", result.String)
@@ -137,7 +138,7 @@ func TestLists(t *testing.T) {
 }
 
 func TestDoubleFuncCall(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	fn1Runned := false
 	fn2Runned := false
@@ -174,7 +175,7 @@ func TestDoubleFuncCall(t *testing.T) {
 }
 
 func TestGenericSet(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	tests := []struct {
 		input    interface{}
@@ -213,7 +214,7 @@ func TestGenericSet(t *testing.T) {
 }
 
 func TestMustEvaluate(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:    "panic",
@@ -226,7 +227,7 @@ func TestMustEvaluate(t *testing.T) {
 	require.Panics(t, func() { interp.MustEvaluate(b) })
 }
 func TestMustLexAndEvaluate(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:    "panic",
@@ -238,343 +239,14 @@ func TestMustLexAndEvaluate(t *testing.T) {
 	require.Panics(t, func() { interp.MustLexAndEvaluate("panic") })
 }
 
-func TestMatchesSignature(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
-
-	// 1 parameter
-	t.Run("ShouldMatch(1)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.DecimalKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewDecimal(decimal.New(0, 0)),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewDecimal(decimal.New(0, 0)),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// 2 parameters
-	t.Run("ShouldMatch(2)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.DecimalKind,
-					block.StringKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewDecimal(decimal.New(0, 0)),
-				block.NewString("Hello"),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewDecimal(decimal.New(0, 0)),
-			block.NewString("Hello"),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// evaluate parameter
-	t.Run("ShouldMatch(3)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.DecimalKind,
-					block.StringKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				lexer.MustLex("+ 1 2"),
-				block.NewString("Hello"),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewDecimal(decimal.New(3, 0)),
-			block.NewString("Hello"),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// first parameter does not match type
-	t.Run("ShouldNotMatch(1)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.StringKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewDecimal(decimal.New(0, 0)),
-			},
-		)
-		require.Equal(t, false, matches)
-		require.Equal(t, invalidSignature, notMatching)
-		require.Nil(t, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// second parameter does not match type
-	t.Run("ShouldNotMatch(2)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.StringKind,
-					block.DecimalKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-				block.NewString("World"),
-			},
-		)
-		require.Equal(t, false, matches)
-		require.Equal(t, invalidSignature, notMatching)
-		require.Nil(t, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// to few arguments
-	t.Run("ShouldNotMatch(3)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.StringKind,
-					block.StringKind,
-					block.StringKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-				block.NewString("World"),
-			},
-		)
-		require.Equal(t, false, matches)
-		require.Equal(t, invalidSignature, notMatching)
-		require.Nil(t, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// variadic signatures
-	// same parameters
-	t.Run("ShouldMatchVariadic(1)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.DecimalKind,
-				},
-				IsVariadic: true,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewDecimal(decimal.New(0, 0)),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewDecimal(decimal.New(0, 0)),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// variadic signatures
-	// multiple parameters
-	t.Run("ShouldMatchVariadic(2)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.DecimalKind,
-				},
-				IsVariadic: true,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewDecimal(decimal.New(0, 0)),
-				block.NewDecimal(decimal.New(0, 0)),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewDecimal(decimal.New(0, 0)),
-			block.NewDecimal(decimal.New(0, 0)),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// variadic signatures
-	// multiple parameters
-	t.Run("ShouldMatchVariadic(3)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.StringKind,
-					block.DecimalKind,
-				},
-				IsVariadic: true,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-				block.NewDecimal(decimal.New(0, 0)),
-				block.NewDecimal(decimal.New(0, 0)),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewString("Hello"),
-			block.NewDecimal(decimal.New(0, 0)),
-			block.NewDecimal(decimal.New(0, 0)),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// evaluate
-	t.Run("ShouldMatchVariadic(4)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.StringKind,
-					block.DecimalKind,
-				},
-				IsVariadic: true,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-				lexer.MustLex("+ 1 2"),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewString("Hello"),
-			block.NewDecimal(decimal.New(3, 0)),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	// Test KindTypes
-	t.Run("MatchType(1)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.AnyKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewString("Hello"),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	t.Run("MatchType(2)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.AtomKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			block.NewString("Hello"),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	t.Run("MatchType(3)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.CollectionKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				block.NewString("Hello"),
-			},
-		)
-		require.Equal(t, false, matches)
-		require.Equal(t, invalidSignature, notMatching)
-		require.Nil(t, evaluatedChildren)
-		require.NoError(t, err)
-	})
-
-	t.Run("MatchType(3)", func(t *testing.T) {
-		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
-			&shared.CommonSignature{
-				Name: "fn",
-				Arguments: []block.Kind{
-					block.BlockKind,
-				},
-				IsVariadic: false,
-			},
-			"fn",
-			[]*block.Block{
-				lexer.MustLex("+ 1 2"),
-			},
-		)
-		require.Equal(t, true, matches)
-		require.Equal(t, notMatchingDetail(0), notMatching)
-		require.EqualValues(t, []*block.Block{
-			lexer.MustLex("+ 1 2"),
-		}, evaluatedChildren)
-		require.NoError(t, err)
-	})
+func TestEvaluateResultIsBlock(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`FN Hello World`,
+			nil,
+			block.New("FN", block.NewString("Hello"), block.NewString("World")),
+		},
+	)
 }
 
 func BenchmarkInterpreter(b *testing.B) {
@@ -589,7 +261,7 @@ func BenchmarkInterpreter(b *testing.B) {
 		{"(= 1 1)", "true"},
 	}
 
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	for i := 0; i < b.N; i++ {
 		for _, test := range tests {

@@ -1,4 +1,4 @@
-package interpreter
+package interpreter_test
 
 import (
 	"testing"
@@ -7,10 +7,11 @@ import (
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
 	"github.com/talon-one/talang/lexer"
+	helpers "github.com/talon-one/talang/testhelpers"
 )
 
 func TestTemplate(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
 		CommonSignature: shared.CommonSignature{
@@ -34,7 +35,7 @@ func TestTemplate(t *testing.T) {
 }
 
 func TestFormatedTemplate(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
 		CommonSignature: shared.CommonSignature{
 			Name: "MultiplyWith2",
@@ -58,7 +59,7 @@ func TestFormatedTemplate(t *testing.T) {
 }
 
 func TestInvalidTemplateArgumentTypes(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
 		CommonSignature: shared.CommonSignature{
 			Name: "MultiplyWith2",
@@ -75,7 +76,7 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 
 // // test if children got an error
 // func TestInvalidTemplateArguments(t *testing.T) {
-// 	interp := mustNewInterpreterWithLogger()
+// 	interp := helpers.MustNewInterpreterWithLogger()
 // 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
 // 		CommonSignature: shared.CommonSignature{
 // 			Name: "MultiplyWith2",

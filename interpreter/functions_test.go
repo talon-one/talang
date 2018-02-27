@@ -1,4 +1,4 @@
-package interpreter
+package interpreter_test
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/shared"
+	helpers "github.com/talon-one/talang/testhelpers"
 )
 
 func getError(result interface{}, err error) error {
@@ -14,7 +15,7 @@ func getError(result interface{}, err error) error {
 }
 
 func TestRegisterFunction(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RemoveAllFunctions())
 	// register a function
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
@@ -61,7 +62,7 @@ func TestRegisterFunction(t *testing.T) {
 }
 
 func TestVariadicFunctionWith0Parameters(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:       "MyFN1",
@@ -93,7 +94,7 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 }
 
 func TestFuncWithWrongParameter(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name: "MyFN1",
@@ -111,7 +112,7 @@ func TestFuncWithWrongParameter(t *testing.T) {
 }
 
 func TestBinding(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	interp.Binding["Root1"] = shared.Binding{
 		Value: block.New("1"),
@@ -168,7 +169,7 @@ func TestBinding(t *testing.T) {
 }
 
 func TestFuncInBinding(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 
 	interp.Binding["Root"] = shared.Binding{
 		Children: map[string]shared.Binding{
@@ -184,7 +185,7 @@ func TestFuncInBinding(t *testing.T) {
 }
 
 func TestFuncErrorInChild(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name: "fn1",
@@ -211,7 +212,7 @@ func TestFuncErrorInChild(t *testing.T) {
 }
 
 func TestVariadicFunctionErrorInChild(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:       "fn1",
@@ -240,7 +241,7 @@ func TestVariadicFunctionErrorInChild(t *testing.T) {
 
 // a function does not returns the correct type
 func TestFunctionUnexpectedReturn(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:    "fn1",
@@ -256,7 +257,7 @@ func TestFunctionUnexpectedReturn(t *testing.T) {
 
 //  a function does not return a value and error
 func TestFunctionNoReturnValue(t *testing.T) {
-	interp := mustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreterWithLogger()
 	interp.RegisterFunction(shared.TaFunction{
 		CommonSignature: shared.CommonSignature{
 			Name:    "fn1",

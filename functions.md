@@ -51,10 +51,10 @@
 ### >=(Time...)Bool
     Tests if the first argument is greather or equal then the following
 
-### between(Time...)Bool
+### between(Decimal...)Bool
     Tests if the arguments are between the second last and the last argument
 
-### between(Decimal...)Bool
+### between(Time...)Bool
     Tests if the arguments are between the second last and the last argument
 
 ### ceil(Decimal)Decimal
@@ -80,6 +80,9 @@
 
 ### item(List, Decimal)Any
     Returns a specific item from a list
+
+### kv(Block...)Map
+    Create a map with any key value pairs passed as arguments.
 
 ### list(Atom...)List
     Create a list out of the children

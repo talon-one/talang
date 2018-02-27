@@ -7,6 +7,7 @@ import (
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter/corefn/cmp"
 	"github.com/talon-one/talang/interpreter/corefn/list"
+	"github.com/talon-one/talang/interpreter/corefn/mapping"
 	"github.com/talon-one/talang/interpreter/corefn/math"
 	"github.com/talon-one/talang/interpreter/corefn/misc"
 	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
@@ -71,12 +72,16 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	// list functions
 	interp.Functions = append(interp.Functions, list.AllOperations()...)
 
+	// map functions
+	interp.Functions = append(interp.Functions, mapping.AllOperations()...)
+
 	// binding
 	interp.Functions = append(interp.Functions, bindingSignature)
 
 	// template
 	interp.Functions = append(interp.Functions, templateSignature(interp))
 
+	// sanitize name
 	for i, f := range interp.Functions {
 		interp.Functions[i].CommonSignature.Name = strings.ToLower(f.CommonSignature.Name)
 	}
