@@ -23,7 +23,7 @@ var ToString = shared.TaFunction{
 	CommonSignature: shared.CommonSignature{
 		Name: "toString",
 		Arguments: []block.Kind{
-			block.AtomKind,
+			block.DecimalKind | block.StringKind | block.BoolKind | block.TimeKind,
 		},
 		Returns:     block.StringKind,
 		Description: "Converts the parameter to a string",
