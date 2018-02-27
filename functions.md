@@ -18,7 +18,7 @@
 ### -(Decimal...)Decimal
     Subtracts the arguments
 
-### .(Atom...)Any
+### .(String...)Any
     Access a variable in the binding
 
 ### /(Decimal...)Decimal
@@ -99,7 +99,7 @@
 ### tail(List)List
     Returns list without the first item
 
-### tostring(Atom)String
+### tostring(Kind(15))String
     Converts the parameter to a string
 
 ### ~(String, String...)Bool
