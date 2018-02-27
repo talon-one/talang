@@ -18,7 +18,7 @@
 ### -(Decimal...)Decimal
     Subtracts the arguments
 
-### .(String...)Any
+### .(Atom...)Any
     Access a variable in the binding
 
 ### /(Decimal...)Decimal
