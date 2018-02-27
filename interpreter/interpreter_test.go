@@ -488,6 +488,93 @@ func TestMatchesSignature(t *testing.T) {
 		}, evaluatedChildren)
 		require.NoError(t, err)
 	})
+
+	// Test KindTypes
+	t.Run("MatchType(1)", func(t *testing.T) {
+		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
+			&shared.CommonSignature{
+				Name: "fn",
+				Arguments: []block.Kind{
+					block.AnyKind,
+				},
+				IsVariadic: false,
+			},
+			"fn",
+			[]*block.Block{
+				block.NewString("Hello"),
+			},
+		)
+		require.Equal(t, true, matches)
+		require.Equal(t, notMatchingDetail(0), notMatching)
+		require.EqualValues(t, []*block.Block{
+			block.NewString("Hello"),
+		}, evaluatedChildren)
+		require.NoError(t, err)
+	})
+
+	t.Run("MatchType(2)", func(t *testing.T) {
+		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
+			&shared.CommonSignature{
+				Name: "fn",
+				Arguments: []block.Kind{
+					block.AtomKind,
+				},
+				IsVariadic: false,
+			},
+			"fn",
+			[]*block.Block{
+				block.NewString("Hello"),
+			},
+		)
+		require.Equal(t, true, matches)
+		require.Equal(t, notMatchingDetail(0), notMatching)
+		require.EqualValues(t, []*block.Block{
+			block.NewString("Hello"),
+		}, evaluatedChildren)
+		require.NoError(t, err)
+	})
+
+	t.Run("MatchType(3)", func(t *testing.T) {
+		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
+			&shared.CommonSignature{
+				Name: "fn",
+				Arguments: []block.Kind{
+					block.CollectionKind,
+				},
+				IsVariadic: false,
+			},
+			"fn",
+			[]*block.Block{
+				block.NewString("Hello"),
+			},
+		)
+		require.Equal(t, false, matches)
+		require.Equal(t, invalidSignature, notMatching)
+		require.Nil(t, evaluatedChildren)
+		require.NoError(t, err)
+	})
+
+	t.Run("MatchType(3)", func(t *testing.T) {
+		matches, notMatching, evaluatedChildren, err := interp.matchesSignature(
+			&shared.CommonSignature{
+				Name: "fn",
+				Arguments: []block.Kind{
+					block.BlockKind,
+				},
+				IsVariadic: false,
+			},
+			"fn",
+			[]*block.Block{
+				lexer.MustLex("+ 1 2"),
+			},
+		)
+		require.Equal(t, true, matches)
+		require.Equal(t, notMatchingDetail(0), notMatching)
+		require.EqualValues(t, []*block.Block{
+			lexer.MustLex("+ 1 2"),
+		}, evaluatedChildren)
+		require.NoError(t, err)
+	})
 }
 
 func BenchmarkInterpreter(b *testing.B) {

@@ -115,7 +115,7 @@ func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerNa
 	// evaluate children if needed to
 	i := 0
 	for ; i < len(sig.Arguments) && i < len(children); i++ {
-		if sig.Arguments[i]&block.AtomKind != 0 && children[i].IsBlock() {
+		if sig.Arguments[i]&block.BlockKind == 0 && children[i].IsBlock() {
 			if err := interp.Evaluate(children[i]); err != nil {
 				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 			}
@@ -125,7 +125,7 @@ func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerNa
 		lastArgumentIndex := len(sig.Arguments) - 1
 		// evaluate the rest
 		for ; i < len(children); i++ {
-			if sig.Arguments[lastArgumentIndex]&block.AtomKind != 0 && children[i].IsBlock() {
+			if sig.Arguments[lastArgumentIndex]&block.BlockKind == 0 && children[i].IsBlock() {
 				if err := interp.Evaluate(children[i]); err != nil {
 					return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 				}

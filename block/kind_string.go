@@ -8,15 +8,17 @@ const (
 	_Kind_name_0 = "DecimalKindStringKind"
 	_Kind_name_1 = "BoolKind"
 	_Kind_name_2 = "TimeKind"
-	_Kind_name_3 = "BlockKind"
-	_Kind_name_4 = "NullKind"
-	_Kind_name_5 = "ListKind"
-	_Kind_name_6 = "AtomKind"
-	_Kind_name_7 = "AnyKind"
+	_Kind_name_3 = "NullKind"
+	_Kind_name_4 = "AtomKindListKind"
+	_Kind_name_5 = "MapKind"
+	_Kind_name_6 = "BlockKind"
+	_Kind_name_7 = "CollectionKind"
+	_Kind_name_8 = "AnyKind"
 )
 
 var (
 	_Kind_index_0 = [...]uint8{0, 11, 21}
+	_Kind_index_4 = [...]uint8{0, 8, 16}
 )
 
 func (i Kind) String() string {
@@ -30,14 +32,17 @@ func (i Kind) String() string {
 		return _Kind_name_2
 	case i == 16:
 		return _Kind_name_3
-	case i == 32:
-		return _Kind_name_4
+	case 31 <= i && i <= 32:
+		i -= 31
+		return _Kind_name_4[_Kind_index_4[i]:_Kind_index_4[i+1]]
 	case i == 64:
 		return _Kind_name_5
-	case i == 111:
+	case i == 128:
 		return _Kind_name_6
-	case i == 127:
+	case i == 224:
 		return _Kind_name_7
+	case i == 255:
+		return _Kind_name_8
 	default:
 		return "Kind(" + strconv.FormatInt(int64(i), 10) + ")"
 	}

@@ -13,15 +13,17 @@ import (
 type Kind int
 
 const (
-	DecimalKind Kind = 1 << iota
-	StringKind  Kind = 1 << iota
-	BoolKind    Kind = 1 << iota
-	TimeKind    Kind = 1 << iota
-	BlockKind   Kind = 1 << iota
-	NullKind    Kind = 1 << iota
-	ListKind    Kind = 1 << iota
-	AtomKind    Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind | ListKind
-	AnyKind     Kind = AtomKind | BlockKind
+	DecimalKind    Kind = 1 << iota
+	StringKind     Kind = 1 << iota
+	BoolKind       Kind = 1 << iota
+	TimeKind       Kind = 1 << iota
+	NullKind       Kind = 1 << iota
+	ListKind       Kind = 1 << iota
+	MapKind        Kind = 1 << iota
+	BlockKind      Kind = 1 << iota
+	AtomKind       Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind
+	CollectionKind Kind = BlockKind | ListKind | MapKind
+	AnyKind        Kind = AtomKind | CollectionKind
 )
 
 type Block struct {
@@ -31,6 +33,7 @@ type Block struct {
 	Time     time.Time
 	Kind     Kind
 	Children []*Block
+	Keys     []string
 }
 
 func New(text string, children ...*Block) *Block {
@@ -99,6 +102,13 @@ func NewList(children ...*Block) *Block {
 		b.Children = children
 	}
 	b.Kind = ListKind
+	return &b
+}
+
+func NewMap(map[string]*Block) *Block {
+	var b Block
+	b.Children = []*Block{}
+	b.Kind = MapKind
 	return &b
 }
 
