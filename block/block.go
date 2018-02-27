@@ -54,16 +54,6 @@ func NewDecimal(decimal *decimal.Big) *Block {
 	return &b
 }
 
-func NewDecimalFromFloat(f float64) *Block {
-	var b Block
-	b.Decimal = decimal.New(0, 0)
-	b.Decimal.SetFloat64(f)
-	b.Kind = DecimalKind
-	b.String = b.Decimal.String()
-	b.Children = []*Block{}
-	return &b
-}
-
 func NewBool(boolean bool) *Block {
 	var b Block
 	b.Bool = boolean

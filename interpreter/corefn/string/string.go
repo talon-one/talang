@@ -147,23 +147,29 @@ var EndsWith = shared.TaFunction{
 var Regexp = shared.TaFunction{
 	CommonSignature: shared.CommonSignature{
 		Name:       "~",
-		IsVariadic: false,
+		IsVariadic: true,
 		Arguments: []block.Kind{
 			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.BoolKind,
-		Description: "Returns wether the first argument matches the regular expression in the second argument",
+		Description: "Returns wether the first argument (regex) matches all of the following arguments",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		if argc < 2 {
 			return nil, errors.New("invalid or missing arguments")
 		}
-		re, err := regexp.Compile(args[1].String)
+		re, err := regexp.Compile(args[0].String)
 		if err != nil {
 			return block.NewBool(false), err
 		}
-		return block.NewBool(re.MatchString(args[0].String)), nil
+
+		for i := 1; i < argc; i++ {
+			if !re.MatchString(args[i].String) {
+				return block.NewBool(false), nil
+			}
+		}
+		return block.NewBool(true), nil
 	},
 }

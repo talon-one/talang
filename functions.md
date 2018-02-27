@@ -12,7 +12,7 @@
 ### +(String...)String
     Concat strings
 
-### +(Decimal...)Decimal
+### +(Decimal, Decimal...)Decimal
     Adds the arguments
 
 ### -(Decimal...)Decimal
@@ -51,10 +51,10 @@
 ### >=(Time...)Bool
     Tests if the first argument is greather or equal then the following
 
-### between(Decimal...)Bool
+### between(Time...)Bool
     Tests if the arguments are between the second last and the last argument
 
-### between(Time...)Bool
+### between(Decimal...)Bool
     Tests if the arguments are between the second last and the last argument
 
 ### ceil(Decimal)Decimal
@@ -69,7 +69,7 @@
 ### drop(List)List
     Create a list containing all but the last item in the input list
 
-### endsWith(String, String...)Bool
+### endswith(String, String...)Bool
     Returns wether the first argument is the suffix of the following arguments
 
 ### floor(Decimal)Decimal
@@ -84,27 +84,24 @@
 ### list(Atom...)List
     Create a list out of the children
 
-### misc3(Block)Kind(0)
-    
-
 ### mod(Decimal...)Decimal
     Modulo the arguments
 
 ### noop()Any
     No operation
 
-### notContains(String, String...)Bool
+### notcontains(String, String...)Bool
     Returns wether the first argument does not exist in the following arguments
 
-### startsWith(String, String...)Bool
+### startswith(String, String...)Bool
     Returns wether the first argument is the prefix of the following arguments
 
 ### tail(List)List
     Returns list without the first item
 
-### toString(Any)String
+### tostring(Atom)String
     Converts the parameter to a string
 
-### ~(String, String)Bool
-    Returns wether the first argument matches the regular expression in the second argument
+### ~(String, String...)Bool
+    Returns wether the first argument (regex) matches all of the following arguments
 

@@ -1,68 +1,146 @@
-package string
+package string_test
 
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
+	helpers "github.com/talon-one/talang/testhelpers"
 )
 
-func mustFunc(result *block.Block, err error) string {
-	if err != nil {
-		panic(err)
-	}
-	return result.String
-}
-
-func getError(result interface{}, err error) error {
-	return err
-}
-
 func TestAdd(t *testing.T) {
-	require.Equal(t, "", mustFunc(Add.Func(nil)))
-	require.Equal(t, "Hello World and Universe", mustFunc(Add.Func(nil, block.New("Hello World"), block.New(" and "), block.New("Universe"))))
+	helpers.RunTests(t, helpers.Test{
+		`+ "Hello World" " and " Universe`,
+		nil,
+		block.NewString("Hello World and Universe"),
+	})
 }
 
 func TestContains(t *testing.T) {
-	require.Error(t, getError(Contains.Func(nil)))
-	require.Error(t, getError(Contains.Func(nil, block.New("1"))))
-	require.Equal(t, "false", mustFunc(Contains.Func(nil, block.New("Hello World"), block.New("Universe"))))
-	require.Equal(t, "false", mustFunc(Contains.Func(nil, block.New("Hello World"), block.New("Hello"), block.New("Universe"))))
-	require.Equal(t, "true", mustFunc(Contains.Func(nil, block.New("Hello World"), block.New("Hello"), block.New("World"))))
+	helpers.RunTests(t,
+		helpers.Test{
+			`contains "Hello"`,
+			nil,
+			&helpers.Error{},
+		},
+		helpers.Test{
+			`contains "Hello World" Universe`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`contains "Hello World" Hello Universe`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`contains "Hello World" Hello World`,
+			nil,
+			block.NewBool(true),
+		},
+	)
 }
 
 func TestNotContains(t *testing.T) {
-	require.Error(t, getError(NotContains.Func(nil)))
-	require.Error(t, getError(NotContains.Func(nil, block.New("1"))))
-	require.Equal(t, "true", mustFunc(NotContains.Func(nil, block.New("Hello World"), block.New("Universe"))))
-	require.Equal(t, "false", mustFunc(NotContains.Func(nil, block.New("Hello World"), block.New("Hello"), block.New("Universe"))))
-	require.Equal(t, "false", mustFunc(NotContains.Func(nil, block.New("Hello World"), block.New("Hello"), block.New("World"))))
+	helpers.RunTests(t,
+		helpers.Test{
+			`notContains "Hello"`,
+			nil,
+			&helpers.Error{},
+		},
+		helpers.Test{
+			`notContains "Hello World" Universe`,
+			nil,
+			block.NewBool(true),
+		},
+		helpers.Test{
+			`notContains "Hello World" Hello Universe`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`notContains "Hello World" Hello World`,
+			nil,
+			block.NewBool(false),
+		},
+	)
 }
 
 func TestStartsWith(t *testing.T) {
-	require.Error(t, getError(StartsWith.Func(nil)))
-	require.Error(t, getError(StartsWith.Func(nil, block.New("1"))))
-	require.Equal(t, "false", mustFunc(StartsWith.Func(nil, block.New("Hello World"), block.New("Bye"))))
-	require.Equal(t, "false", mustFunc(StartsWith.Func(nil, block.New("Hello World"), block.New("Hello"), block.New("Bye"))))
-	require.Equal(t, "true", mustFunc(StartsWith.Func(nil, block.New("Hello World"), block.New("Hello"), block.New("Hell"))))
+	helpers.RunTests(t,
+		helpers.Test{
+			`startsWith "Hello"`,
+			nil,
+			&helpers.Error{},
+		},
+		helpers.Test{
+			`startsWith "Hello World" Bye`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`startsWith "Hello World" Hello Bye`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`startsWith "Hello World" Hello Hell`,
+			nil,
+			block.NewBool(true),
+		},
+	)
 }
 
 func TestEndsWith(t *testing.T) {
-	require.Error(t, getError(EndsWith.Func(nil)))
-	require.Error(t, getError(EndsWith.Func(nil, block.New("1"))))
-	require.Equal(t, "false", mustFunc(EndsWith.Func(nil, block.New("Hello World"), block.New("Universe"))))
-	require.Equal(t, "false", mustFunc(EndsWith.Func(nil, block.New("Hello World"), block.New("World"), block.New("Universe"))))
-	require.Equal(t, "true", mustFunc(EndsWith.Func(nil, block.New("Hello World"), block.New("World"), block.New("ld"))))
+	helpers.RunTests(t,
+		helpers.Test{
+			`endsWith "Hello"`,
+			nil,
+			&helpers.Error{},
+		},
+		helpers.Test{
+			`endsWith "Hello World" Universe`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`endsWith "Hello World" World Universe`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`endsWith "Hello World" World ld`,
+			nil,
+			block.NewBool(true),
+		},
+	)
 }
 
 func TestRegexp(t *testing.T) {
-	require.Error(t, getError(Regexp.Func(nil)))
-	require.Error(t, getError(Regexp.Func(nil, block.New("foo"))))
-	require.Error(t, getError(Regexp.Func(nil, block.New("foo"), block.New("[a"))))
-	require.Equal(t, "true", mustFunc(Regexp.Func(nil, block.New("foobar"), block.New("^foo"))))
-	require.Equal(t, "false", mustFunc(Regexp.Func(nil, block.New("foobar"), block.New("^foo$"))))
-}
-
-func TestAllOperations(t *testing.T) {
-	AllOperations()
+	helpers.RunTests(t,
+		helpers.Test{
+			`~ "Hello"`,
+			nil,
+			&helpers.Error{},
+		},
+		helpers.Test{
+			`~ [a foo`,
+			nil,
+			&helpers.Error{},
+		},
+		helpers.Test{
+			`~ ^foo foobar`,
+			nil,
+			block.NewBool(true),
+		},
+		helpers.Test{
+			`~ ^foo$ foobar`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`~ "^Hello\s\w+" "Hello World" "Hello Universe"`,
+			nil,
+			block.NewBool(true),
+		},
+	)
 }

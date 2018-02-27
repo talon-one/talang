@@ -76,6 +76,10 @@ func (interp *Interpreter) registerCoreFunctions() error {
 
 	// template
 	interp.Functions = append(interp.Functions, templateSignature(interp))
+
+	for i, f := range interp.Functions {
+		interp.Functions[i].CommonSignature.Name = strings.ToLower(f.CommonSignature.Name)
+	}
 	return nil
 }
 

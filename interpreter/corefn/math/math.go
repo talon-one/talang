@@ -14,6 +14,7 @@ var Add = shared.TaFunction{
 		IsVariadic: true,
 		Arguments: []block.Kind{
 			block.DecimalKind,
+			block.DecimalKind,
 		},
 		Returns:     block.DecimalKind,
 		Description: "Adds the arguments",
@@ -149,9 +150,6 @@ var Floor = shared.TaFunction{
 		Description: "Floor the decimal argument",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) != 1 {
-			return nil, errors.New("invalid or missing arguments")
-		}
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
 		if args[0].Decimal.Signbit() {
 			ctx.RoundingMode = decimal.AwayFromZero
@@ -172,10 +170,6 @@ var Ceil = shared.TaFunction{
 		Description: "Ceil the decimal argument",
 	},
 	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) != 1 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
 		if args[0].Decimal.Signbit() {
 			ctx.RoundingMode = decimal.ToZero
