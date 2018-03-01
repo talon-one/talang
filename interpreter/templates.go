@@ -6,10 +6,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
 )
 
-func (interp *Interpreter) RegisterTemplate(signature shared.TaTemplate) error {
+func (interp *Interpreter) RegisterTemplate(signature TaTemplate) error {
 	signature.Name = strings.ToLower(signature.Name)
 	if interp.GetTemplate(signature) != nil {
 		return errors.Errorf("Template `%s' is already registered", signature.Name)
@@ -18,7 +17,7 @@ func (interp *Interpreter) RegisterTemplate(signature shared.TaTemplate) error {
 	return nil
 }
 
-func (interp *Interpreter) UpdateTemplate(signature shared.TaTemplate) error {
+func (interp *Interpreter) UpdateTemplate(signature TaTemplate) error {
 	signature.Name = strings.ToLower(signature.Name)
 	if s := interp.GetTemplate(signature); s != nil {
 		*s = signature
@@ -27,7 +26,7 @@ func (interp *Interpreter) UpdateTemplate(signature shared.TaTemplate) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) RemoveTemplate(signature shared.TaTemplate) error {
+func (interp *Interpreter) RemoveTemplate(signature TaTemplate) error {
 	signature.Name = strings.ToLower(signature.Name)
 	for i := 0; i < len(interp.Templates); i++ {
 		if interp.Templates[i].Equal(&signature) {
@@ -39,7 +38,7 @@ func (interp *Interpreter) RemoveTemplate(signature shared.TaTemplate) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) GetTemplate(signature shared.TaTemplate) *shared.TaTemplate {
+func (interp *Interpreter) GetTemplate(signature TaTemplate) *TaTemplate {
 	signature.Name = strings.ToLower(signature.Name)
 	for i := 0; i < len(interp.Templates); i++ {
 		if interp.Templates[i].Equal(&signature) {
@@ -54,32 +53,22 @@ func (interp *Interpreter) registerCoreTemplates() error {
 }
 
 func (interp *Interpreter) RemoveAllTemplates() error {
-	interp.Templates = []shared.TaTemplate{}
+	interp.Templates = []TaTemplate{}
 	return nil
 }
 
-func templateSignature(interp *Interpreter) shared.TaFunction {
-	return shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
-			Name:       "!",
-			IsVariadic: true,
-			Arguments: []block.Kind{
-				block.StringKind,
-				block.AnyKind,
-			},
-			Returns:     block.AnyKind,
-			Description: "Resolve a template",
+var templateSignature = TaFunction{
+	CommonSignature: CommonSignature{
+		Name:       "!",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.AnyKind,
 		},
-		Func: templateFunc(interp),
-	}
-}
-
-func templateFunc(interp *Interpreter) func(_ *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-	return func(_ *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 1 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+		Returns:     block.AnyKind,
+		Description: "Resolve a template",
+	},
+	Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
 		templates := interp.AllTemplates()
 		blockText := strings.ToLower(args[0].String)
 		// iterate trough all functions
@@ -104,7 +93,7 @@ func templateFunc(interp *Interpreter) func(_ *shared.Interpreter, args ...*bloc
 				interp.Logger.Printf("Running template `%s' with `%v'\n", template.String(), block.BlockArguments(children).ToHumanReadable())
 			}
 			b := template.Template
-			if argc > 1 {
+			if len(args) > 1 {
 				if _, err := replaceVariables(&b, args[1:]...); err != nil {
 					return nil, err
 				}
@@ -112,7 +101,7 @@ func templateFunc(interp *Interpreter) func(_ *shared.Interpreter, args ...*bloc
 			return &b, nil
 		}
 		return nil, errors.Errorf("template `%s' not found", args[0].String)
-	}
+	},
 }
 
 func replaceVariables(b *block.Block, args ...*block.Block) (int, error) {
@@ -158,8 +147,8 @@ func replaceVariable(source *block.Block, name string, replace *block.Block) (re
 // 	if err != nil {
 // 		return err
 // 	}
-// 	return interp.RegisterTemplate(shared.TaTemplate{
-// 		CommonSignature: shared.CommonSignature{
+// 	return interp.RegisterTemplate(TaTemplate{
+// 		CommonSignature: CommonSignature{
 // 			Name: name,
 // 		},
 // 		Template: *block,

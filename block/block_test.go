@@ -171,6 +171,20 @@ func TestUpdate(t *testing.T) {
 	b.Update(NewNull())
 	require.Equal(t, true, b.IsNull())
 	require.Equal(t, "", b.String)
+
+	b.Update(NewList(NewString("Hello"), NewString("World")))
+	require.Equal(t, true, b.IsList())
+	require.EqualValues(t, NewList(NewString("Hello"), NewString("World")).Children, b.Children)
+
+	b.Update(NewMap(map[string]*Block{
+		"Key1": NewString("Value1"),
+		"Key2": NewList(NewString("Value2"), NewString("Value3")),
+	}))
+	require.Equal(t, true, b.IsMap())
+	require.EqualValues(t, map[string]*Block{
+		"Key1": NewString("Value1"),
+		"Key2": NewList(NewString("Value2"), NewString("Value3")),
+	}, b.Map())
 }
 
 func TestString(t *testing.T) {

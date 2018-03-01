@@ -129,10 +129,17 @@ func NewList(children ...*Block) *Block {
 	return &b
 }
 
-func NewMap(map[string]*Block) *Block {
+func NewMap(m map[string]*Block) *Block {
 	var b Block
-	b.Children = []*Block{}
+	b.Children = make([]*Block, len(m))
+	b.Keys = make([]string, len(m))
 	b.Kind = MapKind
+	i := 0
+	for k, v := range m {
+		b.Keys[i] = k
+		b.Children[i] = v
+		i++
+	}
 	return &b
 }
 
@@ -166,6 +173,30 @@ func (b *Block) IsNull() bool {
 
 func (b *Block) IsList() bool {
 	return b.Kind == ListKind
+}
+
+func (b *Block) IsMap() bool {
+	return b.Kind == MapKind
+}
+
+// Get an item from the map
+func (b *Block) MapItem(key string) *Block {
+	for i, k := range b.Keys {
+		if key == k {
+			return b.Children[i]
+		}
+	}
+	return NewNull()
+}
+
+// Create the map
+func (b *Block) Map() map[string]*Block {
+	m := make(map[string]*Block)
+
+	for i, key := range b.Keys {
+		m[key] = b.Children[i]
+	}
+	return m
 }
 
 // todo: filterout invalid decimal types
@@ -217,6 +248,8 @@ func (b *Block) Update(source *Block) {
 		b.Bool = source.Bool
 	case TimeKind:
 		b.Time = source.Time
+	case MapKind:
+		b.Keys = source.Keys
 	}
 	b.String = source.String
 	b.Children = source.Children

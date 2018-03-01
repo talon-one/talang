@@ -10,7 +10,7 @@ import (
 	"github.com/ericlagergren/decimal"
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
 	helpers "github.com/talon-one/talang/testhelpers"
 )
 
@@ -45,8 +45,8 @@ func TestOverloading(t *testing.T) {
 	require.Equal(t, "(FN 1 2)", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
 	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
 
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:       "FN",
 			IsVariadic: false,
 			Arguments: []block.Kind{
@@ -55,15 +55,15 @@ func TestOverloading(t *testing.T) {
 			},
 			Returns: block.DecimalKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
 	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
 	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
 
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:       "FN",
 			IsVariadic: false,
 			Arguments: []block.Kind{
@@ -72,7 +72,7 @@ func TestOverloading(t *testing.T) {
 			},
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.New(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
@@ -83,8 +83,8 @@ func TestOverloading(t *testing.T) {
 func TestOverloadingNested(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:       "fn1",
 			IsVariadic: false,
 			Arguments: []block.Kind{
@@ -93,13 +93,13 @@ func TestOverloadingNested(t *testing.T) {
 			},
 			Returns: block.DecimalKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
 
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:       "fn1",
 			IsVariadic: false,
 			Arguments: []block.Kind{
@@ -108,18 +108,18 @@ func TestOverloadingNested(t *testing.T) {
 			},
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
 
 	nestedFuncCounter := 0
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn2",
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			nestedFuncCounter++
 			return block.NewString(fmt.Sprintf("%d", nestedFuncCounter)), nil
 		},
@@ -142,8 +142,8 @@ func TestDoubleFuncCall(t *testing.T) {
 
 	fn1Runned := false
 	fn2Runned := false
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name: "fn1",
 			Arguments: []block.Kind{
 				block.AtomKind,
@@ -151,20 +151,20 @@ func TestDoubleFuncCall(t *testing.T) {
 			},
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			fn1Runned = true
 			return block.NewString("A"), nil
 		},
 	})
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name: "fn2",
 			Arguments: []block.Kind{
 				block.AtomKind,
 			},
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			fn2Runned = true
 			return block.NewString("B"), nil
 		},
@@ -215,27 +215,33 @@ func TestGenericSet(t *testing.T) {
 
 func TestMustEvaluate(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
-			Name:    "panic",
-			Returns: block.AnyKind,
+	require.NoError(t, interp.RegisterFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name:    "panic",
+				Returns: block.AnyKind,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+				return nil, errors.New("panic")
+			},
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-			return nil, errors.New("panic")
-		}}))
+	))
 	b := lexer.MustLex("panic")
 	require.Panics(t, func() { interp.MustEvaluate(b) })
 }
 func TestMustLexAndEvaluate(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
-			Name:    "panic",
-			Returns: block.AnyKind,
+	require.NoError(t, interp.RegisterFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name:    "panic",
+				Returns: block.AnyKind,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+				return nil, errors.New("panic")
+			},
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-			return nil, errors.New("panic")
-		}}))
+	))
 	require.Panics(t, func() { interp.MustLexAndEvaluate("panic") })
 }
 

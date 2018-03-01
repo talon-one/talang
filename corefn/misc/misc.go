@@ -4,23 +4,27 @@ package misc
 
 import (
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
 )
 
-var Noop = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+func init() {
+	interpreter.RegisterCoreFunction(AllOperations()...)
+}
+
+var Noop = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:        "noop",
 		Arguments:   []block.Kind{},
 		Returns:     block.AnyKind,
 		Description: "No operation",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return nil, nil
 	},
 }
 
-var ToString = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var ToString = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name: "toString",
 		Arguments: []block.Kind{
 			block.DecimalKind | block.StringKind | block.BoolKind | block.TimeKind,
@@ -28,7 +32,7 @@ var ToString = shared.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Converts the parameter to a string",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return block.NewString(args[0].String), nil
 	},
 }

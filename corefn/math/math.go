@@ -3,29 +3,29 @@ package math
 
 import (
 	"github.com/ericlagergren/decimal"
-	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
 )
 
-var Add = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+func init() {
+	interpreter.RegisterCoreFunction(AllOperations()...)
+}
+
+var Add = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "+",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.DecimalKind,
 			block.DecimalKind,
 			block.DecimalKind,
 		},
 		Returns:     block.DecimalKind,
 		Description: "Adds the arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
-		for i := 0; i < argc; i++ {
+		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
 			} else {
@@ -36,20 +36,19 @@ var Add = shared.TaFunction{
 	},
 }
 
-var Sub = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Sub = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "-",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.DecimalKind,
+			block.DecimalKind,
 			block.DecimalKind,
 		},
 		Returns:     block.DecimalKind,
 		Description: "Subtracts the arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -62,20 +61,19 @@ var Sub = shared.TaFunction{
 	},
 }
 
-var Mul = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Mul = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "*",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.DecimalKind,
+			block.DecimalKind,
 			block.DecimalKind,
 		},
 		Returns:     block.DecimalKind,
 		Description: "Multiplies the arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -88,20 +86,19 @@ var Mul = shared.TaFunction{
 	},
 }
 
-var Div = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Div = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "/",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.DecimalKind,
+			block.DecimalKind,
 			block.DecimalKind,
 		},
 		Returns:     block.DecimalKind,
 		Description: "Divides the arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -114,20 +111,19 @@ var Div = shared.TaFunction{
 	},
 }
 
-var Mod = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Mod = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "mod",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.DecimalKind,
+			block.DecimalKind,
 			block.DecimalKind,
 		},
 		Returns:     block.DecimalKind,
 		Description: "Modulo the arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		if len(args) < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -140,8 +136,8 @@ var Mod = shared.TaFunction{
 	},
 }
 
-var Floor = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Floor = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name: "floor",
 		Arguments: []block.Kind{
 			block.DecimalKind,
@@ -149,7 +145,7 @@ var Floor = shared.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Floor the decimal argument",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
 		if args[0].Decimal.Signbit() {
 			ctx.RoundingMode = decimal.AwayFromZero
@@ -160,8 +156,8 @@ var Floor = shared.TaFunction{
 	},
 }
 
-var Ceil = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Ceil = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name: "ceil",
 		Arguments: []block.Kind{
 			block.DecimalKind,
@@ -169,7 +165,7 @@ var Ceil = shared.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Ceil the decimal argument",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
 		if args[0].Decimal.Signbit() {
 			ctx.RoundingMode = decimal.ToZero

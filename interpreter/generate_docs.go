@@ -12,8 +12,8 @@ import (
 	"html/template"
 	texttemplate "text/template"
 
+	"github.com/talon-one/talang"
 	"github.com/talon-one/talang/interpreter"
-	"github.com/talon-one/talang/interpreter/shared"
 )
 
 var flagOutput = flag.String("format", "md", "format to use for output")
@@ -69,12 +69,12 @@ const markdownTemplate string = `# Embedded Functions
 func main() {
 	flag.Parse()
 
-	interp := interpreter.MustNewInterpreter()
+	interp := talang.MustNewInterpreter()
 
 	type fn struct {
 		Arguments []string
 		Returns   string
-		shared.TaFunction
+		interpreter.TaFunction
 	}
 
 	fns := make([]fn, len(interp.Functions))

@@ -1,20 +1,28 @@
 package interpreter
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/corefn/cmp"
-	"github.com/talon-one/talang/interpreter/corefn/list"
-	"github.com/talon-one/talang/interpreter/corefn/mapping"
-	"github.com/talon-one/talang/interpreter/corefn/math"
-	"github.com/talon-one/talang/interpreter/corefn/misc"
-	stringpkg "github.com/talon-one/talang/interpreter/corefn/string"
-	"github.com/talon-one/talang/interpreter/shared"
 )
 
-func (interp *Interpreter) RegisterFunction(signatures ...shared.TaFunction) error {
+var coreFunctions []TaFunction
+
+func RegisterCoreFunction(signatures ...TaFunction) error {
+	for i := 0; i < len(signatures); i++ {
+		signature := signatures[i]
+		signature.Name = strings.ToLower(signature.Name)
+		if getFunction(coreFunctions, signature) != nil {
+			panic(fmt.Errorf("Function `%s' is already registered", signature.Name))
+		}
+		coreFunctions = append(coreFunctions, signature)
+	}
+	return nil
+}
+
+func (interp *Interpreter) RegisterFunction(signatures ...TaFunction) error {
 	for i := 0; i < len(signatures); i++ {
 		signature := signatures[i]
 		signature.Name = strings.ToLower(signature.Name)
@@ -26,7 +34,7 @@ func (interp *Interpreter) RegisterFunction(signatures ...shared.TaFunction) err
 	return nil
 }
 
-func (interp *Interpreter) UpdateFunction(signature shared.TaFunction) error {
+func (interp *Interpreter) UpdateFunction(signature TaFunction) error {
 	signature.Name = strings.ToLower(signature.Name)
 	if s := interp.GetFunction(signature); s != nil {
 		*s = signature
@@ -35,7 +43,7 @@ func (interp *Interpreter) UpdateFunction(signature shared.TaFunction) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) RemoveFunction(signature shared.TaFunction) error {
+func (interp *Interpreter) RemoveFunction(signature TaFunction) error {
 	signature.Name = strings.ToLower(signature.Name)
 	for i := 0; i < len(interp.Functions); i++ {
 		if interp.Functions[i].Equal(&signature) {
@@ -47,39 +55,31 @@ func (interp *Interpreter) RemoveFunction(signature shared.TaFunction) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) GetFunction(signature shared.TaFunction) *shared.TaFunction {
+func getFunction(functions []TaFunction, signature TaFunction) *TaFunction {
 	signature.Name = strings.ToLower(signature.Name)
-	for i := 0; i < len(interp.Functions); i++ {
-		if interp.Functions[i].Equal(&signature) {
-			return &interp.Functions[i]
+	for i := 0; i < len(functions); i++ {
+		if functions[i].Equal(&signature) {
+			return &functions[i]
 		}
 	}
 	return nil
 }
 
+func (interp *Interpreter) GetFunction(signature TaFunction) *TaFunction {
+	return getFunction(interp.Functions, signature)
+}
+
 func (interp *Interpreter) registerCoreFunctions() error {
-	// simple mathematics
-	interp.Functions = append(interp.Functions, math.AllOperations()...)
-	// compare functions
-	interp.Functions = append(interp.Functions, cmp.AllOperations()...)
-
-	// string functions
-	interp.Functions = append(interp.Functions, stringpkg.AllOperations()...)
-
-	// misc functions
-	interp.Functions = append(interp.Functions, misc.AllOperations()...)
-
-	// list functions
-	interp.Functions = append(interp.Functions, list.AllOperations()...)
-
-	// map functions
-	interp.Functions = append(interp.Functions, mapping.AllOperations()...)
-
 	// binding
 	interp.Functions = append(interp.Functions, bindingSignature)
+	interp.Functions = append(interp.Functions, setBindingSignature)
 
 	// template
-	interp.Functions = append(interp.Functions, templateSignature(interp))
+	interp.Functions = append(interp.Functions, templateSignature)
+
+	for _, f := range coreFunctions {
+		interp.Functions = append(interp.Functions, f)
+	}
 
 	// sanitize name
 	for i, f := range interp.Functions {
@@ -89,15 +89,16 @@ func (interp *Interpreter) registerCoreFunctions() error {
 }
 
 func (interp *Interpreter) RemoveAllFunctions() error {
-	interp.Functions = []shared.TaFunction{}
+	interp.Functions = []TaFunction{}
 	return nil
 }
 
-var bindingSignature = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var bindingSignature = TaFunction{
+	CommonSignature: CommonSignature{
 		Name:       ".",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.AtomKind,
 			block.AtomKind,
 		},
 		Returns:     block.AnyKind,
@@ -106,10 +107,11 @@ var bindingSignature = shared.TaFunction{
 	Func: bindingFunc,
 }
 
-func bindingFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+func bindingFunc(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+	argc := len(args)
 	bindMap := interp.Binding
 	var value *block.Block
-	for i := 0; i < len(args); i++ {
+	for i := 0; i < argc; i++ {
 		if binding, ok := bindMap[args[i].String]; ok {
 			bindMap = binding.Children
 			value = binding.Value
@@ -127,11 +129,49 @@ func bindingFunc(interp *shared.Interpreter, args ...*block.Block) (*block.Block
 		}
 
 		// join args
-		qualifiers := make([]string, len(args))
+		qualifiers := make([]string, argc)
 		for j, arg := range args {
 			qualifiers[j] = arg.String
 		}
 		return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
 	}
 	return value, nil
+}
+
+var setBindingSignature = TaFunction{
+	CommonSignature: CommonSignature{
+		Name:       "set",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.AtomKind,
+		},
+		Returns:     block.NullKind,
+		Description: "Set a variable in the binding",
+	},
+	Func: setBindingFunc,
+}
+
+func setBindingFunc(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+	argc := len(args)
+	if argc < 2 {
+		return nil, errors.New("invalid or missing arguments")
+	}
+
+	bindMap := interp.Binding
+	for i := 0; i < argc-2; i++ {
+		if binding, ok := bindMap[args[i].String]; ok {
+			bindMap = binding.Children
+		} else {
+			bindMap[args[i].String] = Binding{
+				Children: make(map[string]Binding),
+			}
+			bindMap = bindMap[args[i].String].Children
+		}
+	}
+	bindMap[args[argc-2].String] = Binding{
+		Value: args[argc-1],
+	}
+
+	return block.NewNull(), nil
 }

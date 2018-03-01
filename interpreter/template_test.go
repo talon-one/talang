@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/lexer"
 	helpers "github.com/talon-one/talang/testhelpers"
 )
@@ -13,8 +13,8 @@ import (
 func TestTemplate(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
-	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
-		CommonSignature: shared.CommonSignature{
+	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template1",
 			Returns: block.DecimalKind,
 		},
@@ -36,8 +36,8 @@ func TestTemplate(t *testing.T) {
 
 func TestFormatedTemplate(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
-		CommonSignature: shared.CommonSignature{
+	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
 			Name: "MultiplyWith2",
 			Arguments: []block.Kind{
 				block.DecimalKind,
@@ -60,8 +60,8 @@ func TestFormatedTemplate(t *testing.T) {
 
 func TestInvalidTemplateArgumentTypes(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
-		CommonSignature: shared.CommonSignature{
+	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
 			Name: "MultiplyWith2",
 			Arguments: []block.Kind{
 				block.DecimalKind,
@@ -77,8 +77,8 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 // // test if children got an error
 // func TestInvalidTemplateArguments(t *testing.T) {
 // 	interp := helpers.MustNewInterpreterWithLogger()
-// 	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
-// 		CommonSignature: shared.CommonSignature{
+// 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+// 		CommonSignature: interpreter.CommonSignature{
 // 			Name: "MultiplyWith2",
 // 			Arguments: []block.Kind{
 // 				block.DecimalKind,
@@ -88,11 +88,11 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 // 		Template: *lexer.MustLex("(* 2 (# 0))"),
 // 	}))
 
-// 	interp.RegisterFunction(shared.TaFunction{
-// 		CommonSignature: shared.CommonSignature{
+// 	interp.RegisterFunction(interpreter.TaFunction{
+// 		CommonSignature: interpreter.CommonSignature{
 // 			Name: "FN",
 // 		},
-// 		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+// 		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 // 			return nil, errors.New("SomeError")
 // 		},
 // 	})

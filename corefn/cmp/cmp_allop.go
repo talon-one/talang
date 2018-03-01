@@ -1,9 +1,9 @@
 package cmp
 
-import "github.com/talon-one/talang/interpreter/shared"
+import "github.com/talon-one/talang/interpreter"
 
-func AllOperations() []shared.TaFunction {
-	return []shared.TaFunction{
+func AllOperations() []interpreter.TaFunction {
+	return []interpreter.TaFunction{
 		Equal,
 		NotEqual,
 		GreaterThanDecimal,

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/lexer"
 	helpers "github.com/talon-one/talang/testhelpers"
 )
 
@@ -20,7 +21,7 @@ func TestContains(t *testing.T) {
 		helpers.Test{
 			`contains "Hello"`,
 			nil,
-			&helpers.Error{},
+			lexer.MustLex(`contains "Hello"`),
 		},
 		helpers.Test{
 			`contains "Hello World" Universe`,
@@ -45,7 +46,7 @@ func TestNotContains(t *testing.T) {
 		helpers.Test{
 			`notContains "Hello"`,
 			nil,
-			&helpers.Error{},
+			lexer.MustLex(`notContains "Hello"`),
 		},
 		helpers.Test{
 			`notContains "Hello World" Universe`,
@@ -70,7 +71,7 @@ func TestStartsWith(t *testing.T) {
 		helpers.Test{
 			`startsWith "Hello"`,
 			nil,
-			&helpers.Error{},
+			lexer.MustLex(`startsWith "Hello"`),
 		},
 		helpers.Test{
 			`startsWith "Hello World" Bye`,
@@ -95,7 +96,7 @@ func TestEndsWith(t *testing.T) {
 		helpers.Test{
 			`endsWith "Hello"`,
 			nil,
-			&helpers.Error{},
+			lexer.MustLex(`endsWith "Hello"`),
 		},
 		helpers.Test{
 			`endsWith "Hello World" Universe`,
@@ -120,7 +121,7 @@ func TestRegexp(t *testing.T) {
 		helpers.Test{
 			`~ "Hello"`,
 			nil,
-			&helpers.Error{},
+			lexer.MustLex(`~ "Hello"`),
 		},
 		helpers.Test{
 			`~ [a foo`,

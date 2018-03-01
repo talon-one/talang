@@ -3,6 +3,8 @@ package math_test
 import (
 	"testing"
 
+	"github.com/talon-one/talang/lexer"
+
 	"github.com/talon-one/talang/block"
 
 	"github.com/ericlagergren/decimal"
@@ -15,7 +17,7 @@ func TestAdd(t *testing.T) {
 		helpers.Test{
 			"+ 1",
 			nil,
-			&helpers.Error{},
+			lexer.MustLex("+ 1"),
 		},
 		helpers.Test{
 			"+ 1 2",
@@ -40,7 +42,7 @@ func TestSub(t *testing.T) {
 		helpers.Test{
 			"- 1",
 			nil,
-			&helpers.Error{},
+			lexer.MustLex("- 1"),
 		},
 		helpers.Test{
 			"- 1 2",
@@ -65,7 +67,7 @@ func TestMul(t *testing.T) {
 		helpers.Test{
 			"* 1",
 			nil,
-			&helpers.Error{},
+			lexer.MustLex("* 1"),
 		},
 		helpers.Test{
 			"* 1 2",
@@ -90,7 +92,7 @@ func TestDiv(t *testing.T) {
 		helpers.Test{
 			"/ 1",
 			nil,
-			&helpers.Error{},
+			lexer.MustLex("/ 1"),
 		},
 		helpers.Test{
 			"/ 1 2",
@@ -115,7 +117,7 @@ func TestMod(t *testing.T) {
 		helpers.Test{
 			"mod 1",
 			nil,
-			&helpers.Error{},
+			lexer.MustLex("mod 1"),
 		},
 		helpers.Test{
 			"mod 2 1",

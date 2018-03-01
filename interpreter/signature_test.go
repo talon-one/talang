@@ -1,4 +1,4 @@
-package shared
+package interpreter
 
 import (
 	"testing"
@@ -142,76 +142,4 @@ func TestMatchesArguments(t *testing.T) {
 			block.BlockKind,
 		}))
 	})
-}
-
-func TestAllFunctions(t *testing.T) {
-	interp := Interpreter{
-		Functions: []TaFunction{
-			{
-				CommonSignature: CommonSignature{
-					Name: "Root1",
-				},
-			},
-			{
-				CommonSignature: CommonSignature{
-					Name: "Root2",
-				},
-			},
-		},
-	}
-
-	subInterp := Interpreter{
-		Functions: []TaFunction{
-			{
-				CommonSignature: CommonSignature{
-					Name: "Sub1",
-				},
-			},
-			{
-				CommonSignature: CommonSignature{
-					Name: "Sub2",
-				},
-			},
-		},
-		Parent: &interp,
-	}
-
-	require.EqualValues(t, interp.Functions, interp.AllFunctions())
-	require.EqualValues(t, append(subInterp.Functions, interp.Functions...), subInterp.AllFunctions())
-}
-
-func TestAllTemplates(t *testing.T) {
-	interp := Interpreter{
-		Templates: []TaTemplate{
-			{
-				CommonSignature: CommonSignature{
-					Name: "Root1",
-				},
-			},
-			{
-				CommonSignature: CommonSignature{
-					Name: "Root2",
-				},
-			},
-		},
-	}
-
-	subInterp := Interpreter{
-		Templates: []TaTemplate{
-			{
-				CommonSignature: CommonSignature{
-					Name: "Sub1",
-				},
-			},
-			{
-				CommonSignature: CommonSignature{
-					Name: "Sub2",
-				},
-			},
-		},
-		Parent: &interp,
-	}
-
-	require.EqualValues(t, interp.Templates, interp.AllTemplates())
-	require.EqualValues(t, append(subInterp.Templates, interp.Templates...), subInterp.AllTemplates())
 }

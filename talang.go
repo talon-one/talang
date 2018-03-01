@@ -1,3 +1,4 @@
+//go:generate go run generate_corefn.go -pkg=talang
 package talang
 
 // for convenience all important stuff is here

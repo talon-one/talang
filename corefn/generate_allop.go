@@ -25,9 +25,9 @@ func mustPrint(n int, err error) {
 
 func createDirtyFile(buf *bytes.Buffer, astFile *ast.File) {
 	mustPrint(fmt.Fprintf(buf, "package %s\n", *pkg))
-	mustPrint(io.WriteString(buf, "import \"github.com/talon-one/talang/interpreter/shared\"\n"))
+	mustPrint(io.WriteString(buf, "import \"github.com/talon-one/talang/interpreter\"\n"))
 
-	mustPrint(io.WriteString(buf, "func AllOperations() []shared.TaFunction {\nreturn []shared.TaFunction{\n"))
+	mustPrint(io.WriteString(buf, "func AllOperations() []interpreter.TaFunction {\nreturn []interpreter.TaFunction{\n"))
 	for _, d := range astFile.Decls {
 		if g, ok := d.(*ast.GenDecl); ok {
 			if strings.EqualFold(g.Tok.String(), "var") && len(g.Specs) > 0 {

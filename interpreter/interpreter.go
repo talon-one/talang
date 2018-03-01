@@ -1,8 +1,10 @@
 package interpreter
 
 import (
+	"context"
 	"fmt"
 	"go/ast"
+	"log"
 	"strings"
 
 	"reflect"
@@ -10,12 +12,16 @@ import (
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
 
-	"github.com/talon-one/talang/interpreter/shared"
 	lexer "github.com/talon-one/talang/lexer"
 )
 
 type Interpreter struct {
-	shared.Interpreter
+	Binding   map[string]Binding
+	Context   context.Context
+	Parent    *Interpreter
+	Functions []TaFunction
+	Templates []TaTemplate
+	Logger    *log.Logger
 }
 
 func NewInterpreter() (*Interpreter, error) {
@@ -23,7 +29,7 @@ func NewInterpreter() (*Interpreter, error) {
 	if err := interp.registerCoreFunctions(); err != nil {
 		return nil, err
 	}
-	interp.Binding = make(map[string]shared.Binding)
+	interp.Binding = make(map[string]Binding)
 	return &interp, nil
 }
 
@@ -79,10 +85,7 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 	}
 
 	if interp.Parent != nil {
-		sharedInterp := Interpreter{
-			Interpreter: *interp.Parent,
-		}
-		return sharedInterp.Evaluate(b)
+		return interp.Parent.Evaluate(b)
 	}
 	return nil
 }
@@ -101,37 +104,58 @@ const (
 	errorInChildrenEvaluation notMatchingDetail = iota
 )
 
-func (interp *Interpreter) matchesSignature(sig *shared.CommonSignature, lowerName string, args []*block.Block) (bool, notMatchingDetail, []*block.Block, error) {
+func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*block.Block) (bool, notMatchingDetail, []*block.Block, error) {
 	if sig.Name != lowerName {
 		return false, invalidName, nil, nil
 	}
-	// make a copy of the children
-	children := make([]*block.Block, len(args))
-	for i, child := range args {
-		children[i] = new(block.Block)
-		*children[i] = *child
+
+	var children []*block.Block
+	argc := len(sig.Arguments)
+	if sig.IsVariadic == false {
+		if argc != len(args) {
+			return false, invalidSignature, nil, nil
+		}
+	} else {
+		if argc-1 > len(args) {
+			return false, invalidSignature, nil, nil
+		}
 	}
 
-	// evaluate children if needed to
-	i := 0
-	for ; i < len(sig.Arguments) && i < len(children); i++ {
-		if sig.Arguments[i]&block.BlockKind == 0 && children[i].IsBlock() {
+	willEvaluate := false
+	for i, j := 0, 0; i < len(args); i++ {
+		if sig.Arguments[j]&block.BlockKind == 0 && args[i].IsBlock() {
+			willEvaluate = true
+			break
+		}
+		j++
+		if j >= argc {
+			j = argc - 1
+		}
+	}
+
+	if willEvaluate {
+		// make a copy of the children
+		children = make([]*block.Block, len(args))
+		for i, child := range args {
+			children[i] = new(block.Block)
+			*children[i] = *child
+		}
+	} else {
+		children = args
+	}
+
+	for i, j := 0, 0; i < len(children); i++ {
+		if sig.Arguments[j]&block.BlockKind == 0 && children[i].IsBlock() {
 			if err := interp.Evaluate(children[i]); err != nil {
 				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 			}
 		}
-	}
-	if sig.IsVariadic {
-		lastArgumentIndex := len(sig.Arguments) - 1
-		// evaluate the rest
-		for ; i < len(children); i++ {
-			if sig.Arguments[lastArgumentIndex]&block.BlockKind == 0 && children[i].IsBlock() {
-				if err := interp.Evaluate(children[i]); err != nil {
-					return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
-				}
-			}
+		j++
+		if j >= argc {
+			j = argc - 1
 		}
 	}
+
 	if sig.MatchesArguments(block.Arguments(children)) {
 		return true, 0, children, nil
 	}
@@ -167,7 +191,7 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 		if interp.Logger != nil {
 			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), block.BlockArguments(children).ToHumanReadable())
 		}
-		result, err := fn.Func(&interp.Interpreter, children...)
+		result, err := fn.Func(interp, children...)
 		if err != nil {
 			if interp.Logger != nil {
 				interp.Logger.Printf("Error in function %s: %v", fn.Name, err)
@@ -195,11 +219,11 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 	return false, nil
 }
 
-func (interp *Interpreter) Set(key string, value shared.Binding) {
+func (interp *Interpreter) Set(key string, value Binding) {
 	interp.Binding[key] = value
 }
 
-func genericSetConv(value interface{}) (*shared.Binding, error) {
+func genericSetConv(value interface{}) (*Binding, error) {
 	reflectValue := reflect.ValueOf(value)
 	reflectType := reflectValue.Type()
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
@@ -209,8 +233,8 @@ func genericSetConv(value interface{}) (*shared.Binding, error) {
 
 	switch reflectType.Kind() {
 	case reflect.Struct:
-		var bind shared.Binding
-		bind.Children = make(map[string]shared.Binding)
+		var bind Binding
+		bind.Children = make(map[string]Binding)
 		for i := 0; i < reflectType.NumField(); i++ {
 			if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
 				structValue, err := genericSetConv(reflectValue.Field(i).Interface())
@@ -240,15 +264,15 @@ func genericSetConv(value interface{}) (*shared.Binding, error) {
 	case reflect.Uint32:
 		fallthrough
 	case reflect.Uint64:
-		return &shared.Binding{
+		return &Binding{
 			Value: block.New(fmt.Sprintf("%v", value)),
 		}, nil
 	case reflect.String:
-		return &shared.Binding{
+		return &Binding{
 			Value: block.NewString(value.(string)),
 		}, nil
 	case reflect.Bool:
-		return &shared.Binding{
+		return &Binding{
 			Value: block.NewBool(value.(bool)),
 		}, nil
 	}
@@ -267,10 +291,30 @@ func (interp *Interpreter) GenericSet(key string, value interface{}) error {
 
 func (interp *Interpreter) NewScope() *Interpreter {
 	i := Interpreter{}
-	i.Binding = make(map[string]shared.Binding)
-	i.Parent = &interp.Interpreter
+	i.Binding = make(map[string]Binding)
+	i.Parent = interp
 	i.Logger = interp.Logger
 	// we need to register binding and template on this scope, because it uses its own scopes
-	i.Functions = []shared.TaFunction{templateSignature(&i), bindingSignature}
+	i.Functions = []TaFunction{templateSignature, bindingSignature, setBindingSignature}
 	return &i
+}
+
+func (interp *Interpreter) AllFunctions() (functions []TaFunction) {
+	if len(interp.Functions) > 0 {
+		functions = append(functions, interp.Functions...)
+	}
+	if interp.Parent != nil {
+		functions = append(functions, interp.Parent.AllFunctions()...)
+	}
+	return functions
+}
+
+func (interp *Interpreter) AllTemplates() (templates []TaTemplate) {
+	if len(interp.Templates) > 0 {
+		templates = append(templates, interp.Templates...)
+	}
+	if interp.Parent != nil {
+		templates = append(templates, interp.Parent.AllTemplates()...)
+	}
+	return templates
 }

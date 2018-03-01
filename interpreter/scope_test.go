@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/lexer"
 	helpers "github.com/talon-one/talang/testhelpers"
 )
@@ -13,7 +13,7 @@ import (
 func TestScopeBinding(t *testing.T) {
 	// create an interpreter and set a binding
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.Set("RootKey", shared.Binding{
+	interp.Set("RootKey", interpreter.Binding{
 		Value: block.NewString("Root"),
 	})
 
@@ -22,14 +22,14 @@ func TestScopeBinding(t *testing.T) {
 
 	// create a scope and set a binding ON the scope
 	scope := interp.NewScope()
-	scope.Set("ScopeKey", shared.Binding{
+	scope.Set("ScopeKey", interpreter.Binding{
 		Value: block.NewString("Scope"),
 	})
 	// check if the scope has the same binding as the root
 	require.Equal(t, "Root", scope.MustLexAndEvaluate("(. RootKey)").String)
 
 	// overwrite the binding on scope level
-	scope.Set("RootKey", shared.Binding{
+	scope.Set("RootKey", interpreter.Binding{
 		Value: block.NewBool(true),
 	})
 	require.Equal(t, "true", scope.MustLexAndEvaluate("(. RootKey)").String)
@@ -42,12 +42,12 @@ func TestScopeBinding(t *testing.T) {
 
 func TestScopeFunctions(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn1",
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Hello"), nil
 		},
 	})
@@ -55,12 +55,12 @@ func TestScopeFunctions(t *testing.T) {
 	require.Equal(t, "Hello", interp.MustLexAndEvaluate("fn1").String)
 
 	scope := interp.NewScope()
-	scope.RegisterFunction(shared.TaFunction{
-		CommonSignature: shared.CommonSignature{
+	scope.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn2",
 			Returns: block.StringKind,
 		},
-		Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 			return block.NewString("Bye"), nil
 		},
 	})
@@ -72,8 +72,8 @@ func TestScopeFunctions(t *testing.T) {
 
 func TestScopeTemplates(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterTemplate(shared.TaTemplate{
-		CommonSignature: shared.CommonSignature{
+	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template1",
 			Returns: block.StringKind,
 		},
@@ -83,8 +83,8 @@ func TestScopeTemplates(t *testing.T) {
 
 	scope := interp.NewScope()
 
-	require.NoError(t, scope.RegisterTemplate(shared.TaTemplate{
-		CommonSignature: shared.CommonSignature{
+	require.NoError(t, scope.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template2",
 			Returns: block.StringKind,
 		},

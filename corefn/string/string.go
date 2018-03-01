@@ -5,22 +5,27 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
 )
 
-var Add = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+func init() {
+	interpreter.RegisterCoreFunction(AllOperations()...)
+}
+
+var Add = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "+",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.StringKind,
 		Description: "Concat strings",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		argc := len(args)
 		values := make([]string, argc)
 		for i := 0; i < argc; i++ {
@@ -30,8 +35,8 @@ var Add = shared.TaFunction{
 	},
 }
 
-var Concat = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Concat = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:        "concat",
 		IsVariadic:  Add.IsVariadic,
 		Arguments:   Add.Arguments,
@@ -41,24 +46,20 @@ var Concat = shared.TaFunction{
 	Func: Add.Func,
 }
 
-var Contains = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Contains = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "contains",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.StringKind,
 			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.BoolKind,
 		Description: "Returns wether the first argument exists in the following arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-
-		for i := 1; i < argc; i++ {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		for i := 1; i < len(args); i++ {
 			if !strings.Contains(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
@@ -67,24 +68,20 @@ var Contains = shared.TaFunction{
 	},
 }
 
-var NotContains = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var NotContains = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "notContains",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.StringKind,
 			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.BoolKind,
 		Description: "Returns wether the first argument does not exist in the following arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-
-		for i := 1; i < argc; i++ {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		for i := 1; i < len(args); i++ {
 			if strings.Contains(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
@@ -93,24 +90,20 @@ var NotContains = shared.TaFunction{
 	},
 }
 
-var StartsWith = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var StartsWith = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "startsWith",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.StringKind,
 			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.BoolKind,
 		Description: "Returns wether the first argument is the prefix of the following arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-
-		for i := 1; i < argc; i++ {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		for i := 1; i < len(args); i++ {
 			if !strings.HasPrefix(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
@@ -118,24 +111,20 @@ var StartsWith = shared.TaFunction{
 		return block.NewBool(true), nil
 	},
 }
-var EndsWith = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var EndsWith = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "endsWith",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.StringKind,
 			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.BoolKind,
 		Description: "Returns wether the first argument is the suffix of the following arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
-
-		for i := 1; i < argc; i++ {
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		for i := 1; i < len(args); i++ {
 			if !strings.HasSuffix(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
 			}
@@ -144,28 +133,25 @@ var EndsWith = shared.TaFunction{
 	},
 }
 
-var Regexp = shared.TaFunction{
-	CommonSignature: shared.CommonSignature{
+var Regexp = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
 		Name:       "~",
 		IsVariadic: true,
 		Arguments: []block.Kind{
+			block.StringKind,
 			block.StringKind,
 			block.StringKind,
 		},
 		Returns:     block.BoolKind,
 		Description: "Returns wether the first argument (regex) matches all of the following arguments",
 	},
-	Func: func(interp *shared.Interpreter, args ...*block.Block) (*block.Block, error) {
-		argc := len(args)
-		if argc < 2 {
-			return nil, errors.New("invalid or missing arguments")
-		}
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		re, err := regexp.Compile(args[0].String)
 		if err != nil {
 			return block.NewBool(false), err
 		}
 
-		for i := 1; i < argc; i++ {
+		for i := 1; i < len(args); i++ {
 			if !re.MatchString(args[i].String) {
 				return block.NewBool(false), nil
 			}

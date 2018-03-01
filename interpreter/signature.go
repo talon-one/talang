@@ -1,27 +1,11 @@
-package shared
+package interpreter
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/talon-one/talang/block"
 )
-
-type Binding struct {
-	Value    *block.Block
-	Children map[string]Binding
-}
-
-type Interpreter struct {
-	Binding   map[string]Binding
-	Context   context.Context
-	Parent    *Interpreter
-	Functions []TaFunction
-	Templates []TaTemplate
-	Logger    *log.Logger
-}
 
 type TaFunc func(*Interpreter, ...*block.Block) (*block.Block, error)
 
@@ -57,7 +41,7 @@ func (s *CommonSignature) String() string {
 	if s.IsVariadic {
 		variadic = "..."
 	}
-	return fmt.Sprintf("%s(%s)%s", s.Name, args, variadic)
+	return fmt.Sprintf("%s(%s%s)", s.Name, args, variadic)
 }
 
 func (a *CommonSignature) Equal(b *CommonSignature) bool {
@@ -121,24 +105,4 @@ func (a *TaTemplate) Equal(b *TaTemplate) bool {
 
 func (s *TaTemplate) MatchesArguments(args []block.Kind) bool {
 	return s.CommonSignature.MatchesArguments(args)
-}
-
-func (interp *Interpreter) AllFunctions() (functions []TaFunction) {
-	if len(interp.Functions) > 0 {
-		functions = append(functions, interp.Functions...)
-	}
-	if interp.Parent != nil {
-		functions = append(functions, interp.Parent.AllFunctions()...)
-	}
-	return functions
-}
-
-func (interp *Interpreter) AllTemplates() (templates []TaTemplate) {
-	if len(interp.Templates) > 0 {
-		templates = append(templates, interp.Templates...)
-	}
-	if interp.Parent != nil {
-		templates = append(templates, interp.Parent.AllTemplates()...)
-	}
-	return templates
 }

@@ -3,9 +3,10 @@ package list_test
 import (
 	"testing"
 
-	"github.com/talon-one/talang/lexer"
+	"github.com/stretchr/testify/require"
 
-	"github.com/talon-one/talang/interpreter/shared"
+	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/lexer"
 
 	"github.com/talon-one/talang/block"
 	helpers "github.com/talon-one/talang/testhelpers"
@@ -23,8 +24,8 @@ func TestHead(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"head (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -32,8 +33,8 @@ func TestHead(t *testing.T) {
 		},
 		helpers.Test{
 			"head (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello")),
 				},
 			},
@@ -41,8 +42,8 @@ func TestHead(t *testing.T) {
 		},
 		helpers.Test{
 			"head (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(),
 				},
 			},
@@ -55,8 +56,8 @@ func TestTail(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"tail (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -64,8 +65,8 @@ func TestTail(t *testing.T) {
 		},
 		helpers.Test{
 			"tail (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello")),
 				},
 			},
@@ -73,8 +74,8 @@ func TestTail(t *testing.T) {
 		},
 		helpers.Test{
 			"tail (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(),
 				},
 			},
@@ -87,8 +88,8 @@ func TestDrop(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"drop (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -96,8 +97,8 @@ func TestDrop(t *testing.T) {
 		},
 		helpers.Test{
 			"drop (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello")),
 				},
 			},
@@ -105,8 +106,8 @@ func TestDrop(t *testing.T) {
 		},
 		helpers.Test{
 			"drop (. List)",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(),
 				},
 			},
@@ -119,8 +120,8 @@ func TestItem(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"item (. List) 0",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -128,8 +129,8 @@ func TestItem(t *testing.T) {
 		},
 		helpers.Test{
 			"item (. List) 1",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -137,8 +138,8 @@ func TestItem(t *testing.T) {
 		},
 		helpers.Test{
 			"item (. List) -1",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -146,8 +147,8 @@ func TestItem(t *testing.T) {
 		},
 		helpers.Test{
 			"item (. List) 2",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
@@ -155,12 +156,26 @@ func TestItem(t *testing.T) {
 		},
 		helpers.Test{
 			"item (. List) A",
-			map[string]shared.Binding{
-				"List": shared.Binding{
+			map[string]interpreter.Binding{
+				"List": interpreter.Binding{
 					Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 				},
 			},
 			lexer.MustLex("item (. List) A"),
 		},
 	)
+}
+
+func TestPush(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.Binding = map[string]interpreter.Binding{
+		"List": interpreter.Binding{
+			Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
+		},
+	}
+	// check if the return value contains the appended data
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and Universe"), interp.MustLexAndEvaluate("push (. List) and Universe"))
+
+	// check if the original list is still unmodified
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding["List"].Value)
 }

@@ -6,13 +6,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/talon-one/talang"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
-	"github.com/talon-one/talang/interpreter/shared"
 )
 
-func MustNewInterpreterWithLogger() *interpreter.Interpreter {
-	interp := interpreter.MustNewInterpreter()
+func MustNewInterpreterWithLogger() *talang.Interpreter {
+	interp := talang.MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
 	return interp
 }
@@ -34,7 +34,7 @@ func (Error) Error() string { return "" }
 
 type Test struct {
 	Input    string
-	Binding  map[string]shared.Binding
+	Binding  map[string]interpreter.Binding
 	Expected interface{}
 }
 
@@ -42,7 +42,7 @@ func RunTests(t *testing.T, tests ...Test) {
 	RunTestsWithInterpreter(t, MustNewInterpreterWithLogger(), tests...)
 }
 
-func RunTestsWithInterpreter(t *testing.T, interp *interpreter.Interpreter, tests ...Test) {
+func RunTestsWithInterpreter(t *testing.T, interp *talang.Interpreter, tests ...Test) {
 	for i, test := range tests {
 		interp := interp.NewScope()
 		interp.Binding = test.Binding
