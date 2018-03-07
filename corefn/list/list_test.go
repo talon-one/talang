@@ -173,8 +173,24 @@ func TestPush(t *testing.T) {
 			Value: block.NewList(block.NewString("Hello"), block.NewString("World")),
 		},
 	}
+	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
+			Name: "fn",
+			Arguments: []block.Kind{
+				block.StringKind,
+			},
+			Returns: block.StringKind,
+		},
+		Template: *lexer.MustLex(`(# 0)`),
+	}))
 	// check if the return value contains the appended data
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and Universe"), interp.MustLexAndEvaluate("push (. List) and Universe"))
+
+	// check if the original list is still unmodified
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding["List"].Value)
+
+	// Push with a function inside
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World Alice"), interp.MustLexAndEvaluate("push (. List) (! fn Alice)"))
 
 	// check if the original list is still unmodified
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding["List"].Value)

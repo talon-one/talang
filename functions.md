@@ -96,10 +96,10 @@
 ### notcontains(String, String, String...)Bool
     Returns wether the first argument does not exist in the following arguments
 
-### push(List, Any, Any...)List
+### push(List, Kind(127), Kind(127)...)List
     Adds an item to the list and returns the list
 
-### set(String, Atom...)Null
+### set(String, Kind(127), Kind(127)...)Null
     Set a variable in the binding
 
 ### startswith(String, String, String...)Bool

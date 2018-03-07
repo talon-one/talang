@@ -144,7 +144,8 @@ var setBindingSignature = TaFunction{
 		IsVariadic: true,
 		Arguments: []block.Kind{
 			block.StringKind,
-			block.AtomKind,
+			block.AtomKind | block.CollectionKind,
+			block.AtomKind | block.CollectionKind,
 		},
 		Returns:     block.NullKind,
 		Description: "Set a variable in the binding",

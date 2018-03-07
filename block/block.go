@@ -22,8 +22,8 @@ const (
 	MapKind        Kind = 1 << iota
 	BlockKind      Kind = 1 << iota
 	AtomKind       Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind
-	CollectionKind Kind = BlockKind | ListKind | MapKind
-	AnyKind        Kind = AtomKind | CollectionKind
+	CollectionKind Kind = ListKind | MapKind
+	AnyKind        Kind = AtomKind | BlockKind | CollectionKind
 )
 
 type Block struct {

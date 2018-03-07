@@ -114,8 +114,8 @@ var Push = interpreter.TaFunction{
 		IsVariadic: true,
 		Arguments: []block.Kind{
 			block.ListKind,
-			block.AnyKind,
-			block.AnyKind,
+			block.AtomKind | block.CollectionKind,
+			block.AtomKind | block.CollectionKind,
 		},
 		Returns:     block.ListKind,
 		Description: "Adds an item to the list and returns the list",

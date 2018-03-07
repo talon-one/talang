@@ -11,8 +11,8 @@ const (
 	_Kind_name_3 = "NullKind"
 	_Kind_name_4 = "AtomKindListKind"
 	_Kind_name_5 = "MapKind"
-	_Kind_name_6 = "BlockKind"
-	_Kind_name_7 = "CollectionKind"
+	_Kind_name_6 = "CollectionKind"
+	_Kind_name_7 = "BlockKind"
 	_Kind_name_8 = "AnyKind"
 )
 
@@ -37,9 +37,9 @@ func (i Kind) String() string {
 		return _Kind_name_4[_Kind_index_4[i]:_Kind_index_4[i+1]]
 	case i == 64:
 		return _Kind_name_5
-	case i == 128:
+	case i == 96:
 		return _Kind_name_6
-	case i == 224:
+	case i == 128:
 		return _Kind_name_7
 	case i == 255:
 		return _Kind_name_8

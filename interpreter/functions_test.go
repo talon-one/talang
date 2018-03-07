@@ -222,6 +222,32 @@ func TestSetBinding(t *testing.T) {
 	})
 }
 
+// Tests if a parent function can access the binding on a scoped interpreter
+func TestRootFuncAccessScopeBinding(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+
+	interp.RegisterFunction(interpreter.TaFunction{
+		CommonSignature: interpreter.CommonSignature{
+			Name: "fn",
+			Arguments: []block.Kind{
+				block.StringKind,
+			},
+			Returns: block.StringKind,
+		},
+		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+			return block.NewString("Hello " + args[0].String), nil
+		},
+	})
+
+	scope := interp.NewScope()
+
+	scope.Binding["Name"] = interpreter.Binding{
+		Value: block.NewString("Joe"),
+	}
+
+	require.Equal(t, "Hello Joe", scope.MustLexAndEvaluate("fn (. Name)").String)
+}
+
 func TestFuncErrorInChild(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 	interp.RegisterFunction(interpreter.TaFunction{
