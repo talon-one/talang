@@ -216,6 +216,9 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 		}
 		return true, nil
 	}
+	if interp.Logger != nil {
+		interp.Logger.Printf("Found no func `%s' in interpreter instance\n", blockText)
+	}
 	return false, nil
 }
 

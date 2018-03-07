@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"testing"
-	"unicode/utf8"
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
@@ -13,113 +12,137 @@ func TestLexer(t *testing.T) {
 		input    string
 		expected *block.Block
 	}{
+		// {
+		// 	"+ 1 2",
+		// 	block.New("+",
+		// 		block.New("1"),
+		// 		block.New("2"),
+		// 	),
+		// },
+		// {
+		// 	"+ (+ 1 2) 3",
+		// 	block.New("+",
+		// 		block.New("+",
+		// 			block.New("1"),
+		// 			block.New("2"),
+		// 		),
+		// 		block.New("3"),
+		// 	),
+		// },
+		// {
+		// 	"+ 1 (- 2 3)",
+		// 	block.New("+",
+		// 		block.New("1"),
+		// 		block.New("-",
+		// 			block.New("2"),
+		// 			block.New("3"),
+		// 		),
+		// 	),
+		// },
+		// {
+		// 	"+ (- 1 2) (* 3 4)",
+		// 	block.New("+",
+		// 		block.New("-",
+		// 			block.New("1"),
+		// 			block.New("2"),
+		// 		),
+		// 		block.New("*",
+		// 			block.New("3"),
+		// 			block.New("4"),
+		// 		),
+		// 	),
+		// },
+		// {
+		// 	"fn A B C",
+		// 	block.New("fn",
+		// 		block.New("A"),
+		// 		block.New("B"),
+		// 		block.New("C"),
+		// 	),
+		// },
+		// {
+		// 	`text "Hello World"`,
+		// 	block.New("text",
+		// 		block.New("Hello World"),
+		// 	),
+		// },
+		// {
+		// 	`text "Hello \"W o r l d\" and Universe"`,
+		// 	block.New("text",
+		// 		block.New(`Hello "W o r l d" and Universe`),
+		// 	),
+		// },
+		// {
+		// 	"+ 1.2 3.4",
+		// 	block.New("+",
+		// 		block.New("1.2"),
+		// 		block.New("3.4"),
+		// 	),
+		// },
+		// {
+		// 	"+ -1 -2",
+		// 	block.New("+",
+		// 		block.New("-1"),
+		// 		block.New("-2"),
+		// 	),
+		// },
+		// {
+		// 	"+ -1.2 -3.4",
+		// 	block.New("+",
+		// 		block.New("-1.2"),
+		// 		block.New("-3.4"),
+		// 	),
+		// },
+		// {
+		// 	"+ -.1 -.2",
+		// 	block.New("+",
+		// 		block.New("-.1"),
+		// 		block.New("-.2"),
+		// 	),
+		// },
+		// {
+		// 	"(fn A B)",
+		// 	block.New("",
+		// 		block.New("fn",
+		// 			block.New("A"),
+		// 			block.New("B"),
+		// 		),
+		// 	),
+		// },
+		// {
+		// 	"(fn (A) B)",
+		// 	block.New("",
+		// 		block.New("fn",
+		// 			&block.Block{
+		// 				String:   "A",
+		// 				Kind:     block.BlockKind,
+		// 				Children: []*block.Block{},
+		// 			},
+		// 			block.New("B"),
+		// 		),
+		// 	),
+		// },
+		// {
+		// 	`set CartItems (push (. CartItems))`,
+		// 	block.New("set",
+		// 		block.NewString("CartItems"),
+		// 		block.New("push",
+		// 			block.New(".",
+		// 				block.NewString("CartItems"),
+		// 			),
+		// 		),
+		// 	),
+		// },
 		{
-			"+ 1 2",
-			block.New("+",
-				block.New("1"),
-				block.New("2"),
-			),
-		},
-		{
-			"+ (+ 1 2) 3",
-			block.New("+",
-				block.New("+",
-					block.New("1"),
-					block.New("2"),
-				),
-				block.New("3"),
-			),
-		},
-		{
-			"+ 1 (- 2 3)",
-			block.New("+",
-				block.New("1"),
-				block.New("-",
-					block.New("2"),
-					block.New("3"),
-				),
-			),
-		},
-		{
-			"+ (- 1 2) (* 3 4)",
-			block.New("+",
-				block.New("-",
-					block.New("1"),
-					block.New("2"),
-				),
-				block.New("*",
-					block.New("3"),
-					block.New("4"),
-				),
-			),
-		},
-		{
-			"fn A B C",
-			block.New("fn",
-				block.New("A"),
-				block.New("B"),
-				block.New("C"),
-			),
-		},
-		{
-			`text "Hello World"`,
-			block.New("text",
-				block.New("Hello World"),
-			),
-		},
-		{
-			`text "Hello \"W o r l d\" and Universe"`,
-			block.New("text",
-				block.New(`Hello "W o r l d" and Universe`),
-			),
-		},
-		{
-			"+ 1.2 3.4",
-			block.New("+",
-				block.New("1.2"),
-				block.New("3.4"),
-			),
-		},
-		{
-			"+ -1 -2",
-			block.New("+",
-				block.New("-1"),
-				block.New("-2"),
-			),
-		},
-		{
-			"+ -1.2 -3.4",
-			block.New("+",
-				block.New("-1.2"),
-				block.New("-3.4"),
-			),
-		},
-		{
-			"+ -.1 -.2",
-			block.New("+",
-				block.New("-.1"),
-				block.New("-.2"),
-			),
-		},
-		{
-			"(fn A B)",
-			block.New("",
-				block.New("fn",
-					block.New("A"),
-					block.New("B"),
-				),
-			),
-		},
-		{
-			"(fn (A) B)",
-			block.New("",
-				block.New("fn",
-					&block.Block{
-						String:   "A",
-						Kind:     block.BlockKind,
-						Children: []*block.Block{},
-					},
-					block.New("B"),
+			// `set CartItems (push (. CartItems) (kv (Position 99) (Name "A Free Pizza!") (Amount 1) (Price 0)))`,
+			`set CartItems (push (. CartItems) (kv (Position 99)))`,
+			block.New("set",
+				block.NewString("CartItems"),
+				block.New("push",
+					block.New(".", block.NewString("CartItems")),
+					block.New("kv",
+						block.New("Position", block.NewDecimalFromInt(99)),
+					),
 				),
 			),
 		},
@@ -130,86 +153,8 @@ func TestLexer(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		require.EqualValues(t, tests[i].expected, s, "Input `%s' failed", tests[i].input)
+		require.Equal(t, true, tests[i].expected.Equal(s), "Input `%s' failed, was `%s'", tests[i].input, s.Stringify())
 	}
-}
-
-func TestUnquote(t *testing.T) {
-	doubleQuote := func(extracted string, rest string, str string) {
-		a, b := unquote(str, '"', '"', '\\')
-		require.Equal(t, extracted, a)
-		require.Equal(t, rest, b)
-	}
-
-	doubleQuote(`Hello World`, ``, `"Hello World"`)
-	doubleQuote(`Hello`, ` World`, `"Hello" World`)
-	doubleQuote(`Hello`, ` "World"`, `"Hello" "World"`)
-	doubleQuote(`Hello World and Universe`, ``, `"Hello World and Universe"`)
-	doubleQuote(`Hello 'World and Universe'`, ``, `"Hello 'World and Universe'"`)
-
-	// nested cases
-	doubleQuote(``, `Hello World""`, `""Hello World""`)
-	doubleQuote(`Hello "World"`, ``, `"Hello \"World\""`)
-	doubleQuote(``, `\"Hello World\"`, `\"Hello World\"`)
-	doubleQuote(`Hello "World and \"Universe\""`, ``, `"Hello \"World and \\"Universe\\"\""`)
-	doubleQuote(`Hello "World" and Universe`, ` and Dimension`, `"Hello \"World\" and Universe" and Dimension`)
-
-	// invalid cases
-	doubleQuote(``, ``, ``)
-	doubleQuote(``, `"`, `"`)
-	doubleQuote(``, `"Test`, `"Test`)
-	doubleQuote(`Hello`, ` "World`, `"Hello" "World`)
-	doubleQuote(`Hello "`, ``, `"Hello \""`)
-	doubleQuote(``, ``, `""`)
-
-	doubleQuote(``, `Hello World`, `Hello World`)
-	doubleQuote(``, `Hello "World"`, `Hello "World"`)
-
-	brakets := func(extracted string, rest string, str string) {
-		a, b := unquote(str, '(', ')', utf8.RuneError)
-		require.Equal(t, extracted, a)
-		require.Equal(t, rest, b)
-	}
-
-	brakets(`Hello World`, ` and Universe`, `(Hello World) and Universe`)
-	brakets(`echo $(echo Hello World)`, ``, `(echo $(echo Hello World))`)
-	brakets(`echo $(echo $(echo Hello World))`, ``, `(echo $(echo $(echo Hello World)))`)
-	brakets(`Hello (World (, (Universe,) Dimension)) and Religion`, ``, `(Hello (World (, (Universe,) Dimension)) and Religion)`)
-
-	brakets(``, `(Hello World`, `(Hello World`)
-	brakets(`Hello (World`, ``, `(Hello (World)`)
-	brakets(`Hello ((World)`, ``, `(Hello ((World))`)
-
-	brakets(`Token2 Token3 (Token4 Token5) Token6`, ` Token7`, `(Token2 Token3 (Token4 Token5) Token6) Token7`)
-
-	brakets(``, `(Token`, `(Token`)
-
-	ticks := func(extracted string, rest string, str string) {
-		a, b := unquote(str, '`', '`', utf8.RuneError)
-		require.Equal(t, extracted, a)
-		require.Equal(t, rest, b)
-	}
-
-	ticks("Token2 Token3 Token4 Token5 Token6", " Token7", "`Token2 Token3 Token4 Token5 Token6` Token7")
-
-	curlyBrackets := func(extracted string, rest string, str string) {
-		a, b := unquote(str, '{', '}', utf8.RuneError)
-		require.Equal(t, extracted, a)
-		require.Equal(t, rest, b)
-	}
-
-	curlyBrackets(`Hello World`, ` and Universe`, `{Hello World} and Universe`)
-	curlyBrackets(`echo ${echo Hello World}`, ``, `{echo ${echo Hello World}}`)
-	curlyBrackets(`echo ${echo ${echo Hello World}}`, ``, `{echo ${echo ${echo Hello World}}}`)
-	curlyBrackets(`Hello {World {, {Universe,} Dimension}} and Religion`, ``, `{Hello {World {, {Universe,} Dimension}} and Religion}`)
-
-	curlyBrackets(``, `{Hello World`, `{Hello World`)
-	curlyBrackets(`Hello {World`, ``, `{Hello {World}`)
-	curlyBrackets(`Hello {{World}`, ``, `{Hello {{World}}`)
-
-	curlyBrackets(`Token2 Token3 {Token4 Token5} Token6`, ` Token7`, `{Token2 Token3 {Token4 Token5} Token6} Token7`)
-
-	curlyBrackets(``, `{Token`, `{Token`)
 }
 
 func BenchmarkParse(b *testing.B) {

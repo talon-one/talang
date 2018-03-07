@@ -270,6 +270,49 @@ func (b *Block) Stringify() string {
 	return text
 }
 
+func (b *Block) Equal(a *Block) bool {
+	if a.Kind != b.Kind {
+		return false
+	}
+
+	switch a.Kind {
+	case DecimalKind:
+		return a.Decimal.Cmp(b.Decimal) == 0
+	case StringKind:
+		return a.String == b.String
+	case BoolKind:
+		return a.Bool == b.Bool
+	case TimeKind:
+		return a.Time.Equal(b.Time)
+	case NullKind:
+		return true
+	case MapKind:
+		if len(a.Keys) != len(b.Keys) {
+			return false
+		}
+
+		for _, key := range a.Keys {
+			if !a.MapItem(key).Equal(b.MapItem(key)) {
+				return false
+			}
+		}
+		return true
+	case ListKind:
+		fallthrough
+	case BlockKind:
+		if len(a.Children) != len(b.Children) {
+			return false
+		}
+		for i, item := range a.Children {
+			if !item.Equal(b.Children[i]) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
 func Arguments(children []*Block) []Kind {
 	types := make([]Kind, len(children))
 	for i, child := range children {
