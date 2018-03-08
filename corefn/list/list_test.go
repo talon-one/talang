@@ -13,11 +13,18 @@ import (
 )
 
 func TestList(t *testing.T) {
-	helpers.RunTests(t, helpers.Test{
-		"list Hello World",
-		nil,
-		block.NewList(block.NewString("Hello"), block.NewString("World")),
-	})
+	helpers.RunTests(t,
+		helpers.Test{
+			"list Hello World",
+			nil,
+			block.NewList(block.NewString("Hello"), block.NewString("World")),
+		},
+		helpers.Test{
+			`list "Hello World" "Hello Universe"`,
+			nil,
+			block.NewList(block.NewString("Hello World"), block.NewString("Hello Universe")),
+		},
+	)
 }
 
 func TestHead(t *testing.T) {
@@ -167,22 +174,22 @@ func TestPush(t *testing.T) {
 }
 
 func TestMap(t *testing.T) {
-	// helpers.RunTests(t, helpers.Test{
-	// 	`map (. List) x (+ (. x Name) " " (. x Surname))`,
-	// 	block.NewMap(map[string]*block.Block{
-	// 		"List": block.NewList(
-	// 			block.NewMap(map[string]*block.Block{
-	// 				"Name":    block.NewString("Joe"),
-	// 				"Surname": block.NewString("Doe"),
-	// 				"Id":      block.NewDecimalFromInt(0),
-	// 			}),
-	// 			block.NewMap(map[string]*block.Block{
-	// 				"Name":    block.NewString("Alice"),
-	// 				"Surname": block.NewString("Wonder"),
-	// 				"Id":      block.NewDecimalFromInt(1),
-	// 			}),
-	// 		),
-	// 	}),
-	// 	lexer.MustLex(`list "Joe Doe" "Alice Wonder`),
-	// })
+	helpers.RunTests(t, helpers.Test{
+		`map (. List) x (+ (. x Name) " " (. x Surname))`,
+		block.NewMap(map[string]*block.Block{
+			"List": block.NewList(
+				block.NewMap(map[string]*block.Block{
+					"Name":    block.NewString("Joe"),
+					"Surname": block.NewString("Doe"),
+					"Id":      block.NewDecimalFromInt(0),
+				}),
+				block.NewMap(map[string]*block.Block{
+					"Name":    block.NewString("Alice"),
+					"Surname": block.NewString("Wonder"),
+					"Id":      block.NewDecimalFromInt(1),
+				}),
+			),
+		}),
+		block.NewList(block.NewString("Joe Doe"), block.NewString("Alice Wonder")),
+	})
 }

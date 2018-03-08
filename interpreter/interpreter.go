@@ -206,7 +206,7 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 			return false, errors.Errorf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
 		}
 		if interp.Logger != nil {
-			interp.Logger.Printf("Updating value to `%s' (%s)\n", result.String, result.Kind.String())
+			interp.Logger.Printf("Updating value to `%s' (%s)\n", result.Stringify(), result.Kind.String())
 		}
 		b.Update(result)
 		if b.IsBlock() {

@@ -274,7 +274,11 @@ func (b *Block) Stringify() string {
 		for i, item := range b.Children {
 			items[i] = item.Stringify()
 		}
-		text = fmt.Sprintf("%s %s", b.String, strings.Join(items, " "))
+		if len(b.String) > 0 {
+			text = b.String + " " + strings.Join(items, " ")
+		} else {
+			text = strings.Join(items, " ")
+		}
 	}
 	if b.IsBlock() {
 		return fmt.Sprintf("(%s)", text)

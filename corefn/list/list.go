@@ -153,7 +153,7 @@ var Map = interpreter.TaFunction{
 
 			var result block.Block
 			result.Update(blockToRun)
-			if err := scope.Evaluate(blockToRun); err != nil {
+			if err := scope.Evaluate(&result); err != nil {
 				return nil, err
 			}
 			values = append(values, &result)
