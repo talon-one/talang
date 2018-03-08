@@ -12,7 +12,7 @@ func init() {
 	interpreter.RegisterCoreFunction(AllOperations()...)
 }
 
-var Map = interpreter.TaFunction{
+var KV = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "kv",
 		IsVariadic: true,

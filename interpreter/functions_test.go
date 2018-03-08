@@ -114,36 +114,20 @@ func TestFuncWithWrongParameter(t *testing.T) {
 func TestBinding(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
-	interp.Binding["Root1"] = interpreter.Binding{
-		Value: block.New("1"),
-		Children: map[string]interpreter.Binding{
-			"Decimal": interpreter.Binding{
-				Value: block.New("2"),
-			},
-			"String": interpreter.Binding{
-				Value: block.New("Hello"),
-			},
-			"List": interpreter.Binding{
-				Value: block.New("", block.NewString("Item1"), block.NewString("Item2")),
-			},
-			"Map": interpreter.Binding{
-				Children: map[string]interpreter.Binding{
-					"Decimal": interpreter.Binding{
-						Value: block.New("2"),
-					},
-					"String": interpreter.Binding{
-						Value: block.New("Hello"),
-					},
-				},
-			},
-		},
-	}
-	interp.Binding["Root2"] = interpreter.Binding{}
+	interp.Binding = block.NewMap(map[string]*block.Block{
+		"Root1": block.NewMap(map[string]*block.Block{
+			"Decimal": block.NewDecimalFromInt(2),
+			"String":  block.NewString("Hello"),
+			"List":    block.NewList(block.NewString("Item1"), block.NewString("Item2")),
+			"Map": block.NewMap(map[string]*block.Block{
+				"Decimal": block.NewDecimalFromInt(2),
+				"String":  block.NewString("Hello"),
+			}),
+		}),
+		"Root2": block.NewMap(map[string]*block.Block{}),
+	})
 
-	b := interp.MustLexAndEvaluate("(+ (. Root1) 2)")
-	require.Equal(t, true, b.IsDecimal())
-	require.Equal(t, "3", b.String)
-	b = interp.MustLexAndEvaluate("(+ (. Root1 Decimal) 2)")
+	b := interp.MustLexAndEvaluate("(+ (. Root1 Decimal) 2)")
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "4", b.String)
 
@@ -152,9 +136,10 @@ func TestBinding(t *testing.T) {
 	require.Equal(t, "Hello", b.String)
 
 	b = interp.MustLexAndEvaluate("(. Root1 List)")
-	require.Equal(t, true, b.IsBlock())
+	require.Equal(t, true, b.IsList())
 
-	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Map)")))
+	b = interp.MustLexAndEvaluate("(. Root1 Map)")
+	require.Equal(t, true, b.IsMap())
 
 	b = interp.MustLexAndEvaluate("(. Root1 Map String)")
 	require.Equal(t, true, b.IsString())
@@ -162,7 +147,9 @@ func TestBinding(t *testing.T) {
 
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root1 Unknown)")))
 
-	require.Error(t, getError(interp.LexAndEvaluate("(. Root2)")))
+	b = interp.MustLexAndEvaluate("(. Root2)")
+	require.Equal(t, true, b.IsMap())
+
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root2 Decimal)")))
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root3)")))
 	require.Error(t, getError(interp.LexAndEvaluate("(. Root3 Decimal)")))
@@ -171,13 +158,11 @@ func TestBinding(t *testing.T) {
 func TestFuncInBinding(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
-	interp.Binding["Root"] = interpreter.Binding{
-		Children: map[string]interpreter.Binding{
-			"2": interpreter.Binding{
-				Value: block.New("2"),
-			},
-		},
-	}
+	interp.Binding = block.NewMap(map[string]*block.Block{
+		"Root": block.NewMap(map[string]*block.Block{
+			"2": block.NewDecimalFromInt(2),
+		}),
+	})
 
 	b := interp.MustLexAndEvaluate("(+ (. Root (+ 1 1)) 2)")
 	require.Equal(t, true, b.IsDecimal())
@@ -187,32 +172,30 @@ func TestFuncInBinding(t *testing.T) {
 func TestSetBinding(t *testing.T) {
 	t.Run("RootLevel", func(t *testing.T) {
 		interp := helpers.MustNewInterpreterWithLogger()
-		interp.Binding["Root"] = interpreter.Binding{
-			Value: block.NewDecimalFromInt(1),
-		}
-		require.Equal(t, "1", interp.MustLexAndEvaluate(". Root").String)
+		interp.Binding = block.NewMap(map[string]*block.Block{
+			"Root": block.NewMap(map[string]*block.Block{
+				"Key": block.NewDecimalFromInt(1),
+			}),
+		})
+		require.Equal(t, "1", interp.MustLexAndEvaluate(". Root Key").String)
 		interp.MustLexAndEvaluate("set Root 2")
 		require.Equal(t, "2", interp.MustLexAndEvaluate(". Root").String)
 	})
 	t.Run("DeepLevel", func(t *testing.T) {
 		interp := helpers.MustNewInterpreterWithLogger()
-		interp.Binding["Root"] = interpreter.Binding{
-			Value: block.NewDecimalFromInt(1),
-			Children: map[string]interpreter.Binding{
-				"Key": interpreter.Binding{
-					Value: block.NewDecimalFromInt(1),
-				},
-			},
-		}
-		require.Equal(t, "1", interp.MustLexAndEvaluate(". Root Key").String)
+		interp.Binding = block.NewMap(map[string]*block.Block{
+			"Root": block.NewMap(map[string]*block.Block{
+				"Key": block.NewDecimalFromInt(1),
+			}),
+		})
 		interp.MustLexAndEvaluate("set Root Key 2")
 		require.Equal(t, "2", interp.MustLexAndEvaluate(". Root Key").String)
 	})
 	t.Run("NotExistingRootLevel", func(t *testing.T) {
 		interp := helpers.MustNewInterpreterWithLogger()
-		require.Error(t, helpers.MustError(interp.LexAndEvaluate(". Root")))
-		interp.MustLexAndEvaluate("set Root Hello")
-		require.Equal(t, "Hello", interp.MustLexAndEvaluate(". Root").String)
+		require.Error(t, helpers.MustError(interp.LexAndEvaluate(". Root Key")))
+		interp.MustLexAndEvaluate("set Root (kv (Key Hello))")
+		require.Equal(t, "Hello", interp.MustLexAndEvaluate(". Root Key").String)
 	})
 	t.Run("NotExistingDeepLevel", func(t *testing.T) {
 		interp := helpers.MustNewInterpreterWithLogger()
@@ -241,9 +224,9 @@ func TestRootFuncAccessScopeBinding(t *testing.T) {
 
 	scope := interp.NewScope()
 
-	scope.Binding["Name"] = interpreter.Binding{
-		Value: block.NewString("Joe"),
-	}
+	interp.Binding = block.NewMap(map[string]*block.Block{
+		"Name": block.NewString("Joe"),
+	})
 
 	require.Equal(t, "Hello Joe", scope.MustLexAndEvaluate("fn (. Name)").String)
 }

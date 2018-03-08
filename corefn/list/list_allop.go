@@ -10,5 +10,6 @@ func AllOperations() []interpreter.TaFunction {
 		Drop,
 		Item,
 		Push,
+		Map,
 	}
 }

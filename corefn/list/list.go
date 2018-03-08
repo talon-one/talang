@@ -127,3 +127,37 @@ var Push = interpreter.TaFunction{
 		return &list, nil
 	},
 }
+
+var Map = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: "map",
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.StringKind,
+			block.BlockKind,
+		},
+		Returns:     block.ListKind,
+		Description: "Create a new list by evaluating the given block for each item in the input list",
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := args[0]
+		bindingName := args[1].String
+		blockToRun := args[2]
+
+		size := len(list.Children)
+		values := make([]*block.Block, 0, size)
+		scope := interp.NewScope()
+
+		for i := 0; i < size; i++ {
+			scope.Set(bindingName, list.Children[i])
+
+			var result block.Block
+			result.Update(blockToRun)
+			if err := scope.Evaluate(blockToRun); err != nil {
+				return nil, err
+			}
+			values = append(values, &result)
+		}
+		return block.NewList(values...), nil
+	},
+}

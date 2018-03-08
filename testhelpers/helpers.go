@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang"
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter"
 )
 
 func MustNewInterpreterWithLogger() *talang.Interpreter {
@@ -34,7 +33,7 @@ func (Error) Error() string { return "" }
 
 type Test struct {
 	Input    string
-	Binding  map[string]interpreter.Binding
+	Binding  *block.Block
 	Expected interface{}
 }
 
@@ -51,11 +50,7 @@ func RunTestsWithInterpreter(t *testing.T, interp *talang.Interpreter, tests ...
 		case error:
 			require.Error(t, err, "Test #%d failed", i)
 		case *block.Block:
-			if b.IsDecimal() && result.IsDecimal() {
-				require.Equal(t, 0, b.Decimal.Cmp(result.Decimal))
-			} else {
-				require.EqualValues(t, test.Expected, result, "Test #%d failed, Expected %s was %s", i, b.Stringify(), result.Stringify())
-			}
+			require.EqualValues(t, true, b.Equal(result), "Test #%d failed, Expected %s was %s", i, b.Stringify(), result.Stringify())
 		}
 	}
 }

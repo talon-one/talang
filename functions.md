@@ -9,11 +9,11 @@
 ### *(Decimal, Decimal, Decimal...)Decimal
     Multiplies the arguments
 
-### +(String, String, String...)String
-    Concat strings
-
 ### +(Decimal, Decimal, Decimal...)Decimal
     Adds the arguments
+
+### +(String, String, String...)String
+    Concat strings
 
 ### -(Decimal, Decimal, Decimal...)Decimal
     Subtracts the arguments
@@ -30,10 +30,10 @@
 ### <(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is less then the following
 
-### <=(Decimal, Decimal, Decimal...)Bool
+### <=(Time, Time, Time...)Bool
     Tests if the first argument is less or equal then the following
 
-### <=(Time, Time, Time...)Bool
+### <=(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is less or equal then the following
 
 ### =(Atom, Atom, Atom...)Bool
@@ -45,10 +45,10 @@
 ### >(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is greather then the following
 
-### >=(Time, Time, Time...)Bool
+### >=(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
-### >=(Decimal, Decimal, Decimal...)Bool
+### >=(Time, Time, Time...)Bool
     Tests if the first argument is greather or equal then the following
 
 ### between(Time, Time, Time, Time...)Bool
@@ -86,6 +86,9 @@
 
 ### list(Atom, Atom...)List
     Create a list out of the children
+
+### map(List, String, Block)List
+    Create a new list by evaluating the given block for each item in the input list
 
 ### mod(Decimal, Decimal, Decimal...)Decimal
     Modulo the arguments

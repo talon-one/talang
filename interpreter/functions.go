@@ -109,33 +109,36 @@ var bindingSignature = TaFunction{
 
 func bindingFunc(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
 	argc := len(args)
-	bindMap := interp.Binding
-	var value *block.Block
-	for i := 0; i < argc; i++ {
-		if binding, ok := bindMap[args[i].String]; ok {
-			bindMap = binding.Children
-			value = binding.Value
-		} else {
-			value = nil
-		}
-	}
-	if value == nil {
-		// lookup in parent
-		if interp.Parent != nil {
-			value, err := bindingFunc(interp.Parent, args...)
-			if err == nil {
-				return value, nil
+	if interp.Binding != nil {
+		value := interp.Binding
+		for i := 0; i < argc; i++ {
+			if !value.IsMap() {
+				break
+			}
+			value = value.MapItem(args[i].String)
+			if value.IsNull() {
+				break
 			}
 		}
 
-		// join args
-		qualifiers := make([]string, argc)
-		for j, arg := range args {
-			qualifiers[j] = arg.String
+		if !value.IsNull() {
+			return value, nil
 		}
-		return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
 	}
-	return value, nil
+
+	// lookup in parent
+	if interp.Parent != nil {
+		value, err := bindingFunc(interp.Parent, args...)
+		if err == nil {
+			return value, nil
+		}
+	}
+
+	qualifiers := make([]string, argc)
+	for j, arg := range args {
+		qualifiers[j] = arg.String
+	}
+	return nil, errors.Errorf("Unable to find `%s'", strings.Join(qualifiers, "."))
 }
 
 var setBindingSignature = TaFunction{
@@ -158,21 +161,19 @@ func setBindingFunc(interp *Interpreter, args ...*block.Block) (*block.Block, er
 	if argc < 2 {
 		return nil, errors.New("invalid or missing arguments")
 	}
+	if interp.Binding == nil {
+		interp.Binding = block.NewMap(map[string]*block.Block{})
+	}
 
-	bindMap := interp.Binding
+	value := interp.Binding
 	for i := 0; i < argc-2; i++ {
-		if binding, ok := bindMap[args[i].String]; ok {
-			bindMap = binding.Children
-		} else {
-			bindMap[args[i].String] = Binding{
-				Children: make(map[string]Binding),
-			}
-			bindMap = bindMap[args[i].String].Children
+		child := value.MapItem(args[i].String)
+		if child.IsNull() {
+			child = block.NewMap(map[string]*block.Block{})
+			value.SetMapItem(args[i].String, child)
 		}
+		value = child
 	}
-	bindMap[args[argc-2].String] = Binding{
-		Value: args[argc-1],
-	}
-
+	value.SetMapItem(args[argc-2].String, args[argc-1])
 	return block.NewNull(), nil
 }

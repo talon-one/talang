@@ -13,25 +13,19 @@ import (
 func TestScopeBinding(t *testing.T) {
 	// create an interpreter and set a binding
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.Set("RootKey", interpreter.Binding{
-		Value: block.NewString("Root"),
-	})
+	interp.Set("RootKey", block.NewString("Root"))
 
 	// get the binding
 	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").String)
 
 	// create a scope and set a binding ON the scope
 	scope := interp.NewScope()
-	scope.Set("ScopeKey", interpreter.Binding{
-		Value: block.NewString("Scope"),
-	})
+	scope.Set("ScopeKey", block.NewString("Scope"))
 	// check if the scope has the same binding as the root
 	require.Equal(t, "Root", scope.MustLexAndEvaluate("(. RootKey)").String)
 
 	// overwrite the binding on scope level
-	scope.Set("RootKey", interpreter.Binding{
-		Value: block.NewBool(true),
-	})
+	scope.Set("RootKey", block.NewBool(true))
 	require.Equal(t, "true", scope.MustLexAndEvaluate("(. RootKey)").String)
 	require.Equal(t, "Root", interp.MustLexAndEvaluate("(. RootKey)").String)
 

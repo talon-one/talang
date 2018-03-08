@@ -189,6 +189,18 @@ func (b *Block) MapItem(key string) *Block {
 	return NewNull()
 }
 
+// Set an item in the map
+func (b *Block) SetMapItem(key string, value *Block) {
+	for i, k := range b.Keys {
+		if key == k {
+			b.Children[i] = value
+			return
+		}
+	}
+	b.Keys = append(b.Keys, key)
+	b.Children = append(b.Children, value)
+}
+
 // Create the map
 func (b *Block) Map() map[string]*Block {
 	m := make(map[string]*Block)

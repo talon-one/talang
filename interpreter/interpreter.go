@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"go/ast"
 	"log"
-	"strings"
-
 	"reflect"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/block"
@@ -16,7 +15,7 @@ import (
 )
 
 type Interpreter struct {
-	Binding   map[string]Binding
+	Binding   *block.Block
 	Context   context.Context
 	Parent    *Interpreter
 	Functions []TaFunction
@@ -29,7 +28,6 @@ func NewInterpreter() (*Interpreter, error) {
 	if err := interp.registerCoreFunctions(); err != nil {
 		return nil, err
 	}
-	interp.Binding = make(map[string]Binding)
 	return &interp, nil
 }
 
@@ -222,11 +220,21 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 	return false, nil
 }
 
-func (interp *Interpreter) Set(key string, value Binding) {
-	interp.Binding[key] = value
+func (interp *Interpreter) Get(key string) *block.Block {
+	if interp.Binding != nil {
+		return interp.Binding.MapItem(key)
+	}
+	return block.NewNull()
 }
 
-func genericSetConv(value interface{}) (*Binding, error) {
+func (interp *Interpreter) Set(key string, value *block.Block) {
+	if interp.Binding == nil {
+		interp.Binding = block.NewMap(map[string]*block.Block{})
+	}
+	interp.Binding.SetMapItem(key, value)
+}
+
+func genericSetConv(value interface{}) (*block.Block, error) {
 	reflectValue := reflect.ValueOf(value)
 	reflectType := reflectValue.Type()
 	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
@@ -236,18 +244,17 @@ func genericSetConv(value interface{}) (*Binding, error) {
 
 	switch reflectType.Kind() {
 	case reflect.Struct:
-		var bind Binding
-		bind.Children = make(map[string]Binding)
+		m := make(map[string]*block.Block)
 		for i := 0; i < reflectType.NumField(); i++ {
 			if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
 				structValue, err := genericSetConv(reflectValue.Field(i).Interface())
 				if err != nil {
 					return nil, err
 				}
-				bind.Children[fieldStruct.Name] = *structValue
+				m[fieldStruct.Name] = structValue
 			}
 		}
-		return &bind, nil
+		return block.NewMap(m), nil
 	case reflect.Int:
 		fallthrough
 	case reflect.Int8:
@@ -267,34 +274,27 @@ func genericSetConv(value interface{}) (*Binding, error) {
 	case reflect.Uint32:
 		fallthrough
 	case reflect.Uint64:
-		return &Binding{
-			Value: block.New(fmt.Sprintf("%v", value)),
-		}, nil
+		return block.NewDecimalFromString(fmt.Sprintf("%v", value)), nil
 	case reflect.String:
-		return &Binding{
-			Value: block.NewString(value.(string)),
-		}, nil
+		return block.NewString(value.(string)), nil
 	case reflect.Bool:
-		return &Binding{
-			Value: block.NewBool(value.(bool)),
-		}, nil
+		return block.NewBool(value.(bool)), nil
 	}
 	return nil, errors.Errorf("Unknown type `%T'", value)
 }
 
 func (interp *Interpreter) GenericSet(key string, value interface{}) error {
-	binding, err := genericSetConv(value)
+	block, err := genericSetConv(value)
 	if err != nil {
 		return err
 	}
 
-	interp.Binding[key] = *binding
+	interp.Set(key, block)
 	return nil
 }
 
 func (interp *Interpreter) NewScope() *Interpreter {
 	i := Interpreter{}
-	i.Binding = make(map[string]Binding)
 	i.Parent = interp
 	i.Logger = interp.Logger
 	// we need to register binding and template on this scope, because it uses its own scopes
