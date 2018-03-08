@@ -8,13 +8,22 @@ import (
 	"github.com/talon-one/talang/block"
 )
 
-func (interp *Interpreter) RegisterTemplate(signature TaTemplate) error {
-	signature.Name = strings.ToLower(signature.Name)
-	if interp.GetTemplate(signature) != nil {
-		return errors.Errorf("Template `%s' is already registered", signature.Name)
+func (interp *Interpreter) RegisterTemplate(signatures ...TaTemplate) error {
+	for i := 0; i < len(signatures); i++ {
+		signature := signatures[i]
+		signature.Name = strings.ToLower(signature.Name)
+		if interp.GetTemplate(signature) != nil {
+			return errors.Errorf("Template `%s' is already registered", signature.Name)
+		}
+		interp.Templates = append(interp.Templates, signature)
 	}
-	interp.Templates = append(interp.Templates, signature)
 	return nil
+}
+
+func (interp *Interpreter) MustRegisterTemplate(signatures ...TaTemplate) {
+	if err := interp.RegisterTemplate(signatures...); err != nil {
+		panic(err)
+	}
 }
 
 func (interp *Interpreter) UpdateTemplate(signature TaTemplate) error {

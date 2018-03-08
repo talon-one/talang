@@ -34,6 +34,12 @@ func (interp *Interpreter) RegisterFunction(signatures ...TaFunction) error {
 	return nil
 }
 
+func (interp *Interpreter) MustRegisterFunction(signatures ...TaFunction) {
+	if err := interp.RegisterFunction(signatures...); err != nil {
+		panic(err)
+	}
+}
+
 func (interp *Interpreter) UpdateFunction(signature TaFunction) error {
 	signature.Name = strings.ToLower(signature.Name)
 	if s := interp.GetFunction(signature); s != nil {
