@@ -51,6 +51,20 @@ func TestUnqoute(t *testing.T) {
 			`Hello (World) and (Universe (and Sun))`,
 			``,
 		},
+		{
+			`(Hello (World)) (Universe)`,
+			`(`,
+			`)`,
+			`Hello (World)`,
+			` (Universe)`,
+		},
+		{
+			`(Hello (World and (Universe))) some Rest`,
+			`(`,
+			`)`,
+			`Hello (World and (Universe))`,
+			` some Rest`,
+		},
 		// Two quotes
 		{
 			`(Hello) (World)`,
@@ -79,8 +93,8 @@ func TestUnqoute(t *testing.T) {
 			`(Hello (World)`,
 			`(`,
 			`)`,
-			`Hello (World`,
 			``,
+			`(Hello (World)`,
 		},
 		// Same Start and End Quote
 		{
@@ -92,10 +106,10 @@ func TestUnqoute(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		extracted, rest := Unquote(test.Input, test.Start, test.End)
-		require.Equal(t, test.Extracted, extracted)
-		require.Equal(t, test.Rest, rest)
+		require.Equal(t, test.Extracted, extracted, "Test #%d failed (extracted):`%s'", i, test.Input)
+		require.Equal(t, test.Rest, rest, "Test #%d failed (rest): `%s'", i, test.Input)
 	}
 }
 
@@ -138,17 +152,17 @@ func TestEscapeUnquote(t *testing.T) {
 			``,
 		},
 		{
-			`"Hello \"World \\"Bar\\"\""`,
+			`"Hello \"World \\"Foo\\"\""`,
 			`"`,
 			`\`,
-			`Hello "World \"Bar\""`,
+			`Hello "World \"Foo\""`,
 			``,
 		},
 		{
-			`"Hello \"World\" and \"Universe \\"and Sun\\"\""`,
+			`"Hello \"World \\"Foo \\\"Bar\\\"\\"\""`,
 			`"`,
 			`\`,
-			`Hello "World" and "Universe \"and Sun\""`,
+			`Hello "World \"Foo \\"Bar\\"\""`,
 			``,
 		},
 		// Two quotes
@@ -183,35 +197,35 @@ func TestEscapeUnquote(t *testing.T) {
 			`"Hello`,
 		},
 		{
+			`"Hello \"World\"`,
+			`"`,
+			`\`,
+			``,
+			`"Hello \"World\"`,
+		},
+		{
 			`"Hello \"World"`,
 			`"`,
 			`\`,
-			`Hello \"World`,
+			`Hello "World`,
 			``,
-		},
-		{
-			`"Hello \"World\"`,
-			`"`,
-			`\`,
-			``,
-			`"Hello \"World\"`,
 		},
 	}
 
 	for i, test := range tests {
 		extracted, rest := EscapeUnquote(test.Input, test.Quote, test.Escape)
-		require.Equal(t, test.Extracted, extracted, "Test #%d failed", i)
-		require.Equal(t, test.Rest, rest, "Test #%d failed", i)
+		require.Equal(t, test.Extracted, extracted, "Test #%d failed (extracted):`%s'", i, test.Input)
+		require.Equal(t, test.Rest, rest, "Test #%d failed (rest): `%s'", i, test.Input)
 	}
 }
 
-func TestUnquoteMega(t *testing.T) {
+// Some legacy tests, keep them in, just to be sure
+func TestUnquoteLegacy(t *testing.T) {
 	doubleQuote := func(extracted string, rest string, str string) {
 		a, b := EscapeUnquote(str, `"`, `\`)
 		require.Equal(t, extracted, a)
 		require.Equal(t, rest, b)
 	}
-
 	doubleQuote(`Hello World`, ``, `"Hello World"`)
 	doubleQuote(`Hello`, ` World`, `"Hello" World`)
 	doubleQuote(`Hello`, ` "World"`, `"Hello" "World"`)
@@ -230,7 +244,7 @@ func TestUnquoteMega(t *testing.T) {
 	doubleQuote(``, `"`, `"`)
 	doubleQuote(``, `"Test`, `"Test`)
 	doubleQuote(`Hello`, ` "World`, `"Hello" "World`)
-	doubleQuote(`Hello \"`, ``, `"Hello \""`)
+	doubleQuote(`Hello "`, ``, `"Hello \""`)
 	doubleQuote(``, ``, `""`)
 
 	doubleQuote(``, `Hello World`, `Hello World`)
@@ -250,8 +264,8 @@ func TestUnquoteMega(t *testing.T) {
 	brakets(`(C) (D)`, ``, `((C) (D))`)
 
 	brakets(``, `(Hello World`, `(Hello World`)
-	brakets(`Hello (World`, ``, `(Hello (World)`)
-	// brakets(`Hello ((World)`, ``, `(Hello ((World))`)
+	brakets(``, `(Hello (World)`, `(Hello (World)`)
+	brakets(``, `(Hello ((World))`, `(Hello ((World))`)
 
 	brakets(`Token2 Token3 (Token4 Token5) Token6`, ` Token7`, `(Token2 Token3 (Token4 Token5) Token6) Token7`)
 	brakets(`Token1 (Token2 Token3) (Token4 (Token5 Token6))`, ``, `(Token1 (Token2 Token3) (Token4 (Token5 Token6)))`)
@@ -280,8 +294,8 @@ func TestUnquoteMega(t *testing.T) {
 	curlyBrackets(`Hello {World {, {Universe,} Dimension}} and Religion`, ``, `{Hello {World {, {Universe,} Dimension}} and Religion}`)
 
 	curlyBrackets(``, `{Hello World`, `{Hello World`)
-	curlyBrackets(`Hello {World`, ``, `{Hello {World}`)
-	// curlyBrackets(`Hello {{World}`, ``, `{Hello {{World}}`)
+	curlyBrackets(``, `{Hello {World}`, `{Hello {World}`)
+	curlyBrackets(``, `{Hello {{World}}`, `{Hello {{World}}`)
 
 	curlyBrackets(`Token2 Token3 {Token4 Token5} Token6`, ` Token7`, `{Token2 Token3 {Token4 Token5} Token6} Token7`)
 

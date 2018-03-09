@@ -2,6 +2,9 @@
 package list
 
 import (
+	"sort"
+
+	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
 
 	"github.com/talon-one/talang/block"
@@ -159,5 +162,88 @@ var Map = interpreter.TaFunction{
 			values = append(values, &result)
 		}
 		return block.NewList(values...), nil
+	},
+}
+
+var Sort = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "sort",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.BoolKind,
+		},
+		Returns:     block.ListKind,
+		Description: "Sort a list ascending, set the second argument to true for descending order",
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := block.NewList()
+		list.Children = make([]*block.Block, len(args[0].Children), len(args[0].Children))
+		copy(list.Children, args[0].Children)
+
+		if len(args) > 1 && args[1].Bool == true {
+			a := block.BlockArguments(list.Children)
+			sort.Sort(sort.Reverse(&a))
+		} else {
+			sort.Sort(block.BlockArguments(list.Children))
+		}
+
+		return list, nil
+	},
+}
+
+var Min = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "min",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Find the lowest number in the list",
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		var d *decimal.Big
+		for _, item := range args[0].Children {
+			if item.IsDecimal() {
+				if d == nil {
+					d = item.Decimal
+				} else if item.Decimal.Cmp(d) < 0 {
+					d = item.Decimal
+				}
+			}
+		}
+		if d == nil {
+			return nil, errors.New("No decimal present in list")
+		}
+		return block.NewDecimal(d), nil
+	},
+}
+
+var Max = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "max",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Find the largest number in the list",
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		var d *decimal.Big
+		for _, item := range args[0].Children {
+			if item.IsDecimal() {
+				if d == nil {
+					d = item.Decimal
+				} else if item.Decimal.Cmp(d) > 0 {
+					d = item.Decimal
+				}
+			}
+		}
+		if d == nil {
+			return nil, errors.New("No decimal present in list")
+		}
+		return block.NewDecimal(d), nil
 	},
 }

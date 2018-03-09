@@ -11,5 +11,8 @@ func AllOperations() []interpreter.TaFunction {
 		Item,
 		Push,
 		Map,
+		Sort,
+		Min,
+		Max,
 	}
 }

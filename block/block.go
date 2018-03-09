@@ -346,3 +346,6 @@ func (b BlockArguments) ToHumanReadable() string {
 	}
 	return strings.Join(arr, ", ")
 }
+func (b BlockArguments) Len() int           { return len(b) }
+func (b BlockArguments) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b BlockArguments) Less(i, j int) bool { return strings.Compare(b[i].String, b[j].String) < 0 }

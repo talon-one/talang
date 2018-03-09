@@ -193,3 +193,64 @@ func TestMap(t *testing.T) {
 		block.NewList(block.NewString("Joe Doe"), block.NewString("Alice Wonder")),
 	})
 }
+
+func TestSort(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.Binding = block.NewMap(map[string]*block.Block{
+		"List": block.NewList(
+			block.NewString("World"),
+			block.NewDecimalFromInt(2),
+			block.NewString("Hello"),
+			block.NewDecimalFromInt(1),
+		),
+	})
+	require.EqualValues(t, block.NewList(block.NewDecimalFromInt(1), block.NewDecimalFromInt(2), block.NewString("Hello"), block.NewString("World")), interp.MustLexAndEvaluate("sort (. List)"))
+
+	// integrity check
+	require.EqualValues(t, block.NewList(block.NewString("World"), block.NewDecimalFromInt(2), block.NewString("Hello"), block.NewDecimalFromInt(1)), interp.Get("List"))
+
+	require.EqualValues(t, block.NewList(block.NewString("World"), block.NewString("Hello"), block.NewDecimalFromInt(2), block.NewDecimalFromInt(1)), interp.MustLexAndEvaluate("sort (. List) true"))
+
+	// integrity check
+	require.EqualValues(t, block.NewList(block.NewString("World"), block.NewDecimalFromInt(2), block.NewString("Hello"), block.NewDecimalFromInt(1)), interp.Get("List"))
+}
+
+func TestMin(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`min (list 100 4 3 10 6000 90 99)`,
+			nil,
+			block.NewDecimalFromInt(3),
+		},
+		helpers.Test{
+			`min (list 100 4 3 10 6000 Hello 90 99)`,
+			nil,
+			block.NewDecimalFromInt(3),
+		},
+		helpers.Test{
+			`min (list Hello World)`,
+			nil,
+			&helpers.Error{},
+		},
+	)
+}
+
+func TestMax(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`max (list 100 4 3 10 6000 90 99)`,
+			nil,
+			block.NewDecimalFromInt(6000),
+		},
+		helpers.Test{
+			`max (list 100 4 3 10 6000 Hello 90 99)`,
+			nil,
+			block.NewDecimalFromInt(6000),
+		},
+		helpers.Test{
+			`max (list Hello World)`,
+			nil,
+			&helpers.Error{},
+		},
+	)
+}

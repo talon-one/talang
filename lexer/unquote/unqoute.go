@@ -15,11 +15,13 @@ func Unquote(str string, quoteStart, quoteEnd string) (string, string) {
 		return "", str
 	}
 
+	size := len(str)
 	quoteStartLen := len(quoteStart)
 	quoteEndLen := len(quoteEnd)
 
 	pos := quoteStartLen
 
+start:
 	endPos := strings.Index(str[pos:], quoteEnd)
 	if endPos == -1 {
 		return "", str
@@ -40,11 +42,18 @@ func Unquote(str string, quoteStart, quoteEnd string) (string, string) {
 
 	// nesting is in our quote
 	pos = firstNested
-	for nestedStart := 0; nestedStart != -1; nestedStart = strings.Index(str[pos:], quoteStart) {
+	for nestedStart := 0; pos < size && nestedStart != -1; nestedStart = strings.Index(str[pos:], quoteStart) {
 		pos += nestedStart
 		unquoted, _ := Unquote(str[pos:], quoteStart, quoteEnd)
 		consumed := len(unquoted)
-		pos += quoteStartLen + consumed + quoteEndLen
+		if consumed > 0 {
+			pos += quoteStartLen + consumed + quoteEndLen
+			goto start
+		}
+	}
+
+	if pos >= size {
+		return "", str
 	}
 
 	endPosAfterNest := strings.Index(str[pos:], quoteEnd)
@@ -58,7 +67,7 @@ func Unquote(str string, quoteStart, quoteEnd string) (string, string) {
 
 func EscapeUnquote(str string, quote string, escape string) (string, string) {
 	unquoted, rest := escapeUnquoteRunes([]rune(str), []rune(quote), []rune(escape))
-	return string(removeRune(unquoted, utf8.RuneError)), string(rest)
+	return string(removeRune(unquoted, utf8.RuneError)), string(removeRune(rest, utf8.RuneError))
 }
 
 func removeRune(runes []rune, sep rune) []rune {
@@ -118,9 +127,11 @@ func escapeUnquoteRunes(str []rune, quote []rune, escape []rune) ([]rune, []rune
 		copy(newQuote[escapeLen:], quote)
 		unquoted, _ := escapeUnquoteRunes(str[pos:], newQuote, escape)
 		consumed := len(unquoted)
+
+		str[pos] = utf8.RuneError
+
 		if consumed > 0 {
 			// mark it for removal
-			str[pos] = utf8.RuneError
 			str[pos+escapeLen+quoteLen+consumed] = utf8.RuneError
 			pos += consumed + len(newQuote)*2
 		} else {

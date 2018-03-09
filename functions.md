@@ -9,11 +9,11 @@
 ### *(Decimal, Decimal, Decimal...)Decimal
     Multiplies the arguments
 
-### +(Decimal, Decimal, Decimal...)Decimal
-    Adds the arguments
-
 ### +(String, String, String...)String
     Concat strings
+
+### +(Decimal, Decimal, Decimal...)Decimal
+    Adds the arguments
 
 ### -(Decimal, Decimal, Decimal...)Decimal
     Subtracts the arguments
@@ -24,31 +24,31 @@
 ### /(Decimal, Decimal, Decimal...)Decimal
     Divides the arguments
 
-### <(Time, Time, Time...)Bool
-    Tests if the first argument is less then the following
-
 ### <(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is less then the following
 
-### <=(Time, Time, Time...)Bool
-    Tests if the first argument is less or equal then the following
+### <(Time, Time, Time...)Bool
+    Tests if the first argument is less then the following
 
 ### <=(Decimal, Decimal, Decimal...)Bool
+    Tests if the first argument is less or equal then the following
+
+### <=(Time, Time, Time...)Bool
     Tests if the first argument is less or equal then the following
 
 ### =(Atom, Atom, Atom...)Bool
     Tests if the arguments are the same
 
-### >(Time, Time, Time...)Bool
-    Tests if the first argument is greather then the following
-
 ### >(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is greather then the following
 
-### >=(Decimal, Decimal, Decimal...)Bool
-    Tests if the first argument is greather or equal then the following
+### >(Time, Time, Time...)Bool
+    Tests if the first argument is greather then the following
 
 ### >=(Time, Time, Time...)Bool
+    Tests if the first argument is greather or equal then the following
+
+### >=(Decimal, Decimal, Decimal...)Bool
     Tests if the first argument is greather or equal then the following
 
 ### between(Time, Time, Time, Time...)Bool
@@ -90,6 +90,12 @@
 ### map(List, String, Block)List
     Create a new list by evaluating the given block for each item in the input list
 
+### max(List)Decimal
+    Find the largest number in the list
+
+### min(List)Decimal
+    Find the lowest number in the list
+
 ### mod(Decimal, Decimal, Decimal...)Decimal
     Modulo the arguments
 
@@ -104,6 +110,9 @@
 
 ### set(String, Kind(127), Kind(127)...)Null
     Set a variable in the binding
+
+### sort(List, Bool...)List
+    Sort a list ascending, set the second argument to true for descending order
 
 ### startswith(String, String, String...)Bool
     Returns wether the first argument is the prefix of the following arguments
