@@ -191,6 +191,7 @@ func TestGenericSet(t *testing.T) {
 		require.Equal(t, test.expected, interp.MustLexAndEvaluate(". Key"), "Failed for %v", test.input)
 	}
 
+	// struct
 	require.NoError(t, interp.GenericSet("Key", struct {
 		Str1 string
 		Int2 int
@@ -201,17 +202,18 @@ func TestGenericSet(t *testing.T) {
 	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
 	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
 
-	st := struct {
+	// struct ptr
+	require.NoError(t, interp.GenericSet("Key", &struct {
 		Str1 string
 		Int2 int
 	}{
 		Str1: "Test",
 		Int2: 1,
-	}
-	require.NoError(t, interp.GenericSet("Key", &st))
+	}))
 	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
 	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
 
+	// map
 	require.NoError(t, interp.GenericSet("Key", map[string]interface{}{
 		"Str1": "Test",
 		"Int2": 1,
@@ -223,6 +225,11 @@ func TestGenericSet(t *testing.T) {
 		1: "Test",
 		2: 1,
 	}))
+
+	// slice
+	require.NoError(t, interp.GenericSet("Key", []interface{}{"Hello", true}))
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("item (. Key) 0").String)
+	require.Equal(t, true, interp.MustLexAndEvaluate("item (. Key) 1").Bool)
 }
 
 func TestMustEvaluate(t *testing.T) {

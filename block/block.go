@@ -81,6 +81,17 @@ func NewDecimalFromString(s string) *Block {
 	return &b
 }
 
+// NewDecimalFromFloat creates a new decimal block from a float (REMEMBER float64 is not exact! use with care)
+func NewDecimalFromFloat(i float64) *Block {
+	var b Block
+	b.Decimal = decimal.New(0, 0)
+	b.Decimal = b.Decimal.SetFloat64(i)
+	b.Kind = DecimalKind
+	b.String = b.Decimal.String()
+	b.Children = []*Block{}
+	return &b
+}
+
 func NewBool(boolean bool) *Block {
 	var b Block
 	b.Bool = boolean

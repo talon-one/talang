@@ -237,7 +237,7 @@ func (interp *Interpreter) Set(key string, value *block.Block) {
 func genericSetConv(value interface{}) (*block.Block, error) {
 	reflectValue := reflect.ValueOf(value)
 	reflectType := reflectValue.Type()
-	for reflectType.Kind() == reflect.Slice || reflectType.Kind() == reflect.Ptr {
+	for reflectType.Kind() == reflect.Ptr {
 		reflectType = reflectType.Elem()
 		reflectValue = reflectValue.Elem()
 	}
@@ -268,6 +268,17 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 			}
 		}
 		return block.NewMap(m), nil
+	case reflect.Slice:
+		size := reflectValue.Len()
+		s := make([]*block.Block, size, size)
+		for i := 0; i < size; i++ {
+			var err error
+			s[i], err = genericSetConv(reflectValue.Index(i).Interface())
+			if err != nil {
+				return nil, err
+			}
+		}
+		return block.NewList(s...), nil
 	case reflect.Int:
 		fallthrough
 	case reflect.Int8:
@@ -292,6 +303,10 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 		return block.NewString(value.(string)), nil
 	case reflect.Bool:
 		return block.NewBool(value.(bool)), nil
+	case reflect.Float32:
+		return block.NewDecimalFromFloat(float64(value.(float32))), nil
+	case reflect.Float64:
+		return block.NewDecimalFromFloat(value.(float64)), nil
 	}
 	return nil, errors.Errorf("Unknown type `%T'", value)
 }
