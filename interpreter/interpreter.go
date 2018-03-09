@@ -255,6 +255,19 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 			}
 		}
 		return block.NewMap(m), nil
+	case reflect.Map:
+		m := make(map[string]*block.Block)
+		if reflectType.Key().Kind() != reflect.String {
+			return nil, errors.New("A diffrent key than `string' is not supported")
+		}
+		for _, key := range reflectValue.MapKeys() {
+			var err error
+			m[key.String()], err = genericSetConv(reflectValue.MapIndex(key).Interface())
+			if err != nil {
+				return nil, err
+			}
+		}
+		return block.NewMap(m), nil
 	case reflect.Int:
 		fallthrough
 	case reflect.Int8:
@@ -289,7 +302,11 @@ func (interp *Interpreter) GenericSet(key string, value interface{}) error {
 		return err
 	}
 
-	interp.Set(key, block)
+	if len(key) == 0 {
+		interp.Binding = block
+	} else {
+		interp.Set(key, block)
+	}
 	return nil
 }
 

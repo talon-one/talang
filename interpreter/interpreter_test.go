@@ -211,6 +211,18 @@ func TestGenericSet(t *testing.T) {
 	require.NoError(t, interp.GenericSet("Key", &st))
 	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
 	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
+
+	require.NoError(t, interp.GenericSet("Key", map[string]interface{}{
+		"Str1": "Test",
+		"Int2": 1,
+	}))
+	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
+	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
+
+	require.Error(t, interp.GenericSet("Key", map[int]interface{}{
+		1: "Test",
+		2: 1,
+	}))
 }
 
 func TestMustEvaluate(t *testing.T) {
