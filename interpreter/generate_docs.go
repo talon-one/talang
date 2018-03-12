@@ -66,7 +66,8 @@ const markdownTemplate string = `# Embedded Functions
 )
 {{- $element.Returns }}
 {{ $element.Description }}
-` + "```" + `{{ TrimSpace $element.Example }}
+` + "```" + `
+{{ TrimSpace $element.Example }}
 ` + "```" + `
 {{ end }}
 `
