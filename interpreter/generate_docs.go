@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 )
 
 var flagOutput = flag.String("format", "md", "format to use for output")
+var flagDir = flag.String("dir", ".", "output dir")
 
 const htmlTemplate string = `
 <html>
@@ -108,7 +110,7 @@ func main() {
 
 	switch strings.ToLower(*flagOutput) {
 	case "json":
-		f, err := os.Create("functions.json")
+		f, err := os.Create(filepath.Join(*flagDir, "functions.json"))
 		if err != nil {
 			panic(err)
 		}
@@ -121,7 +123,7 @@ func main() {
 			panic(err)
 		}
 	case "html":
-		f, err := os.Create("functions.html")
+		f, err := os.Create(filepath.Join(*flagDir, "functions.html"))
 		if err != nil {
 			panic(err)
 		}
@@ -136,7 +138,7 @@ func main() {
 			panic(err)
 		}
 	case "md":
-		f, err := os.Create("functions.md")
+		f, err := os.Create(filepath.Join(*flagDir, "functions.md"))
 		if err != nil {
 			panic(err)
 		}
