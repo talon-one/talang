@@ -49,6 +49,7 @@ const htmlTemplate string = `
 			{{- $element.Returns -}}
 			</summary>
 			<p>{{ $element.Description }}</p>
+			<code>{{- $element.Example -}}</code>
 		</details>
 	{{ end }}
 </html>
@@ -64,7 +65,9 @@ const markdownTemplate string = `# Embedded Functions
 {{ if $element.IsVariadic }}...{{ end -}}
 )
 {{- $element.Returns }}
-    {{ $element.Description }}
+{{ $element.Description }}
+` + "```" + `{{ TrimSpace $element.Example }}
+` + "```" + `
 {{ end }}
 `
 
@@ -129,7 +132,7 @@ func main() {
 		}
 		defer f.Close()
 
-		t, err := template.New("html").Parse(htmlTemplate)
+		t, err := template.New("html").Funcs(template.FuncMap{"TrimSpace": strings.TrimSpace}).Parse(htmlTemplate)
 		if err != nil {
 			panic(err)
 		}
@@ -144,7 +147,7 @@ func main() {
 		}
 		defer f.Close()
 
-		t, err := texttemplate.New("html").Parse(markdownTemplate)
+		t, err := texttemplate.New("html").Funcs(texttemplate.FuncMap{"TrimSpace": strings.TrimSpace}).Parse(markdownTemplate)
 		if err != nil {
 			panic(err)
 		}

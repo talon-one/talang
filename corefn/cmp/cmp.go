@@ -22,6 +22,14 @@ var Equal = interpreter.TaFunction{
 		},
 		Returns:     block.BoolKind,
 		Description: "Tests if the arguments are the same",
+		Example: `
+= 1 1                                                           // compares decimals, returns true
+= "Hello World" "Hello World"                                   // compares strings, returns true
+= true true                                                     // compares booleans, returns true
+(= "Mon Jan 2 15:04:05 MST 2006" "Mon Jan 2 15:04:05 MST 2006") // compares time, returns true
+(= 1 "1")                                                       // returns true
+(= "Hello" "Hello" "Bye")                                       // returns false
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		for i := 1; i < len(args); i++ {

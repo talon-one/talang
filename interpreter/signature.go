@@ -15,6 +15,7 @@ type CommonSignature struct {
 	Name        string
 	Returns     block.Kind
 	Description string
+	Example     string
 }
 
 type TaFunction struct {
