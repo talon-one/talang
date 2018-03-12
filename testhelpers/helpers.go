@@ -12,7 +12,7 @@ import (
 
 func MustNewInterpreterWithLogger() *talang.Interpreter {
 	interp := talang.MustNewInterpreter()
-	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
+	interp.Logger = log.New(os.Stdout, "", 0)
 	return interp
 }
 

@@ -70,12 +70,18 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 	}
 
 	if len(b.String) > 0 {
+		var oldPrefix string
 		if interp.Logger != nil {
 			interp.Logger.Printf("Evaluating `%s'\n", b.Stringify())
+			oldPrefix = interp.Logger.Prefix()
+			interp.Logger.SetPrefix(oldPrefix + ">")
 		}
 		stopProcessing, err := interp.callFunc(b)
 		if err != nil {
 			return err
+		}
+		if interp.Logger != nil {
+			interp.Logger.SetPrefix(oldPrefix)
 		}
 		if stopProcessing {
 			return nil
