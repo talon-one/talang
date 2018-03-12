@@ -21,7 +21,7 @@ You can see a list of all embedded functions in [functions.md](functions.md)
 |             |                                                                                | `"Hello World"`                       |
 | Bool        | `true` or `false`                                                              | `true`                                |
 |             |                                                                                | `false`                               |
-| Time        |                                                                                |                                       |
+| Time        |                                                                                | `Mon Jan 2 15:04:05 MST 2006`         |
 | Null        |                                                                                |                                       |
 | List        |                                                                                | `list 1 true "Hello World"`           |
 | Map         |                                                                                | `kv (Key1 true) (Key2 "Hello World")` |
