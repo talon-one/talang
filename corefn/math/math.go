@@ -22,6 +22,10 @@ var Add = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Adds the arguments",
+		Example: `
+(+ 1 1)                                                         // returns 2
+(+ 1 2 3)                                                       // returns 6
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
@@ -47,6 +51,10 @@ var Sub = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Subtracts the arguments",
+		Example: `
+(- 1 1)                                                         // returns 0
+(- 1 2 3)                                                       // returns -4
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
@@ -72,6 +80,10 @@ var Mul = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Multiplies the arguments",
+		Example: `
+(* 1 2)                                                         // returns 2
+(* 1 2 3)                                                       // returns 6
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
@@ -97,6 +109,10 @@ var Div = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Divides the arguments",
+		Example: `
+(/ 1 2)                                                         // returns 0.5
+(/ 1 2 3)                                                       // returns 0.166666
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
@@ -122,6 +138,10 @@ var Mod = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Modulo the arguments",
+		Example: `
+(mod 1 2)                                                         // returns 1
+(mod 3 8 2)                                                       // returns 1
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
@@ -144,6 +164,14 @@ var Floor = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Floor the decimal argument",
+		Example: `
+(floor 2)                                                         // returns 2
+(floor 2.4)                                                       // returns 2
+(floor 2.5)                                                       // returns 2
+(floor 2.9)                                                       // returns 2
+(floor -2.7)                                                      // returns -3
+(floor -2)                                                        // returns -2
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
@@ -164,6 +192,14 @@ var Ceil = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Ceil the decimal argument",
+		Example: `
+(ceil 2)                                                          // returns 2
+(ceil 2.4)                                                        // returns 3
+(ceil 2.5)                                                        // returns 3
+(ceil 2.9)                                                        // returns 3
+(ceil -2.7)                                                       // returns -2
+(ceil -2)                                                         // returns -2
+		`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}

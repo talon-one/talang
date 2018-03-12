@@ -185,6 +185,11 @@ func TestCeil(t *testing.T) {
 			block.NewDecimal(decimal.New(3, 0)),
 		},
 		helpers.Test{
+			"ceil 2.5",
+			nil,
+			block.NewDecimal(decimal.New(3, 0)),
+		},
+		helpers.Test{
 			"ceil 2.9",
 			nil,
 			block.NewDecimal(decimal.New(3, 0)),

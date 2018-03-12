@@ -21,25 +21,29 @@ Tests if the arguments are not the same
 ### *(Decimal, Decimal, Decimal...)Decimal
 Multiplies the arguments
 ```
-
+(* 1 2)                                                         // returns 2
+(* 1 2 3)                                                       // returns 6
 ```
 
 ### +(String, String, String...)String
 Concat strings
 ```
-
+(+ "Hello" " " "World")                                           // returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
 ```
 
 ### +(Decimal, Decimal, Decimal...)Decimal
 Adds the arguments
 ```
-
+(+ 1 1)                                                         // returns 2
+(+ 1 2 3)                                                       // returns 6
 ```
 
 ### -(Decimal, Decimal, Decimal...)Decimal
 Subtracts the arguments
 ```
-
+(- 1 1)                                                         // returns 0
+(- 1 2 3)                                                       // returns -4
 ```
 
 ### .(Atom, Atom...)Any
@@ -51,7 +55,8 @@ Access a variable in the binding
 ### /(Decimal, Decimal, Decimal...)Decimal
 Divides the arguments
 ```
-
+(/ 1 2)                                                         // returns 0.5
+(/ 1 2 3)                                                       // returns 0.166666
 ```
 
 ### <(Decimal, Decimal, Decimal...)Bool
@@ -153,19 +158,28 @@ Tests if the arguments are between the second last and the last argument
 ### ceil(Decimal)Decimal
 Ceil the decimal argument
 ```
-
+(ceil 2)                                                          // returns 2
+(ceil 2.4)                                                        // returns 3
+(ceil 2.5)                                                        // returns 3
+(ceil 2.9)                                                        // returns 3
+(ceil -2.7)                                                       // returns -2
+(ceil -2)                                                         // returns -2
 ```
 
 ### concat(String, String, String...)String
 Concat strings
 ```
-
+(+ "Hello" " " "World")                                           // returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
 ```
 
 ### contains(String, String, String...)Bool
 Returns wether the first argument exists in the following arguments
 ```
-
+(contains "Hello" "Hello World")                                  // returns true
+(contains "Hello" "World")                                        // returns false
+(contains "Hello" "Hello World" "Hello Universe")                 // returns true
+(contains "World" "Hello World" "Hello Universe")                 // returns false
 ```
 
 ### drop(List)List
@@ -177,13 +191,21 @@ Create a list containing all but the last item in the input list
 ### endswith(String, String, String...)Bool
 Returns wether the first argument is the suffix of the following arguments
 ```
-
+(endsWith "World" "Hello World")                                   // returns true
+(endsWith "World" "Hello Universe")                                // returns false
+(endsWith "World" "Hello World" "Hello Universe")                  // returns false
+(endsWith "World" "Hello World" "By World")                        // returns true
 ```
 
 ### floor(Decimal)Decimal
 Floor the decimal argument
 ```
-
+(floor 2)                                                         // returns 2
+(floor 2.4)                                                       // returns 2
+(floor 2.5)                                                       // returns 2
+(floor 2.9)                                                       // returns 2
+(floor -2.7)                                                      // returns -3
+(floor -2)                                                        // returns -2
 ```
 
 ### head(List)Any
@@ -231,19 +253,23 @@ Find the lowest number in the list
 ### mod(Decimal, Decimal, Decimal...)Decimal
 Modulo the arguments
 ```
-
+(mod 1 2)                                                         // returns 1
+(mod 3 8 2)                                                       // returns 1
 ```
 
 ### noop()Any
 No operation
 ```
-
+(noop)
 ```
 
 ### notcontains(String, String, String...)Bool
 Returns wether the first argument does not exist in the following arguments
 ```
-
+(notContains "Hello" "Hello World")                                  // returns false
+(notContains "Hello" "World")                                        // returns true
+(notContains "Hello" "Hello World" "Hello Universe")                 // returns false
+(notContains "World" "Hello World" "Hello Universe")                 // returns false
 ```
 
 ### push(List, Kind(127), Kind(127)...)List
@@ -267,7 +293,10 @@ Sort a list ascending, set the second argument to true for descending order
 ### startswith(String, String, String...)Bool
 Returns wether the first argument is the prefix of the following arguments
 ```
-
+(startsWith "Hello" "Hello World")                                   // returns true
+(startsWith "Hello" "World")                                         // returns false
+(startsWith "Hello" "Hello World" "Hello Universe")                  // returns true
+(startsWith "Hello" "Hello World" "Hell Universe")                   // returns false
 ```
 
 ### tail(List)List
@@ -279,12 +308,16 @@ Returns list without the first item
 ### tostring(Kind(15))String
 Converts the parameter to a string
 ```
-
+(toString 1)                                                      // returns "1"
+(toString true)                                                   // returns "true"
 ```
 
 ### ~(String, String, String...)Bool
 Returns wether the first argument (regex) matches all of the following arguments
 ```
-
+(~ "[a-z\s]*" "Hello World")                                       // returns true
+(~ "[a-z\s]*" "Hello W0rld")                                       // returns false
+(~ "[a-z\s]*" "Hello World" "Hello Universe")                      // returns true
+(~ "[a-z\s]*" "Hello W0rld" "Hello Universe"")                     // returns false
 ```
 
