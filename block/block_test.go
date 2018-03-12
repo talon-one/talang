@@ -236,6 +236,11 @@ func TestNewTyped(t *testing.T) {
 	}
 }
 
+func TestNewTime(t *testing.T) {
+	parsedTime, err := time.Parse(time.RFC3339, "2006-01-02T15:04:05Z")
+	require.NoError(t, err)
+	require.Equal(t, NewTime(parsedTime), New("2006-01-02T15:04:05Z"))
+}
 func TestIsDecimal(t *testing.T) {
 	block := New("1")
 	require.Equal(t, true, block.IsDecimal())
