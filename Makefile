@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 
 build:
+	@go get golang.org/x/tools/cmd/stringer
 	go generate ./...
 	go run interpreter/generate_docs.go -dir=./docs/
 
