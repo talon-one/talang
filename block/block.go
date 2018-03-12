@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/ericlagergren/decimal"
 )
@@ -222,7 +223,6 @@ func (b *Block) Map() map[string]*Block {
 	return m
 }
 
-// todo: filterout invalid decimal types
 func (b *Block) initValue(text string) {
 	// only blocks could have children
 	if len(b.Children) > 0 {
@@ -249,17 +249,47 @@ func (b *Block) initValue(text string) {
 			return
 		}
 
-		var ok bool
-		// try to parse it as a decimal
-		b.Decimal, ok = decimal.New(0, 0).SetString(text)
-		if ok {
-			b.Kind = DecimalKind
-			return
+		if isDecimal(text) {
+			var ok bool
+			// try to parse it as a decimal
+			b.Decimal, ok = decimal.New(0, 0).SetString(text)
+			if ok {
+				b.Kind = DecimalKind
+				return
+			}
 		}
 		b.Kind = StringKind
 	} else {
 		b.Kind = BlockKind
 	}
+}
+
+func isDecimal(s string) bool {
+	if len(s) <= 0 {
+		return false
+	}
+	runes := []rune(s)
+
+	i := 0
+	if runes[0] == '+' || runes[0] == '-' {
+		i++
+	}
+
+	gotDot := false
+	for ; i < len(runes); i++ {
+		if runes[i] == '.' {
+			if gotDot == true {
+				return false
+			}
+			gotDot = true
+			continue
+		}
+		if !unicode.IsNumber(runes[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (b *Block) Update(source *Block) {
