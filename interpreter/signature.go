@@ -24,7 +24,7 @@ type TaFunction struct {
 
 type TaTemplate struct {
 	CommonSignature
-	Template block.Block `json:"-"`
+	Template block.Block
 }
 
 func (s *CommonSignature) String() string {
