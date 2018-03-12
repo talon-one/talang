@@ -1,6 +1,8 @@
 package block
 
 import (
+	"encoding/json"
+	"sort"
 	"testing"
 	"time"
 
@@ -97,6 +99,8 @@ func TestNewTyped(t *testing.T) {
 
 		{TimeKind, "2006-01-02T15:04:05Z", NewTime(time)},
 
+		{ListKind, "", NewList()},
+
 		{NullKind, "", NewNull()},
 	}
 	for _, test := range tests {
@@ -187,12 +191,145 @@ func TestUpdate(t *testing.T) {
 	}, b.Map())
 }
 
-func TestString(t *testing.T) {
+func TestMapItem(t *testing.T) {
+	block := NewMap(map[string]*Block{
+		"Key1": NewBool(true),
+		"Key2": NewDecimalFromInt(1),
+		"Key3": NewString("Hello"),
+	})
+	require.Equal(t, NewBool(true), block.MapItem("Key1"))
+
+	require.Equal(t, NewNull(), block.MapItem("Key4"))
+}
+
+func TestSetMapItem(t *testing.T) {
+	block := NewMap(map[string]*Block{
+		"Key1": NewBool(true),
+		"Key2": NewDecimalFromInt(1),
+		"Key3": NewString("Hello"),
+	})
+	block.SetMapItem("Key1", NewString("World"))
+	require.Equal(t, NewString("World"), block.MapItem("Key1"))
+
+	block.SetMapItem("Key4", NewString("Foo"))
+	require.Equal(t, NewString("Foo"), block.MapItem("Key4"))
+}
+
+func TestStringify(t *testing.T) {
 	block := New("+", New("1"), New("2"))
 	require.Equal(t, "(+ 1 2)", block.Stringify())
 
 	block = New("+", New("-", New("1"), New("2")), New("3"))
 	require.Equal(t, "(+ (- 1 2) 3)", block.Stringify())
+
+	block = New("", New("-", New("1"), New("2")), New("3"))
+	require.Equal(t, "((- 1 2) 3)", block.Stringify())
+}
+
+func TestEqual(t *testing.T) {
+	now := time.Now()
+	tests := []struct {
+		a        *Block
+		b        *Block
+		expected bool
+	}{
+		{
+			NewDecimalFromInt(1),
+			NewDecimalFromInt(1),
+			true,
+		},
+		{
+			NewString("Hello"),
+			NewString("Hello"),
+			true,
+		},
+		{
+			NewBool(true),
+			NewBool(true),
+			true,
+		},
+		{
+			NewTime(now),
+			NewTime(now),
+			true,
+		},
+		{
+			NewNull(),
+			NewNull(),
+			true,
+		},
+		{
+			NewList(NewBool(true), NewString("Hello")),
+			NewList(NewBool(true), NewString("Hello")),
+			true,
+		},
+		{
+			NewMap(map[string]*Block{
+				"Key1": NewBool(true),
+				"Key2": NewDecimalFromInt(1),
+				"Key3": NewString("Hello"),
+			}),
+			NewMap(map[string]*Block{
+				"Key2": NewDecimalFromInt(1),
+				"Key1": NewBool(true),
+				"Key3": NewString("Hello"),
+			}),
+			true,
+		},
+		{
+			New("", NewBool(true), NewString("Hello")),
+			New("", NewBool(true), NewString("Hello")),
+			true,
+		},
+		{
+			NewDecimalFromInt(1),
+			nil,
+			false,
+		},
+		{
+			&Block{},
+			&Block{},
+			false,
+		},
+		{
+			NewMap(map[string]*Block{
+				"Key1": NewBool(true),
+				"Key3": NewString("Hello"),
+			}),
+			NewMap(map[string]*Block{
+				"Key2": NewDecimalFromInt(1),
+				"Key1": NewBool(true),
+				"Key3": NewString("Hello"),
+			}),
+			false,
+		},
+		{
+			NewMap(map[string]*Block{
+				"Key1": NewBool(true),
+				"Key2": NewDecimalFromInt(2),
+				"Key3": NewString("Hello"),
+			}),
+			NewMap(map[string]*Block{
+				"Key2": NewDecimalFromInt(1),
+				"Key1": NewBool(true),
+				"Key3": NewString("Hello"),
+			}),
+			false,
+		},
+		{
+			New("", NewBool(true)),
+			New("", NewBool(true), NewString("Hello")),
+			false,
+		},
+		{
+			New("", NewBool(true), NewString("Hello")),
+			New("", NewBool(false), NewString("Hello")),
+			false,
+		},
+	}
+	for i, test := range tests {
+		require.Equal(t, test.expected, test.a.Equal(test.b), "Test %d failed", i)
+	}
 }
 
 func TestArguments(t *testing.T) {
@@ -206,4 +343,30 @@ func TestArguments(t *testing.T) {
 func TestToHumanReadable(t *testing.T) {
 	block := New("+", New("1"), New("2"))
 	require.Equal(t, "1, 2", BlockArguments(block.Children).ToHumanReadable())
+}
+
+func TestMarshaling(t *testing.T) {
+	block1 := NewMap(map[string]*Block{
+		"Key2": NewDecimalFromInt(1),
+		"Key1": NewBool(true),
+		"Key3": NewString("Hello"),
+		"Key4": NewList(NewBool(false), NewMap(map[string]*Block{
+			"SubKey1": NewDecimalFromInt(3),
+			"SubKey2": NewTime(time.Now()),
+		})),
+	})
+	b, err := json.Marshal(block1)
+	require.NoError(t, err)
+
+	var block2 Block
+
+	require.NoError(t, json.Unmarshal(b, &block2))
+
+	require.Equal(t, true, block1.Equal(&block2))
+}
+
+func TestSort(t *testing.T) {
+	list := NewList(NewDecimalFromInt(4), NewDecimalFromInt(2), NewDecimalFromInt(3))
+	sort.Sort(BlockArguments(list.Children))
+	require.Equal(t, true, list.Equal(NewList(NewDecimalFromInt(2), NewDecimalFromInt(3), NewDecimalFromInt(4))))
 }

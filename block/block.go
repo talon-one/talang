@@ -298,7 +298,7 @@ func (b *Block) Stringify() string {
 }
 
 func (b *Block) Equal(a *Block) bool {
-	if a.Kind != b.Kind {
+	if a == nil || a.Kind != b.Kind {
 		return false
 	}
 
