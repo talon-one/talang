@@ -177,7 +177,7 @@ var Regexp = interpreter.TaFunction{
 (~ "[a-z\s]*" "Hello World")                                       // returns true
 (~ "[a-z\s]*" "Hello W0rld")                                       // returns false
 (~ "[a-z\s]*" "Hello World" "Hello Universe")                      // returns true
-(~ "[a-z\s]*" "Hello W0rld" "Hello Universe"")                     // returns false
+(~ "[a-z\s]*" "Hello W0rld" "Hello Universe")                      // returns false
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

@@ -318,6 +318,6 @@ Returns wether the first argument (regex) matches all of the following arguments
 (~ "[a-z\s]*" "Hello World")                                       // returns true
 (~ "[a-z\s]*" "Hello W0rld")                                       // returns false
 (~ "[a-z\s]*" "Hello World" "Hello Universe")                      // returns true
-(~ "[a-z\s]*" "Hello W0rld" "Hello Universe"")                     // returns false
+(~ "[a-z\s]*" "Hello W0rld" "Hello Universe")                      // returns false
 ```
 
