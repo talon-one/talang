@@ -22,3 +22,23 @@ func TestToString(t *testing.T) {
 		block.NewString("1"),
 	})
 }
+
+func TestNot(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			"not false",
+			nil,
+			block.NewBool(true),
+		},
+		helpers.Test{
+			"not true",
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			"not (not false)",
+			nil,
+			block.NewBool(false),
+		},
+	)
+}

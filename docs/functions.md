@@ -77,20 +77,20 @@ Tests if the first argument is less then the following
 (< 2 1)                                                         // returns false
 ```
 
-### <=(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less or equal then the following
-```
-(<= 0 1)                                                        // returns true
-(<= 1 1)                                                        // returns true
-(<= 2 1)                                                        // returns false
-```
-
 ### <=(Time, Time, Time...)Bool
 Tests if the first argument is less or equal then the following
 ```
 (<= "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
 (<= "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
 (<= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns false
+```
+
+### <=(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is less or equal then the following
+```
+(<= 0 1)                                                        // returns true
+(<= 1 1)                                                        // returns true
+(<= 2 1)                                                        // returns false
 ```
 
 ### =(Atom, Atom, Atom...)Bool
@@ -194,7 +194,8 @@ Returns wether the first argument exists in the following arguments
 ### count(List)Decimal
 Return the number of items in the input list
 ```
-
+(count (list 1 2 3 4))											// returns "4"
+(count (list 1))												// returns "1"
 ```
 
 ### drop(List)List
@@ -283,6 +284,13 @@ No operation
 (noop)
 ```
 
+### not(Bool)Bool
+Inverts the argument
+```
+(not false)                                                      // returns "true"
+(not (not false))                                                // returns "false"
+```
+
 ### notcontains(String, String, String...)Bool
 Returns wether the first argument does not exist in the following arguments
 ```
@@ -297,6 +305,13 @@ Adds an item to the list and returns the list
 ```
 (push (list "Hello World" "Hello Universe") "Hello Human")        // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
 (push (list 1 2) 3 4)                                             // returns a list containing 1, 2, 3 and 4
+```
+
+### reverse(List)List
+Reverses the order of items in a given list
+```
+(reverse (list 1 2 3 4))										// returns "(4 3 2 1)"
+(reverse (list 1))												// returns "(1)"
 ```
 
 ### set(String, Kind(127), Kind(127)...)Null

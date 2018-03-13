@@ -6,5 +6,6 @@ func AllOperations() []interpreter.TaFunction {
 	return []interpreter.TaFunction{
 		Noop,
 		ToString,
+		Not,
 	}
 }

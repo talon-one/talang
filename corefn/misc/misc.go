@@ -43,3 +43,21 @@ var ToString = interpreter.TaFunction{
 		return block.NewString(args[0].String), nil
 	},
 }
+
+var Not = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: "not",
+		Arguments: []block.Kind{
+			block.BoolKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Inverts the argument",
+		Example: `
+(not false)                                                      // returns "true"
+(not (not false))                                                // returns "false"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewBool(!args[0].Bool), nil
+	},
+}

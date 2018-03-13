@@ -313,3 +313,18 @@ func TestCount(t *testing.T) {
 		},
 	)
 }
+
+func TestReverse(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`reverse (list 1 2 3 4)`,
+			nil,
+			block.NewList(
+				block.NewDecimalFromInt(4),
+				block.NewDecimalFromInt(3),
+				block.NewDecimalFromInt(2),
+				block.NewDecimalFromInt(1),
+			),
+		},
+	)
+}
