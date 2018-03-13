@@ -82,11 +82,10 @@ var templateSignature = TaFunction{
 `,
 	},
 	Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
-		templates := interp.AllTemplates()
+		walker := templateWalker{interp: interp}
 		blockText := strings.ToLower(args[0].String)
 		// iterate trough all functions
-		for n := 0; n < len(templates); n++ {
-			template := templates[n]
+		for template := walker.Next(); template != nil; template = walker.Next() {
 			run, detail, children, err := interp.matchesSignature(&template.CommonSignature, blockText, args[1:])
 			if err != nil {
 				return nil, errors.Errorf("error in template `%s': %v", template.Name, err)

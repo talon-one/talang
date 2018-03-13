@@ -382,3 +382,23 @@ n:
 	f.pos++
 	return fn
 }
+
+type templateWalker struct {
+	interp *Interpreter
+	pos    int
+}
+
+func (f *templateWalker) Next() *TaTemplate {
+n:
+	if f.pos >= len(f.interp.Templates) {
+		if f.interp.Parent != nil {
+			f.pos = 0
+			f.interp = f.interp.Parent
+			goto n
+		}
+		return nil
+	}
+	fn := &f.interp.Templates[f.pos]
+	f.pos++
+	return fn
+}
