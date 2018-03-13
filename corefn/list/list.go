@@ -25,6 +25,10 @@ var List = interpreter.TaFunction{
 		},
 		Returns:     block.ListKind,
 		Description: "Create a list out of the children",
+		Example: `
+(list "Hello World" "Hello Universe")                           // returns a list with string items
+(list 1 true Hello)                                             // returns a list with an int, bool and string
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		return block.NewList(args...), nil
@@ -40,6 +44,10 @@ var Head = interpreter.TaFunction{
 		},
 		Returns:     block.AnyKind,
 		Description: "Returns the first item in the list",
+		Example: `
+(head (list "Hello World" "Hello Universe"))                    // returns "Hello World"
+(head (list 1 true Hello))                                      // returns 1
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args[0].Children) > 0 {
@@ -58,6 +66,10 @@ var Tail = interpreter.TaFunction{
 		},
 		Returns:     block.ListKind,
 		Description: "Returns list without the first item",
+		Example: `
+(tail (list "Hello World" "Hello Universe"))                    // returns a list containing "Hello Universe"
+(tail (list 1 true Hello))                                      // returns a list containing true and Hello
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if len(args[0].Children) <= 0 {
@@ -76,6 +88,10 @@ var Drop = interpreter.TaFunction{
 		},
 		Returns:     block.ListKind,
 		Description: "Create a list containing all but the last item in the input list",
+		Example: `
+(drop (list "Hello World" "Hello Universe"))                    // returns a list containing "Hello World"
+(drop (list 1 true Hello))                                      // returns a list containing 1 and true
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		if l := len(args[0].Children); l > 0 {
@@ -95,6 +111,11 @@ var Item = interpreter.TaFunction{
 		},
 		Returns:     block.AnyKind,
 		Description: "Returns a specific item from a list",
+		Example: `
+(item (list "Hello World" "Hello Universe") 0)                    // returns "Hello World"
+(item (list 1 true Hello) 1)                                      // returns true
+(item (list 1 true Hello) 3)                                      // fails
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		i, ok := args[1].Decimal.Int64()
@@ -122,6 +143,10 @@ var Push = interpreter.TaFunction{
 		},
 		Returns:     block.ListKind,
 		Description: "Adds an item to the list and returns the list",
+		Example: `
+(push (list "Hello World" "Hello Universe") "Hello Human")        // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(push (list 1 2) 3 4)                                             // returns a list containing 1, 2, 3 and 4
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var list block.Block
@@ -141,6 +166,9 @@ var Map = interpreter.TaFunction{
 		},
 		Returns:     block.ListKind,
 		Description: "Create a new list by evaluating the given block for each item in the input list",
+		Example: `
+(map  (list "World" "Universe") x (+ "Hello " (. x)))             // returns a list containing "Hello World" and "Hello Universe"
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		list := args[0]
@@ -175,6 +203,10 @@ var Sort = interpreter.TaFunction{
 		},
 		Returns:     block.ListKind,
 		Description: "Sort a list ascending, set the second argument to true for descending order",
+		Example: `
+(sort  (list "World" "Universe"))                                 // returns a list containing "Universe" and "World"
+(sort  (list "World" "Universe") true)                            // returns a list containing "World" and "Universe"
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		list := block.NewList()
@@ -201,6 +233,9 @@ var Min = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Find the lowest number in the list",
+		Example: `
+(min  (list 3 4 1 3 7 1 17 15 2))                              // returns 1
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big
@@ -229,6 +264,9 @@ var Max = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Find the largest number in the list",
+		Example: `
+(max  (list 3 4 1 3 7 1 17 15 2))                              // returns 17
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var d *decimal.Big

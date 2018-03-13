@@ -185,7 +185,8 @@ Returns wether the first argument exists in the following arguments
 ### drop(List)List
 Create a list containing all but the last item in the input list
 ```
-
+(drop (list "Hello World" "Hello Universe"))                    // returns a list containing "Hello World"
+(drop (list 1 true Hello))                                      // returns a list containing 1 and true
 ```
 
 ### endswith(String, String, String...)Bool
@@ -211,13 +212,16 @@ Floor the decimal argument
 ### head(List)Any
 Returns the first item in the list
 ```
-
+(head (list "Hello World" "Hello Universe"))                    // returns "Hello World"
+(head (list 1 true Hello))                                      // returns 1
 ```
 
 ### item(List, Decimal)Any
 Returns a specific item from a list
 ```
-
+(item (list "Hello World" "Hello Universe") 0)                    // returns "Hello World"
+(item (list 1 true Hello) 1)                                      // returns true
+(item (list 1 true Hello) 3)                                      // fails
 ```
 
 ### kv(Block...)Map
@@ -229,25 +233,26 @@ Create a map with any key value pairs passed as arguments.
 ### list(Atom, Atom...)List
 Create a list out of the children
 ```
-
+(list "Hello World" "Hello Universe")                           // returns a list with string items
+(list 1 true Hello)                                             // returns a list with an int, bool and string
 ```
 
 ### map(List, String, Block)List
 Create a new list by evaluating the given block for each item in the input list
 ```
-
+(map  (list "World" "Universe") x (+ "Hello " (. x)))             // returns a list containing "Hello World" and "Hello Universe"
 ```
 
 ### max(List)Decimal
 Find the largest number in the list
 ```
-
+(max  (list 3 4 1 3 7 1 17 15 2))                              // returns 17
 ```
 
 ### min(List)Decimal
 Find the lowest number in the list
 ```
-
+(min  (list 3 4 1 3 7 1 17 15 2))                              // returns 1
 ```
 
 ### mod(Decimal, Decimal, Decimal...)Decimal
@@ -275,7 +280,8 @@ Returns wether the first argument does not exist in the following arguments
 ### push(List, Kind(127), Kind(127)...)List
 Adds an item to the list and returns the list
 ```
-
+(push (list "Hello World" "Hello Universe") "Hello Human")        // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(push (list 1 2) 3 4)                                             // returns a list containing 1, 2, 3 and 4
 ```
 
 ### set(String, Kind(127), Kind(127)...)Null
@@ -287,7 +293,8 @@ Set a variable in the binding
 ### sort(List, Bool...)List
 Sort a list ascending, set the second argument to true for descending order
 ```
-
+(sort  (list "World" "Universe"))                                 // returns a list containing "Universe" and "World"
+(sort  (list "World" "Universe") true)                            // returns a list containing "World" and "Universe"
 ```
 
 ### startswith(String, String, String...)Bool
@@ -302,7 +309,8 @@ Returns wether the first argument is the prefix of the following arguments
 ### tail(List)List
 Returns list without the first item
 ```
-
+(tail (list "Hello World" "Hello Universe"))                    // returns a list containing "Hello Universe"
+(tail (list 1 true Hello))                                      // returns a list containing true and Hello
 ```
 
 ### tostring(Kind(15))String
