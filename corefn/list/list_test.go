@@ -171,6 +171,14 @@ func TestPush(t *testing.T) {
 
 	// check if the original list is still unmodified
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+
+	newList := interp.MustLexAndEvaluate("push (. List) and")
+
+	interp.Binding.MapItem("List").Children[0] = block.NewString("Dude!")
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Dude! World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
 }
 
 func TestMap(t *testing.T) {
