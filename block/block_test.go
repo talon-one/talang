@@ -502,3 +502,15 @@ func TestSort(t *testing.T) {
 	sort.Sort(BlockArguments(list.Children))
 	require.Equal(t, true, list.Equal(NewList(NewDecimalFromInt(2), NewDecimalFromInt(3), NewDecimalFromInt(4))))
 }
+
+func BenchmarkIsDecimal(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		isDecimal("2007-01-02T00:00:00Z")
+	}
+}
+
+func BenchmarkTimeParse(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		time.Parse(time.RFC3339, "2007-01-02T00:00:00Z")
+	}
+}

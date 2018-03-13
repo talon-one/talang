@@ -242,13 +242,7 @@ func (b *Block) initValue(text string) {
 			return
 		}
 
-		var err error
-		b.Time, err = time.Parse(time.RFC3339, text)
-		if err == nil {
-			b.Kind = TimeKind
-			return
-		}
-
+		// is it a decimal?
 		if isDecimal(text) {
 			var ok bool
 			// try to parse it as a decimal
@@ -258,6 +252,15 @@ func (b *Block) initValue(text string) {
 				return
 			}
 		}
+
+		// is it a time?
+		var err error
+		b.Time, err = time.Parse(time.RFC3339, text)
+		if err == nil {
+			b.Kind = TimeKind
+			return
+		}
+
 		b.Kind = StringKind
 	} else {
 		b.Kind = BlockKind
