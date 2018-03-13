@@ -7,4 +7,5 @@ import (
 	_ "github.com/talon-one/talang/corefn/math"
 	_ "github.com/talon-one/talang/corefn/misc"
 	_ "github.com/talon-one/talang/corefn/string"
+	_ "github.com/talon-one/talang/corefn/time"
 )
