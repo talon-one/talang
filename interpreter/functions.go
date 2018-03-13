@@ -15,7 +15,7 @@ func RegisterCoreFunction(signatures ...TaFunction) error {
 		signature := signatures[i]
 		signature.Name = strings.ToLower(signature.Name)
 		if getFunction(coreFunctions, signature) != nil {
-			panic(fmt.Errorf("Function `%s' is already registered", signature.Name))
+			return fmt.Errorf("Function `%s' is already registered", signature.Name)
 		}
 		coreFunctions = append(coreFunctions, signature)
 	}

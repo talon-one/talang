@@ -280,14 +280,14 @@ func TestIsBlock(t *testing.T) {
 	require.Equal(t, true, b.IsBlock())
 }
 
-func TestUpdate(t *testing.T) {
+func TestCopy(t *testing.T) {
 	// create a simple block
 	var b Block
-	b.Update(NewString("Hello"))
+	Copy(&b, NewString("Hello"))
 	require.Equal(t, true, b.IsString())
 	require.Equal(t, "Hello", b.String)
 
-	b.Update(NewBool(false))
+	Copy(&b, NewBool(false))
 	require.Equal(t, true, b.IsBool())
 	require.Equal(t, "false", b.String)
 
@@ -296,23 +296,23 @@ func TestUpdate(t *testing.T) {
 		panic(err)
 	}
 
-	b.Update(NewTime(time))
+	Copy(&b, NewTime(time))
 	require.Equal(t, true, b.IsTime())
 	require.Equal(t, "2006-01-02T15:04:05Z", b.String)
 
-	b.Update(NewDecimal(decimal.New(1, 0)))
+	Copy(&b, NewDecimal(decimal.New(1, 0)))
 	require.Equal(t, true, b.IsDecimal())
 	require.Equal(t, "1", b.String)
 
-	b.Update(NewNull())
+	Copy(&b, NewNull())
 	require.Equal(t, true, b.IsNull())
 	require.Equal(t, "", b.String)
 
-	b.Update(NewList(NewString("Hello"), NewString("World")))
+	Copy(&b, NewList(NewString("Hello"), NewString("World")))
 	require.Equal(t, true, b.IsList())
 	require.EqualValues(t, NewList(NewString("Hello"), NewString("World")).Children, b.Children)
 
-	b.Update(NewMap(map[string]*Block{
+	Copy(&b, NewMap(map[string]*Block{
 		"Key1": NewString("Value1"),
 		"Key2": NewList(NewString("Value2"), NewString("Value3")),
 	}))

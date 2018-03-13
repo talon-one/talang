@@ -151,10 +151,7 @@ var Push = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		var list block.Block
-		list.Update(args[0])
-		list.Children = append(list.Children, args[1:]...)
-		return &list, nil
+		return block.NewList(append(args[0].Children, args[1:]...)...), nil
 	},
 }
 
@@ -185,7 +182,7 @@ var Map = interpreter.TaFunction{
 			scope.Set(bindingName, list.Children[i])
 
 			var result block.Block
-			result.Update(blockToRun)
+			block.Copy(&result, blockToRun)
 			if err := scope.Evaluate(&result); err != nil {
 				return nil, err
 			}

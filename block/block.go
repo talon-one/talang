@@ -292,20 +292,32 @@ func isDecimal(s string) bool {
 	return true
 }
 
-func (b *Block) Update(source *Block) {
-	b.Kind = source.Kind
-	switch b.Kind {
-	case DecimalKind:
-		b.Decimal = source.Decimal
-	case BoolKind:
-		b.Bool = source.Bool
-	case TimeKind:
-		b.Time = source.Time
-	case MapKind:
-		b.Keys = source.Keys
+// Copy creates an copy of the block
+func Copy(dst *Block, src *Block) {
+	if src == nil {
+		return
 	}
-	b.String = source.String
-	b.Children = source.Children
+	if dst == nil {
+		return
+	}
+	dst.Kind = src.Kind
+	switch dst.Kind {
+	case DecimalKind:
+		dst.Decimal = src.Decimal
+	case BoolKind:
+		dst.Bool = src.Bool
+	case TimeKind:
+		dst.Time = src.Time
+	case MapKind:
+		dst.Keys = make([]string, len(src.Keys))
+		copy(dst.Keys, src.Keys)
+	}
+	dst.String = src.String
+	dst.Children = make([]*Block, len(src.Children))
+	for i, child := range src.Children {
+		dst.Children[i] = new(Block)
+		Copy(dst.Children[i], child)
+	}
 }
 
 func (b *Block) Stringify() string {

@@ -274,6 +274,49 @@ func TestEvaluateResultIsBlock(t *testing.T) {
 	)
 }
 
+func TestModifiesInput(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	require.NoError(t, interp.RegisterFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name: "fn",
+				Arguments: []block.Kind{
+					block.ListKind,
+				},
+				Returns: block.AnyKind,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+				args[0].Children[0] = block.NewDecimalFromInt(1)
+				return nil, nil
+			},
+		},
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name: "fn",
+				Arguments: []block.Kind{
+					block.DecimalKind,
+				},
+				Returns: block.AnyKind,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+				args[0] = block.NewDecimalFromInt(1)
+				return nil, nil
+			},
+		},
+	))
+
+	interp.Binding = block.NewMap(map[string]*block.Block{
+		"List1": block.NewList(block.NewDecimalFromInt(0), block.NewDecimalFromInt(1)),
+		"Int1":  block.NewDecimalFromInt(0),
+	})
+
+	interp.MustLexAndEvaluate("fn (. List1)")
+	interp.MustLexAndEvaluate("fn (. Int1)")
+
+	require.Equal(t, true, interp.Get("List1").Equal(block.NewList(block.NewDecimalFromInt(0), block.NewDecimalFromInt(1))))
+	require.Equal(t, true, interp.Get("Int1").Equal(block.NewDecimalFromInt(0)))
+}
+
 func BenchmarkInterpreter(b *testing.B) {
 	tests := []struct {
 		input    string

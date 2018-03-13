@@ -217,7 +217,7 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 		if interp.Logger != nil {
 			interp.Logger.Printf("Updating value to `%s' (%s)\n", result.Stringify(), result.Kind.String())
 		}
-		b.Update(result)
+		block.Copy(b, result)
 		if b.IsBlock() {
 			return true, interp.Evaluate(b)
 		}

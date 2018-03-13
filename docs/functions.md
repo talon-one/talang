@@ -26,18 +26,18 @@ Multiplies the arguments
 (* 1 2 3)                                                       // returns 6
 ```
 
-### +(String, String, String...)String
-Concat strings
-```
-(+ "Hello" " " "World")                                           // returns "Hello World"
-(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
-```
-
 ### +(Decimal, Decimal, Decimal...)Decimal
 Adds the arguments
 ```
 (+ 1 1)                                                         // returns 2
 (+ 1 2 3)                                                       // returns 6
+```
+
+### +(String, String, String...)String
+Concat strings
+```
+(+ "Hello" " " "World")                                           // returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
 ```
 
 ### -(Decimal, Decimal, Decimal...)Decimal
@@ -61,20 +61,20 @@ Divides the arguments
 (/ 1 2 3)                                                       // returns 0.166666
 ```
 
-### <(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less then the following
-```
-(< 0 1)                                                         // returns true
-(< 1 1)                                                         // returns false
-(< 2 1)                                                         // returns false
-```
-
 ### <(Time, Time, Time...)Bool
 Tests if the first argument is less then the following
 ```
 (< "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns true
 (< "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
 (< "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
+```
+
+### <(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is less then the following
+```
+(< 0 1)                                                         // returns true
+(< 1 1)                                                         // returns false
+(< 2 1)                                                         // returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -121,20 +121,20 @@ Tests if the first argument is greather then the following
 (> "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns true
 ```
 
-### >=(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is greather or equal then the following
-```
-(>= 0 1)                                                        // returns false
-(>= 1 1)                                                        // returns true
-(>= 2 1)                                                        // returns true
-```
-
 ### >=(Time, Time, Time...)Bool
 Tests if the first argument is greather or equal then the following
 ```
 (>= "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns false
 (>= "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
 (>= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
+```
+
+### >=(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is greather or equal then the following
+```
+(>= 0 1)                                                        // returns false
+(>= 1 1)                                                        // returns true
+(>= 2 1)                                                        // returns true
 ```
 
 ### append(List, Kind(127), Kind(127)...)List
@@ -189,6 +189,12 @@ Returns wether the first argument exists in the following arguments
 (contains "Hello" "World")                                        // returns false
 (contains "Hello" "Hello World" "Hello Universe")                 // returns true
 (contains "World" "Hello World" "Hello Universe")                 // returns false
+```
+
+### count(List)Decimal
+Return the number of items in the input list
+```
+
 ```
 
 ### drop(List)List
