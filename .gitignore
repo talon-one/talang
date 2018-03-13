@@ -1,2 +1,3 @@
 *.test
 *.prof
+.vscode/

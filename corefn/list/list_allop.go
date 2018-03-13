@@ -17,5 +17,6 @@ func AllOperations() []interpreter.TaFunction {
 		Append,
 		Count,
 		Reverse,
+		Join,
 	}
 }

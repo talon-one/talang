@@ -350,3 +350,43 @@ func BenchmarkReverse(b *testing.B) {
 		}
 	}
 }
+
+func TestJoin(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`join (list hello world) -`,
+			nil,
+			block.NewString("hello-world"),
+		},
+		helpers.Test{
+			`join (. lol) -`,
+			block.NewMap(map[string]*block.Block{
+				"lol": block.NewList(block.NewString("lol")),
+			}),
+			block.NewString("lol"),
+		},
+		helpers.Test{
+			`join (. lol) -`,
+			block.NewMap(map[string]*block.Block{
+				"lol": block.NewList(block.NewString("lo ll")),
+			}),
+			block.NewString("lo ll"),
+		},
+		helpers.Test{
+			`join (list lo        l) -`,
+			nil,
+			block.NewString("lo-l"),
+		},
+		helpers.Test{
+			`join (list 1 2 3) -`,
+			nil,
+			helpers.Error{},
+		},
+		// FIX - the interpreter parses "1" as a decimal, should be a string.
+		// helpers.Test{
+		// 	`join (list "1" "2" "3") -`,
+		// 	nil,
+		// 	block.NewString("1-2-3"),
+		// },
+	)
+}

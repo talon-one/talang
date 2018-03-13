@@ -3,6 +3,7 @@ package list
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
@@ -339,5 +340,34 @@ var Reverse = interpreter.TaFunction{
 			list.Children[childrenCount-i] = args[0].Children[i]
 		}
 		return list, nil
+	},
+}
+
+var Join = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "join",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.StringKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Create a string by joining together a list of strings with `glue`",
+		Example: `
+(join (list hello world) "-")										// returns "hello-world"
+(join (list hello world) ",")										// returns "hello,world"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		if args[0].Children[0].Kind != block.StringKind {
+			return nil, errors.New("List must be of string type")
+		}
+
+		var final = make([]string, len(args[0].Children))
+		for i := 0; i < len(args[0].Children); i++ {
+			final[i] = args[0].Children[i].String
+		}
+		ret := strings.Join(final, args[1].String)
+		return block.NewString(ret), nil
 	},
 }
