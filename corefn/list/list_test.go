@@ -328,3 +328,25 @@ func TestReverse(t *testing.T) {
 		},
 	)
 }
+
+func BenchmarkReverse(b *testing.B) {
+	tests := []struct {
+		input    string
+		expected *block.Block
+	}{
+		{"reverse (list 1 2 3 4)", block.NewList(
+			block.NewDecimalFromInt(4),
+			block.NewDecimalFromInt(3),
+			block.NewDecimalFromInt(2),
+			block.NewDecimalFromInt(1),
+		)},
+	}
+
+	interp := helpers.MustNewInterpreter()
+
+	for i := 0; i < b.N; i++ {
+		for _, test := range tests {
+			require.Equal(b, test.expected, interp.MustLexAndEvaluate(test.input))
+		}
+	}
+}

@@ -334,7 +334,7 @@ var Reverse = interpreter.TaFunction{
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		list := block.NewList()
 		list.Children = make([]*block.Block, len(args[0].Children))
-		childrenCount := len(list.Children) - 1
+		childrenCount := len(args[0].Children) - 1
 		for i := childrenCount; i >= 0; i-- {
 			list.Children[childrenCount-i] = args[0].Children[i]
 		}
