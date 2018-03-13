@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -99,6 +100,14 @@ func main() {
 		returns := f.Returns.String()
 		if strings.HasSuffix(returns, "Kind") {
 			returns = returns[:len(returns)-4]
+		}
+
+		// some warnings if some data is missing
+		if len(f.Description) <= 0 {
+			log.Printf("WARNING: func `%s' has no `Description`", f.Name)
+		}
+		if len(f.Example) <= 0 {
+			log.Printf("WARNING: func `%s' has no `Example`", f.Name)
 		}
 
 		fns[i] = fn{

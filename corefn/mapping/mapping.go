@@ -21,6 +21,9 @@ var KV = interpreter.TaFunction{
 		},
 		Returns:     block.MapKind,
 		Description: "Create a map with any key value pairs passed as arguments.",
+		Example: `
+(kv (Key1 "Hello World") (Key2 true) (Key3 123))               // returns a Map with the keys key1, key2, key3
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		m := make(map[string]*block.Block)

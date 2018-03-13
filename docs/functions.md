@@ -3,7 +3,8 @@
 ### !(String, Any...)Any
 Resolve a template
 ```
-
+(! Template1)                                                  // executes the Template1
+(! Template2 "Hello World")                                    // executes Template2 with "Hello World" as parameter
 ```
 
 ### !=(Atom, Atom, Atom...)Bool
@@ -49,7 +50,8 @@ Subtracts the arguments
 ### .(Atom, Atom...)Any
 Access a variable in the binding
 ```
-
+(. Key1)                                                       // returns the data assigned to Key1
+(. Key2 SubKey1)                                               // returns the data assigned to SubKey1 in the Map Key2
 ```
 
 ### /(Decimal, Decimal, Decimal...)Decimal
@@ -227,7 +229,7 @@ Returns a specific item from a list
 ### kv(Block...)Map
 Create a map with any key value pairs passed as arguments.
 ```
-
+(kv (Key1 "Hello World") (Key2 true) (Key3 123))               // returns a Map with the keys key1, key2, key3
 ```
 
 ### list(Atom, Atom...)List
@@ -287,7 +289,8 @@ Adds an item to the list and returns the list
 ### set(String, Kind(127), Kind(127)...)Null
 Set a variable in the binding
 ```
-
+(set Key1 "Hello World")                                       // sets Key1 to "Hello World"
+(set Key2 SubKey1 true)                                        // sets SubKey1 in map Key2 to true
 ```
 
 ### sort(List, Bool...)List
