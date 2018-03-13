@@ -25,8 +25,10 @@ parse:
 	start := 0
 	i := 0
 
-	for w := 0; i < strLen; i += w {
-		r, width := utf8.DecodeRuneInString(str[i:])
+	var r rune
+	var width int
+	for ; i < strLen; i += width {
+		r, width = utf8.DecodeRuneInString(str[i:])
 		switch r {
 		case 0x09: // tab
 			fallthrough
@@ -92,8 +94,6 @@ parse:
 			str = rest
 			goto parse
 		}
-
-		w = width
 	}
 	if start < len(str) {
 		if len(operation) == 0 {

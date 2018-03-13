@@ -87,13 +87,13 @@ var templateSignature = TaFunction{
 		// iterate trough all functions
 		for n := 0; n < len(templates); n++ {
 			template := templates[n]
-			run, notMatchingDetail, children, err := interp.matchesSignature(&template.CommonSignature, blockText, args[1:])
+			run, detail, children, err := interp.matchesSignature(&template.CommonSignature, blockText, args[1:])
 			if err != nil {
 				return nil, errors.Errorf("error in template `%s': %v", template.Name, err)
 			}
 			if !run {
 				if interp.Logger != nil {
-					switch notMatchingDetail {
+					switch detail {
 					case invalidSignature:
 						interp.Logger.Printf("NOT Running template `%s' (not matching signature)\n", template.String())
 					case errorInChildrenEvaluation:

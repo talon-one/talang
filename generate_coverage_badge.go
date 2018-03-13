@@ -59,10 +59,6 @@ var (
 	lineRe = regexp.MustCompile(`^(.+):([0-9]+).([0-9]+),([0-9]+).([0-9]+) ([0-9]+) ([0-9]+)$`)
 )
 
-type CoverageResult struct {
-	Percent float64
-}
-
 type Profile struct {
 	FileName string
 	Mode     string

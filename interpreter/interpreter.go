@@ -28,6 +28,9 @@ func NewInterpreter() (*Interpreter, error) {
 	if err := interp.registerCoreFunctions(); err != nil {
 		return nil, err
 	}
+	if err := interp.registerCoreTemplates(); err != nil {
+		return nil, err
+	}
 	return &interp, nil
 }
 
@@ -115,7 +118,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 
 	var children []*block.Block
 	argc := len(sig.Arguments)
-	if sig.IsVariadic == false {
+	if !sig.IsVariadic {
 		if argc != len(args) {
 			return false, invalidSignature, nil, nil
 		}
@@ -172,11 +175,11 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 	// iterate trough all functions
 	for n := 0; n < len(functions); n++ {
 		fn := functions[n]
-		run, notMatchingDetail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children)
+		run, detail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children)
 
 		if !run {
 			if interp.Logger != nil {
-				switch notMatchingDetail {
+				switch detail {
 				case invalidSignature:
 					interp.Logger.Printf("NOT Running function `%s' (not matching signature)\n", fn.String())
 				case errorInChildrenEvaluation:
@@ -264,7 +267,7 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 	case reflect.Map:
 		m := make(map[string]*block.Block)
 		if reflectType.Key().Kind() != reflect.String {
-			return nil, errors.New("A diffrent key than `string' is not supported")
+			return nil, errors.New("A different key than `string' is not supported")
 		}
 		for _, key := range reflectValue.MapKeys() {
 			var err error

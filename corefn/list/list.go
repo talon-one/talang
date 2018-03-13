@@ -12,7 +12,9 @@ import (
 )
 
 func init() {
-	interpreter.RegisterCoreFunction(AllOperations()...)
+	if err := interpreter.RegisterCoreFunction(AllOperations()...); err != nil {
+		panic(err)
+	}
 }
 
 var List = interpreter.TaFunction{
@@ -210,10 +212,10 @@ var Sort = interpreter.TaFunction{
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		list := block.NewList()
-		list.Children = make([]*block.Block, len(args[0].Children), len(args[0].Children))
+		list.Children = make([]*block.Block, len(args[0].Children))
 		copy(list.Children, args[0].Children)
 
-		if len(args) > 1 && args[1].Bool == true {
+		if len(args) > 1 && args[1].Bool {
 			a := block.BlockArguments(list.Children)
 			sort.Sort(sort.Reverse(&a))
 		} else {

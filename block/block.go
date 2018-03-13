@@ -278,7 +278,7 @@ func isDecimal(s string) bool {
 	gotDot := false
 	for ; i < len(runes); i++ {
 		if runes[i] == '.' {
-			if gotDot == true {
+			if gotDot {
 				return false
 			}
 			gotDot = true

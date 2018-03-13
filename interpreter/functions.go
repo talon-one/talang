@@ -83,9 +83,7 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	// template
 	interp.Functions = append(interp.Functions, templateSignature)
 
-	for _, f := range coreFunctions {
-		interp.Functions = append(interp.Functions, f)
-	}
+	interp.Functions = append(interp.Functions, coreFunctions...)
 
 	// sanitize name
 	for i, f := range interp.Functions {

@@ -8,7 +8,9 @@ import (
 )
 
 func init() {
-	interpreter.RegisterCoreFunction(AllOperations()...)
+	if err := interpreter.RegisterCoreFunction(AllOperations()...); err != nil {
+		panic(err)
+	}
 }
 
 var Add = interpreter.TaFunction{

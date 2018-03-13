@@ -48,7 +48,7 @@ func RunTestsWithInterpreter(t *testing.T, interp *talang.Interpreter, tests ...
 		result, err := interp.LexAndEvaluate(test.Input)
 		switch b := test.Expected.(type) {
 		case error:
-			require.Error(t, err, "Test #%d failed", i)
+			require.Error(t, err, "Test %d failed", i)
 		case *block.Block:
 			require.EqualValues(t, true, b.Equal(result), "Test #%d failed, Expected %s was %s", i, b.Stringify(), result.Stringify())
 		}

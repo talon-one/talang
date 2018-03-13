@@ -306,9 +306,9 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 		require.Equal(t, test.Expected.NotMatching, test.Result.NotMatching, "Test #%d failed", i)
 		require.EqualValues(t, test.Expected.EvaluatedChildren, test.Result.EvaluatedChildren, "Test #%d failed", i)
 		if test.Expected.Error == true {
-			require.Error(t, test.Result.Error, "Test #%d failed", i)
+			require.Error(t, test.Result.Error, "Test %d failed", i)
 		} else {
-			require.NoError(t, test.Result.Error, "Test #%d failed", i)
+			require.NoError(t, test.Result.Error, "Test %d failed", i)
 		}
 	}
 }

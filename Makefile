@@ -18,5 +18,8 @@ precommithook: build
 test: build
 	go test -race -count=1 -cover ./...
 
-check: test
+metalint: test
+	gometalinter --vendor --enable-all --disable=lll --exclude "_test\.go" --exclude "testhelpers" ./...
+
+metalintall: test
 	gometalinter --vendor --enable-all --disable=lll ./...
