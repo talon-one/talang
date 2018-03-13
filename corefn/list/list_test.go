@@ -298,3 +298,18 @@ func TestMax(t *testing.T) {
 		},
 	)
 }
+
+func TestCount(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`count (list 1 2 3 4)`,
+			nil,
+			block.NewDecimalFromInt(4),
+		},
+		helpers.Test{
+			`count (list hola hola amigos)`,
+			nil,
+			block.NewDecimalFromInt(3),
+		},
+	)
+}

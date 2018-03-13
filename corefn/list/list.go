@@ -299,3 +299,20 @@ var Append = interpreter.TaFunction{
 	},
 	Func: Push.Func,
 }
+
+var Count = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "count",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Return the number of items in the input list",
+		Example:     "",
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		count := int64(len(args[0].Children))
+		return block.NewDecimalFromInt(count), nil
+	},
+}

@@ -15,5 +15,6 @@ func AllOperations() []interpreter.TaFunction {
 		Min,
 		Max,
 		Append,
+		Count,
 	}
 }
