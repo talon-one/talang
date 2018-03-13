@@ -287,3 +287,15 @@ var Max = interpreter.TaFunction{
 		return block.NewDecimal(d), nil
 	},
 }
+
+var Append = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:        "append",
+		IsVariadic:  Push.IsVariadic,
+		Arguments:   Push.Arguments,
+		Returns:     Push.Returns,
+		Description: Push.Description,
+		Example:     Push.Example,
+	},
+	Func: Push.Func,
+}

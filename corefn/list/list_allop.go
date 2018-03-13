@@ -14,5 +14,6 @@ func AllOperations() []interpreter.TaFunction {
 		Sort,
 		Min,
 		Max,
+		Append,
 	}
 }

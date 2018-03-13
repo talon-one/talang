@@ -121,6 +121,14 @@ Tests if the first argument is greather then the following
 (> "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns true
 ```
 
+### >=(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is greather or equal then the following
+```
+(>= 0 1)                                                        // returns false
+(>= 1 1)                                                        // returns true
+(>= 2 1)                                                        // returns true
+```
+
 ### >=(Time, Time, Time...)Bool
 Tests if the first argument is greather or equal then the following
 ```
@@ -129,12 +137,11 @@ Tests if the first argument is greather or equal then the following
 (>= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
 ```
 
-### >=(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is greather or equal then the following
+### append(List, Kind(127), Kind(127)...)List
+Adds an item to the list and returns the list
 ```
-(>= 0 1)                                                        // returns false
-(>= 1 1)                                                        // returns true
-(>= 2 1)                                                        // returns true
+(push (list "Hello World" "Hello Universe") "Hello Human")        // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(push (list 1 2) 3 4)                                             // returns a list containing 1, 2, 3 and 4
 ```
 
 ### between(Time, Time, Time, Time...)Bool

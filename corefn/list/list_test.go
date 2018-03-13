@@ -181,6 +181,42 @@ func TestPush(t *testing.T) {
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
 }
 
+func TestAppend(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.Binding = block.NewMap(map[string]*block.Block{
+		"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+	})
+	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
+		CommonSignature: interpreter.CommonSignature{
+			Name: "fn",
+			Arguments: []block.Kind{
+				block.StringKind,
+			},
+			Returns: block.StringKind,
+		},
+		Template: *lexer.MustLex(`(# 0)`),
+	}))
+	// check if the return value contains the appended data
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and Universe"), interp.MustLexAndEvaluate("append (. List) and Universe"))
+
+	// check if the original list is still unmodified
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+
+	// Push with a function inside
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World Alice"), interp.MustLexAndEvaluate("append (. List) (! fn Alice)"))
+
+	// check if the original list is still unmodified
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+
+	newList := interp.MustLexAndEvaluate("append (. List) and")
+
+	interp.Binding.MapItem("List").Children[0] = block.NewString("Dude!")
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Dude! World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
+}
+
 func TestMap(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`map (. List) x (+ (. x Name) " " (. x Surname))`,
