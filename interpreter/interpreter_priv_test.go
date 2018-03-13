@@ -738,3 +738,63 @@ func TestAllTemplates(t *testing.T) {
 	require.EqualValues(t, interp.Templates, interp.AllTemplates())
 	require.EqualValues(t, append(subInterp.Templates, interp.Templates...), subInterp.AllTemplates())
 }
+
+func TestFuncWalker(t *testing.T) {
+	interp, err := NewInterpreter()
+
+	require.NoError(t, err)
+	require.NoError(t, interp.RemoveAllFunctions())
+
+	require.NoError(t, interp.RegisterFunction(TaFunction{
+		CommonSignature: CommonSignature{
+			Name: "ROOTFN",
+		},
+		Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, nil
+		},
+	}))
+
+	interp = interp.NewScope()
+	require.NoError(t, interp.RemoveAllFunctions())
+
+	require.NoError(t, interp.RegisterFunction(TaFunction{
+		CommonSignature: CommonSignature{
+			Name: "Scope1FN",
+		},
+		Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+			return nil, nil
+		},
+	}))
+
+	interp = interp.NewScope()
+	require.NoError(t, interp.RemoveAllFunctions())
+
+	require.NoError(t, interp.RegisterFunction(
+		TaFunction{
+			CommonSignature: CommonSignature{
+				Name: "Scope2FN1",
+			},
+			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+				return nil, nil
+			},
+		},
+		TaFunction{
+			CommonSignature: CommonSignature{
+				Name: "Scope2FN2",
+			},
+			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+				return nil, nil
+			},
+		},
+	))
+
+	walker := funcWalker{
+		interp: interp,
+	}
+
+	require.Equal(t, "scope2fn1", walker.Next().Name)
+	require.Equal(t, "scope2fn2", walker.Next().Name)
+	require.Equal(t, "scope1fn", walker.Next().Name)
+	require.Equal(t, "rootfn", walker.Next().Name)
+	require.Nil(t, walker.Next())
+}

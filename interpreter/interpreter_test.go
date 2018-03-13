@@ -329,7 +329,7 @@ func BenchmarkInterpreter(b *testing.B) {
 		{"(= 1 1)", "true"},
 	}
 
-	interp := helpers.MustNewInterpreterWithLogger()
+	interp := helpers.MustNewInterpreter()
 
 	for i := 0; i < b.N; i++ {
 		for _, test := range tests {

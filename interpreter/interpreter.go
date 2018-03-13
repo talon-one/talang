@@ -117,32 +117,33 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 	}
 
 	var children []*block.Block
-	argc := len(sig.Arguments)
+	argc := len(args)
+	sigargc := len(sig.Arguments)
 	if !sig.IsVariadic {
-		if argc != len(args) {
+		if sigargc != argc {
 			return false, invalidSignature, nil, nil
 		}
 	} else {
-		if argc-1 > len(args) {
+		if sigargc-1 > argc {
 			return false, invalidSignature, nil, nil
 		}
 	}
 
 	willEvaluate := false
-	for i, j := 0, 0; i < len(args); i++ {
+	for i, j := 0, 0; i < argc; i++ {
 		if sig.Arguments[j]&block.BlockKind == 0 && args[i].IsBlock() {
 			willEvaluate = true
 			break
 		}
 		j++
-		if j >= argc {
-			j = argc - 1
+		if j >= sigargc {
+			j = sigargc - 1
 		}
 	}
 
 	if willEvaluate {
 		// make a copy of the children
-		children = make([]*block.Block, len(args))
+		children = make([]*block.Block, argc)
 		for i, child := range args {
 			children[i] = new(block.Block)
 			*children[i] = *child
@@ -158,8 +159,8 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 			}
 		}
 		j++
-		if j >= argc {
-			j = argc - 1
+		if j >= sigargc {
+			j = sigargc - 1
 		}
 	}
 
@@ -170,11 +171,10 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 }
 
 func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
-	functions := interp.AllFunctions()
+	walker := funcWalker{interp: interp}
 	blockText := strings.ToLower(b.String)
 	// iterate trough all functions
-	for n := 0; n < len(functions); n++ {
-		fn := functions[n]
+	for fn := walker.Next(); fn != nil; fn = walker.Next() {
 		run, detail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children)
 
 		if !run {
@@ -361,4 +361,24 @@ func (interp *Interpreter) AllTemplates() (templates []TaTemplate) {
 		templates = append(templates, interp.Parent.AllTemplates()...)
 	}
 	return templates
+}
+
+type funcWalker struct {
+	interp *Interpreter
+	pos    int
+}
+
+func (f *funcWalker) Next() *TaFunction {
+n:
+	if f.pos >= len(f.interp.Functions) {
+		if f.interp.Parent != nil {
+			f.pos = 0
+			f.interp = f.interp.Parent
+			goto n
+		}
+		return nil
+	}
+	fn := &f.interp.Functions[f.pos]
+	f.pos++
+	return fn
 }

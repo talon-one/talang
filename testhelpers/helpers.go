@@ -16,6 +16,10 @@ func MustNewInterpreterWithLogger() *talang.Interpreter {
 	return interp
 }
 
+func MustNewInterpreter() *talang.Interpreter {
+	return talang.MustNewInterpreter()
+}
+
 func MustBlock(result *block.Block, err error) *block.Block {
 	if err != nil {
 		panic(err)
