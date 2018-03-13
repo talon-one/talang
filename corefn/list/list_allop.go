@@ -16,5 +16,6 @@ func AllOperations() []interpreter.TaFunction {
 		Max,
 		Append,
 		Count,
+		Reverse,
 	}
 }

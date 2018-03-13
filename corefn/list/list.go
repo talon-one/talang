@@ -306,10 +306,38 @@ var Count = interpreter.TaFunction{
 		},
 		Returns:     block.DecimalKind,
 		Description: "Return the number of items in the input list",
-		Example:     "",
+		Example: `
+(count (list 1 2 3 4))											// returns "4"
+(count (list 1))												// returns "1"
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		count := int64(len(args[0].Children))
 		return block.NewDecimalFromInt(count), nil
+	},
+}
+
+var Reverse = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "reverse",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+		},
+		Returns:     block.ListKind,
+		Description: "Reverses the order of items in a given list",
+		Example: `
+(reverse (list 1 2 3 4))										// returns "(4 3 2 1)"
+(reverse (list 1))												// returns "(1)"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := block.NewList()
+		list.Children = make([]*block.Block, len(args[0].Children))
+		childrenCount := len(list.Children) - 1
+		for i := childrenCount; i >= 0; i-- {
+			list.Children[childrenCount-i] = args[0].Children[i]
+		}
+		return list, nil
 	},
 }
