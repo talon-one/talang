@@ -286,7 +286,7 @@ func TestModifiesInput(t *testing.T) {
 				Returns: block.AnyKind,
 			},
 			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-				args[0].Children[0] = block.NewDecimalFromInt(1)
+				args[0].Children[0] = block.NewDecimalFromInt(1000)
 				return nil, nil
 			},
 		},
@@ -299,7 +299,7 @@ func TestModifiesInput(t *testing.T) {
 				Returns: block.AnyKind,
 			},
 			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-				args[0] = block.NewDecimalFromInt(1)
+				args[0] = block.NewDecimalFromInt(1000)
 				return nil, nil
 			},
 		},
