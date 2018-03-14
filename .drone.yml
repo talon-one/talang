@@ -20,7 +20,7 @@ pipeline:
     template: |
       {{ repo.name }}:${DRONE_BRANCH} build {{ build.number }} by {{ build.author }} was a {{ build.status }}.
       {{#success build.status}}
-      Look at the build logs at {{ build.link }}. Try the new deployment at https://${DRONE_BRANCH}.talon.farm.
+      Look at the build logs at {{ build.link }}.
       {{else}}
       Check out {{ build.link }} to see why.
       {{/success}}
