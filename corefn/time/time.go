@@ -24,12 +24,33 @@ var After = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks whether time A is after B",
 		Example: `
-(+ "Hello" " " "World")                                           // returns "Hello World"
-(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
+(after "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
+(after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		time := args[0].Time.After(args[1].Time)
+		return block.NewBool(time), nil
+	},
+}
+
+var Before = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "before",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+			block.TimeKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Checks whether time A is before B",
+		Example: `
+(after "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
+(after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		time := args[0].Time.Before(args[1].Time)
 		return block.NewBool(time), nil
 	},
 }
