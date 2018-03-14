@@ -72,6 +72,14 @@ func TestParseTime(t *testing.T) {
 	})
 }
 
+func TestDate(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`date 2018-01-02T19:04:05Z`,
+		nil,
+		block.NewString("2018-01-02"),
+	})
+}
+
 func mustParseJodaTime(layout string, date string) time.Time {
 	time, err := jodaTime.Parse(layout, date)
 	if err != nil {

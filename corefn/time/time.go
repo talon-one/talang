@@ -113,3 +113,21 @@ var ParseTime = interpreter.TaFunction{
 		return block.NewTime(date), nil
 	},
 }
+
+var Date = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "date",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the date in YYYY-MM-DD format from a time.",
+		Example: `
+(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(jodaTime.Format("yyyy-MM-dd", args[0].Time)), nil
+	},
+}
