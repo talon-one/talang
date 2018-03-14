@@ -371,3 +371,24 @@ var Join = interpreter.TaFunction{
 		return block.NewString(ret), nil
 	},
 }
+
+var IsEmpty = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "isEmpty",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Check if a list is empty",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		if args[0].IsEmpty() {
+			return block.NewBool(true), nil
+		}
+		return block.NewBool(false), nil
+	},
+}

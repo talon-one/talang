@@ -390,3 +390,13 @@ func TestJoin(t *testing.T) {
 		// },
 	)
 }
+
+func TestIsEmpty(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`isEmpty (list hello world)`,
+			nil,
+			block.NewBool(false),
+		},
+	)
+}
