@@ -9,6 +9,7 @@ func AllOperations() []interpreter.TaFunction {
 		BetweenTimes,
 		ParseTime,
 		Date,
+		Hour,
 		Month,
 		MonthDay,
 		WeekDay,

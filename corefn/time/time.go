@@ -114,6 +114,24 @@ var ParseTime = interpreter.TaFunction{
 	},
 }
 
+var Hour = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "hour",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the hour (00-23) from a time",
+		Example: `
+(hour 2018-01-14T19:04:05Z)                                // returns "19"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(jodaTime.Format("HH", args[0].Time)), nil
+	},
+}
+
 var Date = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "date",

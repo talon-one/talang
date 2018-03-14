@@ -126,3 +126,19 @@ func TestFormatTime(t *testing.T) {
 		block.NewString("2018-03-11T19:04:05Z"),
 	})
 }
+
+func TestHour(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`hour 2018-03-11T00:04:05Z`,
+		nil,
+		block.NewString("00"),
+	}, helpers.Test{
+		`hour 2018-03-11T23:04:05Z`,
+		nil,
+		block.NewString("23"),
+	}, helpers.Test{
+		`hour 2018-03-11T04:04:05Z`,
+		nil,
+		block.NewString("04"),
+	})
+}
