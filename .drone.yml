@@ -5,7 +5,6 @@ pipeline:
     pull: true
     environment:
     commands:
-      - go get ./...
       - go test ./...
     when:
       event: push
