@@ -131,3 +131,76 @@ var Date = interpreter.TaFunction{
 		return block.NewString(jodaTime.Format("yyyy-MM-dd", args[0].Time)), nil
 	},
 }
+
+var Month = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "month",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the month (1-11) from a time",
+		Example: `
+(month 2018-01-02T19:04:05Z)                                // returns "1"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(jodaTime.Format("M", args[0].Time)), nil
+	},
+}
+
+var MonthDay = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "monthDay",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the day (1-31) from a time",
+		Example: `
+(monthDay 2018-01-14T19:04:05Z)                                // returns "14"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(jodaTime.Format("d", args[0].Time)), nil
+	},
+}
+
+// Disclaimer: weekDay has lowercased 'D' due to old names
+var WeekDay = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "weekday",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the week day (0-6) from a time",
+		Example: `
+(weekDay 2018-01-14T19:04:05Z)                                // returns "3"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(jodaTime.Format("e", args[0].Time)), nil
+	},
+}
+
+var Year = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "year",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the year from a time",
+		Example: `
+(year 2018-01-02T19:04:05Z)                                // returns "2018"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(jodaTime.Format("yyyy", args[0].Time)), nil
+	},
+}

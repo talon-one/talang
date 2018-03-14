@@ -80,6 +80,37 @@ func TestDate(t *testing.T) {
 	})
 }
 
+func TestMonth(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`month 2018-01-02T19:04:05Z`,
+		nil,
+		block.NewString("1"),
+	})
+}
+
+func TestYear(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`year 2018-01-02T19:04:05Z`,
+		nil,
+		block.NewString("2018"),
+	})
+}
+
+func TestMonthDay(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`monthDay 2018-01-14T19:04:05Z`,
+		nil,
+		block.NewString("14"),
+	})
+}
+func TestWeekDay(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`weekDay 2018-03-11T19:04:05Z`,
+		nil,
+		block.NewString("0"),
+	})
+}
+
 func mustParseJodaTime(layout string, date string) time.Time {
 	time, err := jodaTime.Parse(layout, date)
 	if err != nil {
