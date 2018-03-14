@@ -204,3 +204,21 @@ var Year = interpreter.TaFunction{
 		return block.NewString(jodaTime.Format("yyyy", args[0].Time)), nil
 	},
 }
+
+var FormatTime = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "formatTime",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Create an RFC3339 timestamp, the inverse of parseTime",
+		Example: `
+(formatTime 2018-01-02T19:04:05Z)                                // returns "2018"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		return block.NewString(args[0].Time.Format(time.RFC3339)), nil
+	},
+}

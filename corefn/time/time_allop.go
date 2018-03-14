@@ -13,5 +13,6 @@ func AllOperations() []interpreter.TaFunction {
 		MonthDay,
 		WeekDay,
 		Year,
+		FormatTime,
 	}
 }
