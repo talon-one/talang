@@ -2,7 +2,7 @@
 package time
 
 import (
-	_ "github.com/araddon/dateparse"
+	"github.com/araddon/dateparse"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
 )
@@ -75,5 +75,25 @@ var BetweenTimes = interpreter.TaFunction{
 		a := args[0].Time.After(args[1].Time)
 		b := args[0].Time.Before(args[2].Time)
 		return block.NewBool(a && b), nil
+	},
+}
+
+var ParseTime = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "parseTime",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.TimeKind,
+		Description: "Evaluates whether a timestamp is between minTime and maxTime",
+		Example:     ``,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		date, err := dateparse.ParseAny(args[0].String)
+		if err != nil {
+			return nil, err
+		}
+		return block.NewTime(date), nil
 	},
 }

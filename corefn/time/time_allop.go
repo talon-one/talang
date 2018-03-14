@@ -7,5 +7,6 @@ func AllOperations() []interpreter.TaFunction {
 		After,
 		Before,
 		BetweenTimes,
+		ParseTime,
 	}
 }
