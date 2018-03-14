@@ -3,8 +3,8 @@
 ### !(String, Any...)Any
 Resolve a template
 ```lisp
-(! Template1)                                                    // executes the Template1
-(! Template2 "Hello World")                                      // executes Template2 with "Hello World" as parameter
+(! Template1)                                                    ; executes the Template1
+(! Template2 "Hello World")                                      ; executes Template2 with "Hello World" as parameter
 ```
 
 ### !=(Atom, Atom, Atom...)Bool
@@ -50,8 +50,8 @@ Subtracts the arguments
 ### .(Atom, Atom...)Any
 Access a variable in the binding
 ```lisp
-(. Key1)                                                         // returns the data assigned to Key1
-(. Key2 SubKey1)                                                 // returns the data assigned to SubKey1 in the Map Key2
+(. Key1)                                                         ; returns the data assigned to Key1
+(. Key2 SubKey1)                                                 ; returns the data assigned to SubKey1 in the Map Key2
 ```
 
 ### /(Decimal, Decimal, Decimal...)Decimal
@@ -140,7 +140,7 @@ Tests if the first argument is greather or equal then the following
 ### addduration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625"
 ```
 
 ### after(Time, Time)Bool
@@ -426,8 +426,8 @@ Reverses the order of items in a given list
 ### set(String, Kind(127), Kind(127)...)Null
 Set a variable in the binding
 ```lisp
-(set Key1 "Hello World")                                         // sets Key1 to "Hello World"
-(set Key2 SubKey1 true)                                          // sets SubKey1 in map Key2 to true
+(set Key1 "Hello World")                                         ; sets Key1 to "Hello World"
+(set Key2 SubKey1 true)                                          ; sets SubKey1 in map Key2 to true
 ```
 
 ### sort(List, Bool...)List

@@ -77,8 +77,8 @@ var templateSignature = TaFunction{
 		Returns:     block.AnyKind,
 		Description: "Resolve a template",
 		Example: `
-(! Template1)                                                    // executes the Template1
-(! Template2 "Hello World")                                      // executes Template2 with "Hello World" as parameter
+(! Template1)                                                    ; executes the Template1
+(! Template2 "Hello World")                                      ; executes Template2 with "Hello World" as parameter
 `,
 	},
 	Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
