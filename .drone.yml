@@ -1,3 +1,18 @@
+
+
+workspace:
+  base: /go
+  path: src/github.com/talon-one/talang
+
+pipeline:
+  test:
+    image: golang:1.10
+    commands:
+      - go test -cover $(go list ./... | grep -v /vendor/)
+    when:
+      event: push
+
+
 workspace:
   base: /pipeline
   path: src/github.com/talon-one/talang
@@ -14,18 +29,18 @@ pipeline:
       event: push
 
   # Notification for regular pushes
-  slack_regular:
-    image: plugins/slack
-    webhook: https://hooks.slack.com/services/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
-    channel: tech_monitor
-    username: drone
-    template: |
-      {{ repo.name }}:${DRONE_BRANCH} build {{ build.number }} by {{ build.author }} was a {{ build.status }}.
-      {{#success build.status}}
-      Look at the build logs at {{ build.link }}. Try the new deployment at https://${DRONE_BRANCH}.talon.farm.
-      {{else}}
-      Check out {{ build.link }} to see why.
-      {{/success}}
-    when:
-      event: push
-      status: [ failure, success ]
+  #slack_regular:
+  #  image: plugins/slack
+  #  webhook: https://hooks.slack.com/services/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
+  #  channel: tech_monitor
+  #  username: drone
+  #  template: |
+  #    {{ repo.name }}:${DRONE_BRANCH} build {{ build.number }} by {{ build.author }} was a {{ build.status }}.
+  #    {{#success build.status}}
+  #    Look at the build logs at {{ build.link }}. Try the new deployment at https://${DRONE_BRANCH}.talon.farm.
+  #    {{else}}
+  #    Check out {{ build.link }} to see why.
+  #    {{/success}}
+  #  when:
+  #    event: push
+  #    status: [ failure, success ]
