@@ -26,18 +26,18 @@ Multiplies the arguments
 (* 1 2 3)                                                       // returns 6
 ```
 
-### +(Decimal, Decimal, Decimal...)Decimal
-Adds the arguments
-```
-(+ 1 1)                                                         // returns 2
-(+ 1 2 3)                                                       // returns 6
-```
-
 ### +(String, String, String...)String
 Concat strings
 ```
 (+ "Hello" " " "World")                                           // returns "Hello World"
 (+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
+```
+
+### +(Decimal, Decimal, Decimal...)Decimal
+Adds the arguments
+```
+(+ 1 1)                                                         // returns 2
+(+ 1 2 3)                                                       // returns 6
 ```
 
 ### -(Decimal, Decimal, Decimal...)Decimal
@@ -105,14 +105,6 @@ Tests if the arguments are the same
 (= "Hello" "Hello" "Bye")                                       // returns false
 ```
 
-### >(Time, Time, Time...)Bool
-Tests if the first argument is greather then the following
-```
-(> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns false
-(> 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns false
-(> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns true
-```
-
 ### >(Decimal, Decimal, Decimal...)Bool
 Tests if the first argument is greather then the following
 ```
@@ -121,12 +113,12 @@ Tests if the first argument is greather then the following
 (> 2 1)                                                         // returns true
 ```
 
-### >=(Time, Time, Time...)Bool
-Tests if the first argument is greather or equal then the following
+### >(Time, Time, Time...)Bool
+Tests if the first argument is greather then the following
 ```
-(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)              // returns false
-(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)              // returns true
-(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)              // returns true
+(> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns false
+(> 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns false
+(> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns true
 ```
 
 ### >=(Decimal, Decimal, Decimal...)Bool
@@ -135,6 +127,14 @@ Tests if the first argument is greather or equal then the following
 (>= 0 1)                                                        // returns false
 (>= 1 1)                                                        // returns true
 (>= 2 1)                                                        // returns true
+```
+
+### >=(Time, Time, Time...)Bool
+Tests if the first argument is greather or equal then the following
+```
+(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)              // returns false
+(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)              // returns true
+(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)              // returns true
 ```
 
 ### after(Time, Time)Bool
@@ -219,6 +219,12 @@ Return the number of items in the input list
 (count (list 1))												// returns "1"
 ```
 
+### date(Time)String
+Extract the date in YYYY-MM-DD format from a time.
+```
+(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
+```
+
 ### drop(List)List
 Create a list containing all but the last item in the input list
 ```
@@ -246,11 +252,23 @@ Floor the decimal argument
 (floor -2)                                                        // returns -2
 ```
 
+### formattime(Time)String
+Create an RFC3339 timestamp, the inverse of parseTime
+```
+(formatTime 2018-01-02T19:04:05Z)                                // returns "2018"
+```
+
 ### head(List)Any
 Returns the first item in the list
 ```
 (head (list "Hello World" "Hello Universe"))                    // returns "Hello World"
 (head (list 1 true Hello))                                      // returns 1
+```
+
+### hour(Time)String
+Extract the hour (00-23) from a time
+```
+(hour 2018-01-14T19:04:05Z)                                // returns "19"
 ```
 
 ### item(List, Decimal)Any
@@ -287,6 +305,12 @@ Create a new list by evaluating the given block for each item in the input list
 (map  (list "World" "Universe") x (+ "Hello " (. x)))             // returns a list containing "Hello World" and "Hello Universe"
 ```
 
+### matchtime(Time, Time, String)Bool
+Checks if two times match for a given layour
+```
+
+```
+
 ### max(List)Decimal
 Find the largest number in the list
 ```
@@ -299,11 +323,29 @@ Find the lowest number in the list
 (min  (list 3 4 1 3 7 1 17 15 2))                              // returns 1
 ```
 
+### minute(Time)String
+Extract the hour (00-23) from a time
+```
+(minute 2018-01-14T19:04:05Z)                                // returns "04"
+```
+
 ### mod(Decimal, Decimal, Decimal...)Decimal
 Modulo the arguments
 ```
 (mod 1 2)                                                         // returns 1
 (mod 3 8 2)                                                       // returns 1
+```
+
+### month(Time)String
+Extract the month (1-11) from a time
+```
+(month 2018-01-02T19:04:05Z)                                // returns "1"
+```
+
+### monthday(Time)String
+Extract the day (1-31) from a time
+```
+(monthDay 2018-01-14T19:04:05Z)                                // returns "14"
 ```
 
 ### noop()Any
@@ -384,6 +426,18 @@ Converts the parameter to a string
 ```
 (toString 1)                                                      // returns "1"
 (toString true)                                                   // returns "true"
+```
+
+### weekday(Time)String
+Extract the week day (0-6) from a time
+```
+(weekDay 2018-01-14T19:04:05Z)                                // returns "3"
+```
+
+### year(Time)String
+Extract the year from a time
+```
+(year 2018-01-02T19:04:05Z)                                // returns "2018"
 ```
 
 ### ~(String, String, String...)Bool

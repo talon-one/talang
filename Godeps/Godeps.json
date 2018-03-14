@@ -36,6 +36,21 @@
 			"Rev": "9de02cb5004ae21b328caf5fd6e0c1665579dbde"
 		},
 		{
+			"ImportPath": "github.com/fatih/color",
+			"Comment": "v1.5.0-8-g5df930a",
+			"Rev": "5df930a27be2502f99b292b7cc09ebad4d0891f4"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.9-14-gefa5899",
+			"Rev": "efa589957cd060542a26d2dd7832fd6a6c6c3ade"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.3-7-g6ca4dbf",
+			"Rev": "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c"
+		},
+		{
 			"ImportPath": "github.com/pkg/errors",
 			"Comment": "v0.8.0-11-g30136e2",
 			"Rev": "30136e27e2ac8d167177e8a583aa4c3fea5be833"
@@ -63,6 +78,18 @@
 		{
 			"ImportPath": "github.com/vjeantet/jodaTime",
 			"Rev": "be924ce213fb35f66c810b61e051965eb78b82d0"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "c4a91bd4f524f10d064139674cf55852e055ad01"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "8c0ece68c28377f4c326d85b94f8df0dace46f80"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/windows",
+			"Rev": "8c0ece68c28377f4c326d85b94f8df0dace46f80"
 		}
 	]
 }
