@@ -108,8 +108,8 @@ var bindingSignature = TaFunction{
 		Returns:     block.AnyKind,
 		Description: "Access a variable in the binding",
 		Example: `
-(. Key1)                                                       // returns the data assigned to Key1
-(. Key2 SubKey1)                                               // returns the data assigned to SubKey1 in the Map Key2
+(. Key1)                                                         // returns the data assigned to Key1
+(. Key2 SubKey1)                                                 // returns the data assigned to SubKey1 in the Map Key2
 `,
 	},
 	Func: bindingFunc,
@@ -161,8 +161,8 @@ var setBindingSignature = TaFunction{
 		Returns:     block.NullKind,
 		Description: "Set a variable in the binding",
 		Example: `
-(set Key1 "Hello World")                                       // sets Key1 to "Hello World"
-(set Key2 SubKey1 true)                                        // sets SubKey1 in map Key2 to true
+(set Key1 "Hello World")                                         // sets Key1 to "Hello World"
+(set Key2 SubKey1 true)                                          // sets SubKey1 in map Key2 to true
 `,
 	},
 	Func: setBindingFunc,

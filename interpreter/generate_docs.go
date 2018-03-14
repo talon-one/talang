@@ -67,7 +67,7 @@ const markdownTemplate string = `# Embedded Functions
 )
 {{- $element.Returns }}
 {{ $element.Description }}
-` + "```" + `
+` + "```lisp" + `
 {{ TrimSpace $element.Example }}
 ` + "```" + `
 {{ end }}
@@ -86,7 +86,8 @@ func main() {
 
 	fns := make([]fn, len(interp.Functions))
 
-	for i, f := range interp.Functions {
+	for i := 0; i < len(interp.Functions); i++ {
+		f := interp.Functions[i]
 		arguments := make([]string, len(f.Arguments))
 		for j, a := range f.Arguments {
 			arg := a.String()

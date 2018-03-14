@@ -29,8 +29,8 @@ var After = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks whether time A is after B",
 		Example: `
-(after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
-(after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "false"
+(after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                // returns "true"
+(after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                // returns "false"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -50,8 +50,8 @@ var Before = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks whether time A is before B",
 		Example: `
-(before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "false"
-(before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
+(before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)               // returns "false"
+(before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               // returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -94,8 +94,8 @@ var ParseTime = interpreter.TaFunction{
 		Returns:     block.TimeKind,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
 		Example: `
-(parseTime "2018-01-02T19:04:05Z")                              // returns "2018-01-02 19:04:05 +0000 UTC"
-(parseTime "20:04:05Z" "HH:mm:ss")                              // returns "2018-01-02 20:04:05 +0000 UTC"
+(parseTime "2018-01-02T19:04:05Z")                               // returns "2018-01-02 19:04:05 +0000 UTC"
+(parseTime "20:04:05Z" "HH:mm:ss")                               // returns "2018-01-02 20:04:05 +0000 UTC"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -126,7 +126,7 @@ var Hour = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Extract the hour (00-23) from a time",
 		Example: `
-(hour 2018-01-14T19:04:05Z)                                // returns "19"
+(hour 2018-01-14T19:04:05Z)                                      // returns "19"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -145,7 +145,7 @@ var Minute = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Extract the hour (00-23) from a time",
 		Example: `
-(minute 2018-01-14T19:04:05Z)                                // returns "04"
+(minute 2018-01-14T19:04:05Z)                                    // returns "04"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -182,7 +182,7 @@ var Month = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Extract the month (1-11) from a time",
 		Example: `
-(month 2018-01-02T19:04:05Z)                                // returns "1"
+(month 2018-01-02T19:04:05Z)                                     // returns "1"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -201,7 +201,7 @@ var MonthDay = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Extract the day (1-31) from a time",
 		Example: `
-(monthDay 2018-01-14T19:04:05Z)                                // returns "14"
+(monthDay 2018-01-14T19:04:05Z)                                  // returns "14"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -221,7 +221,7 @@ var WeekDay = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Extract the week day (0-6) from a time",
 		Example: `
-(weekDay 2018-01-14T19:04:05Z)                                // returns "3"
+(weekDay 2018-01-14T19:04:05Z)                                   // returns "3"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -239,7 +239,7 @@ var Year = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Extract the year from a time",
 		Example: `
-(year 2018-01-02T19:04:05Z)                                // returns "2018"
+(year 2018-01-02T19:04:05Z)                                      // returns "2018"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -278,7 +278,7 @@ var MatchTime = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks if two times match for a given layout",
 		Example: `
-matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD				// returns "true"
+matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   // returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -298,7 +298,7 @@ var Days = interpreter.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 // returns "3.423892107645601701193527333089150488376617431640625"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -319,7 +319,7 @@ var AddDuration = interpreter.TaFunction{
 		Returns:     block.TimeKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 // returns "3.423892107645601701193527333089150488376617431640625"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -344,7 +344,7 @@ var SubDuration = interpreter.TaFunction{
 		Returns:     block.TimeKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 // returns "3.423892107645601701193527333089150488376617431640625"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
