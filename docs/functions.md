@@ -140,14 +140,14 @@ Tests if the first argument is greather or equal then the following
 ### addduration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 // returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
 ```
 
 ### after(Time, Time)Bool
 Checks whether time A is after B
 ```lisp
-(after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                // returns "true"
-(after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                // returns "false"
+(after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "true"
+(after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "false"
 ```
 
 ### append(List, Kind(127), Kind(127)...)List
@@ -160,8 +160,8 @@ Adds an item to the list and returns the list
 ### before(Time, Time)Bool
 Checks whether time A is before B
 ```lisp
-(before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)               // returns "false"
-(before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               // returns "true"
+(before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "false"
+(before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "true"
 ```
 
 ### between(Decimal, Decimal, Decimal, Decimal...)Bool
@@ -187,8 +187,8 @@ Tests if the arguments are between the second last and the last argument
 ### betweentimes(Time, Time, Time)Bool
 Evaluates whether a timestamp is between minTime and maxTime
 ```lisp
-(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
-(betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "true"
+(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
+(betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "true"
 ```
 
 ### ceil(Decimal)Decimal
@@ -228,13 +228,13 @@ Return the number of items in the input list
 ### date(Time)String
 Extract the date in YYYY-MM-DD format from a time.
 ```lisp
-(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
+(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
 ```
 
 ### days(Time)Decimal
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 // returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
 ```
 
 ### drop(List)List
@@ -274,7 +274,7 @@ Floor the decimal argument
 ### formattime(Time)String
 Create an RFC3339 timestamp, the inverse of parseTime
 ```lisp
-(formatTime 2018-01-02T19:04:05Z)                                // returns "2018"
+(formatTime 2018-01-02T19:04:05Z)                                ; returns "2018"
 ```
 
 ### head(List)Any
@@ -287,7 +287,7 @@ Returns the first item in the list
 ### hour(Time)String
 Extract the hour (00-23) from a time
 ```lisp
-(hour 2018-01-14T19:04:05Z)                                      // returns "19"
+(hour 2018-01-14T19:04:05Z)                                      ; returns "19"
 ```
 
 ### isempty(List)Bool
@@ -340,7 +340,7 @@ Create a new list by evaluating the given block for each item in the input list
 ### matchtime(Time, Time, String)Bool
 Checks if two times match for a given layout
 ```lisp
-matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   // returns "true"
+matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   ; returns "true"
 ```
 
 ### max(List)Decimal
@@ -358,7 +358,7 @@ Find the lowest number in the list
 ### minute(Time)String
 Extract the hour (00-23) from a time
 ```lisp
-(minute 2018-01-14T19:04:05Z)                                    // returns "04"
+(minute 2018-01-14T19:04:05Z)                                    ; returns "04"
 ```
 
 ### mod(Decimal, Decimal, Decimal...)Decimal
@@ -371,13 +371,13 @@ Modulo the arguments
 ### month(Time)String
 Extract the month (1-11) from a time
 ```lisp
-(month 2018-01-02T19:04:05Z)                                     // returns "1"
+(month 2018-01-02T19:04:05Z)                                     ; returns "1"
 ```
 
 ### monthday(Time)String
 Extract the day (1-31) from a time
 ```lisp
-(monthDay 2018-01-14T19:04:05Z)                                  // returns "14"
+(monthDay 2018-01-14T19:04:05Z)                                  ; returns "14"
 ```
 
 ### noop()Any
@@ -405,8 +405,8 @@ Returns wether the first argument does not exist in the following arguments
 ### parsetime(String, String...)Time
 Evaluates whether a timestamp is between minTime and maxTime
 ```lisp
-(parseTime "2018-01-02T19:04:05Z")                               // returns "2018-01-02 19:04:05 +0000 UTC"
-(parseTime "20:04:05Z" "HH:mm:ss")                               // returns "2018-01-02 20:04:05 +0000 UTC"
+(parseTime "2018-01-02T19:04:05Z")                               ; returns "2018-01-02 19:04:05 +0000 UTC"
+(parseTime "20:04:05Z" "HH:mm:ss")                               ; returns "2018-01-02 20:04:05 +0000 UTC"
 ```
 
 ### push(List, Kind(127), Kind(127)...)List
@@ -455,7 +455,7 @@ Returns wether the first argument is the prefix of the following arguments
 ### subduration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 // returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
 ```
 
 ### tail(List)List
@@ -475,13 +475,13 @@ Converts the parameter to a string
 ### weekday(Time)String
 Extract the week day (0-6) from a time
 ```lisp
-(weekDay 2018-01-14T19:04:05Z)                                   // returns "3"
+(weekDay 2018-01-14T19:04:05Z)                                   ; returns "3"
 ```
 
 ### year(Time)String
 Extract the year from a time
 ```lisp
-(year 2018-01-02T19:04:05Z)                                      // returns "2018"
+(year 2018-01-02T19:04:05Z)                                      ; returns "2018"
 ```
 
 ### ~(String, String, String...)Bool
