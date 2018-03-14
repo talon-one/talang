@@ -196,3 +196,23 @@ var Regexp = interpreter.TaFunction{
 		return block.NewBool(true), nil
 	},
 }
+
+var LastName = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "lastName",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Returns wether the first argument (regex) matches all of the following arguments",
+		Example: `
+(lastName "Alex Unger")					// returns "Unger"
+(lastName "Mr Foo Bar")					// returns "Bar"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		words := strings.Split(args[0].String, " ")
+		return block.NewString(words[len(words)-1]), nil
+	},
+}

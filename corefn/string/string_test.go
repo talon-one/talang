@@ -145,3 +145,17 @@ func TestRegexp(t *testing.T) {
 		},
 	)
 }
+
+func TestLastName(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`lastName "Hello Mr Mock"`,
+			nil,
+			block.NewString("Mock"),
+		}, helpers.Test{
+			`lastName "Bond"`,
+			nil,
+			block.NewString("Bond"),
+		},
+	)
+}
