@@ -166,3 +166,26 @@ func TestMatchTime(t *testing.T) {
 		block.NewBool(false),
 	})
 }
+
+func TestAddDuration(t *testing.T) {
+	_time1, _ := time.Parse(time.RFC3339, "2018-03-11T00:05:05Z")
+	_time2, _ := time.Parse(time.RFC3339, "2018-03-12T02:04:05Z")
+	_time3, _ := time.Parse(time.RFC3339, "2018-03-19T02:04:05Z")
+	helpers.RunTests(t, helpers.Test{
+		`addDuration 2018-03-11T00:04:05Z 1 "minutes"`,
+		nil,
+		block.NewTime(_time1),
+	}, helpers.Test{
+		`addDuration 2018-03-12T00:04:05Z 2 "hours"`,
+		nil,
+		block.NewTime(_time2),
+	}, helpers.Test{
+		`addDuration 2018-03-14T02:04:05Z 5 "days"`,
+		nil,
+		block.NewTime(_time3),
+	}, helpers.Test{
+		`addDuration 2018-03-14T02:04:05Z 5 "eons"`,
+		nil,
+		helpers.Error{},
+	})
+}

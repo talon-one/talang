@@ -2,6 +2,7 @@
 package time
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -304,4 +305,46 @@ var Days = interpreter.TaFunction{
 		now := args[0].Time.Sub(time.Now())
 		return block.NewDecimalFromFloat((now.Hours() / 24)), nil
 	},
+}
+
+var AddDuration = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "addDuration",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,    // since
+			block.DecimalKind, // ammount
+			block.StringKind,  // units
+		},
+		Returns:     block.TimeKind,
+		Description: "Extract days from now from time",
+		Example: `
+(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		duration, err := makeDuration(args[1], args[2].String)
+		fmt.Println(duration)
+		if err != nil {
+			return nil, err
+		}
+		return block.NewTime(args[0].Time.Add(duration)), nil
+	},
+}
+
+func makeDuration(n *block.Block, unit string) (time.Duration, error) {
+	var multiplier int64
+	switch unit {
+	case "days":
+		multiplier = int64(time.Hour) * 24
+	case "hours":
+		multiplier = int64(time.Hour)
+	case "minutes":
+		multiplier = int64(time.Minute)
+	default:
+		return 0, fmt.Errorf("invalid duration unit %q", unit)
+	}
+	trg, _ := n.Decimal.Int64()
+	result := multiplier * trg
+	return time.Duration(result), nil
 }
