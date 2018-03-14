@@ -30,3 +30,15 @@ func TestBefore(t *testing.T) {
 		block.NewBool(true),
 	})
 }
+
+func TestBetweenTimes(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`betweenTimes "2006-01-02T19:04:05Z" "2006-01-01T15:04:05Z" "2006-01-03T19:04:05Z"`,
+		nil,
+		block.NewBool(true),
+	}, helpers.Test{
+		`betweenTimes "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z" "2006-01-03T19:04:05Z"`,
+		nil,
+		block.NewBool(false),
+	})
+}

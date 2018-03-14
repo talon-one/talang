@@ -54,3 +54,26 @@ var Before = interpreter.TaFunction{
 		return block.NewBool(time), nil
 	},
 }
+
+var BetweenTimes = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "betweenTimes",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind, // timestamp
+			block.TimeKind, // minTime
+			block.TimeKind, // maxTime
+		},
+		Returns:     block.BoolKind,
+		Description: "Evaluates whether a timestamp is between minTime and maxTime",
+		Example: `
+(betweenTimes "2006-01-02T19:04:05Z" "2006-01-01T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "false"
+(betweenTimes "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "true"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		a := args[0].Time.After(args[1].Time)
+		b := args[0].Time.Before(args[2].Time)
+		return block.NewBool(a && b), nil
+	},
+}
