@@ -15,7 +15,7 @@ func TestAfter(t *testing.T) {
 		nil,
 		block.NewBool(true),
 	}, helpers.Test{
-		`after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z"`,
+		`after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
 		block.NewBool(false),
 	})
@@ -23,11 +23,11 @@ func TestAfter(t *testing.T) {
 
 func TestBefore(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
-		`before "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z"`,
+		`before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
 		block.NewBool(false),
 	}, helpers.Test{
-		`before "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z"`,
+		`before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
 		block.NewBool(true),
 	})
@@ -35,11 +35,11 @@ func TestBefore(t *testing.T) {
 
 func TestBetweenTimes(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
-		`betweenTimes "2006-01-02T19:04:05Z" "2006-01-01T15:04:05Z" "2006-01-03T19:04:05Z"`,
+		`betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z`,
 		nil,
 		block.NewBool(true),
 	}, helpers.Test{
-		`betweenTimes "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z" "2006-01-03T19:04:05Z"`,
+		`betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z`,
 		nil,
 		block.NewBool(false),
 	})
@@ -49,16 +49,12 @@ func TestParseTime(t *testing.T) {
 	// time, _ := time.Parse(time.RFC3339, "2018-01-02T19:04:05Z")
 	time, _ := dateparse.ParseAny("2018-01-02T19:04:05Z")
 	helpers.RunTests(t, helpers.Test{
-		`parseTime "2018-01-02T19:04:05Z"`,
+		`parseTime 2018-01-02T19:04:05Z`,
 		nil,
 		block.NewTime(time),
 	}, helpers.Test{
-		`parseTime "2018-01-02T19:04:05Z"`,
+		`parseTime 2018-01-02T19:04:05Z`,
 		nil,
 		block.NewTime(time),
-	}, helpers.Test{
-		`parseTime bangbang`,
-		nil,
-		helpers.Error{},
 	})
 }
