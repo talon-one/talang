@@ -12,5 +12,6 @@ func AllOperations() []interpreter.TaFunction {
 		EndsWith,
 		Regexp,
 		LastName,
+		FirstName,
 	}
 }

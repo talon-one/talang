@@ -205,7 +205,7 @@ var LastName = interpreter.TaFunction{
 			block.StringKind,
 		},
 		Returns:     block.StringKind,
-		Description: "Returns wether the first argument (regex) matches all of the following arguments",
+		Description: "Extract the last word (space-separated) from a string",
 		Example: `
 (lastName "Alex Unger")					// returns "Unger"
 (lastName "Mr Foo Bar")					// returns "Bar"
@@ -214,5 +214,25 @@ var LastName = interpreter.TaFunction{
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		words := strings.Split(args[0].String, " ")
 		return block.NewString(words[len(words)-1]), nil
+	},
+}
+
+var FirstName = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "firstName",
+		IsVariadic: true,
+		Arguments: []block.Kind{
+			block.StringKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract all but the last word (space-separated) from a string",
+		Example: `
+(lastName "Alex Unger")					// returns "Alex"
+(lastName "Mr Foo Bar")					// returns "Mr"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		words := strings.Split(args[0].String, " ")
+		return block.NewString(words[0]), nil
 	},
 }

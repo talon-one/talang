@@ -159,3 +159,17 @@ func TestLastName(t *testing.T) {
 		},
 	)
 }
+
+func TestFirstName(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`firstName "Hello Mr Mock"`,
+			nil,
+			block.NewString("Hello"),
+		}, helpers.Test{
+			`firstName "Bond"`,
+			nil,
+			block.NewString("Bond"),
+		},
+	)
+}
