@@ -11,6 +11,11 @@
 			"Rev": "c9a50ad15ed95a301129d74b25ede60000713c8d"
 		},
 		{
+			"ImportPath": "github.com/chzyer/readline",
+			"Comment": "v1.4-38-gf6d7a1f",
+			"Rev": "f6d7a1f6fbf35bbf9beb80dc63c56a29dcfb759f"
+		},
+		{
 			"ImportPath": "github.com/davecgh/go-spew/spew",
 			"Comment": "v1.1.0-11-g87df7c6",
 			"Rev": "87df7c60d5820d0f8ae11afede5aa52325c09717"
