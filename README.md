@@ -1,4 +1,4 @@
-# talang
+# talang [![Build Status](https://drone.talon.farm/api/badges/talon-one/talang/status.svg)](https://drone.talon.farm/talon-one/talang)
 
 
 ### Setup a git precommit hook
