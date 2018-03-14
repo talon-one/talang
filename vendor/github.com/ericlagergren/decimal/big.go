@@ -14,9 +14,7 @@ import (
 
 	"github.com/ericlagergren/decimal/internal/arith"
 	"github.com/ericlagergren/decimal/internal/arith/checked"
-	"github.com/ericlagergren/decimal/internal/buf"
 	"github.com/ericlagergren/decimal/internal/c"
-	"github.com/ericlagergren/decimal/internal/compat"
 )
 
 // Big is a floating-point, arbitrary-precision decimal.
@@ -167,7 +165,7 @@ var payloads = [...]string{
 	quorem_:        "integer division or remainder has too many digits",
 	reminfy:        "remainder of infinity",
 	remx0:          "remainder by zero",
-	quotermexp:     "division with unlimitedprecision has a non-terminating decimal expansion",
+	quotermexp:     "division with unlimited precision has a non-terminating decimal expansion",
 	invctxpltz:     "operation with a precision less than zero",
 	invctxpgtu:     "operation with a precision greater than MaxPrecision",
 	invctxrmode:    "operation with an invalid RoundingMode",
@@ -188,20 +186,18 @@ func (p Payload) String() string {
 
 // An ErrNaN is used when a decimal operation would lead to a NaN under IEEE-754
 // rules. An ErrNaN implements the error interface.
-type ErrNaN struct {
-	Msg string
-}
+type ErrNaN struct{ Msg string }
 
-func (e ErrNaN) Error() string {
-	return e.Msg
-}
+func (e ErrNaN) Error() string { return e.Msg }
 
 var _ error = ErrNaN{}
 
 // CheckNaNs checks if either x or y is NaN. If so, it follows the rules of NaN
 // handling set forth in the GDA specification. The second argument, y, may be
 // nil. It returns true if either condition is a NaN.
-func (z *Big) CheckNaNs(x, y *Big) bool { return z.checkNaNs(x, y, 0) }
+func (z *Big) CheckNaNs(x, y *Big) bool {
+	return z.invalidContext(z.Context) || z.checkNaNs(x, y, 0)
+}
 
 func (z *Big) checkNaNs(x, y *Big, op Payload) bool {
 	var yform form
@@ -276,7 +272,7 @@ func (z *Big) Abs(x *Big) *Big {
 	if debug {
 		x.validate()
 	}
-	if !z.checkNaNs(x, x, absvalue) {
+	if !z.invalidContext(z.Context) && !z.checkNaNs(x, x, absvalue) {
 		z.Context.round(z.copyAbs(x))
 	}
 	return z
@@ -363,7 +359,7 @@ func cmp(x, y *Big, abs bool) int {
 	// NaN cmp x
 	// z cmp NaN
 	// NaN cmp NaN
-	if x.checkNaNs(x, y, comparison) {
+	if (x.form|y.form)&nan != 0 {
 		return 0
 	}
 
@@ -400,7 +396,7 @@ func cmpabs(x, y *Big) int {
 		if y.isCompact() {
 			return +1 // !x.isCompact
 		}
-		return compat.BigCmpAbs(&x.unscaled, &y.unscaled)
+		return x.unscaled.CmpAbs(&y.unscaled)
 	}
 
 	// Signs are the same and the scales differ. Compare the lengths of their
@@ -606,7 +602,9 @@ func (x *Big) Format(s fmt.State, c rune) {
 	// empty buffer.
 	tmpbuf := lpZero || lpSpace
 	if tmpbuf {
-		f.w = buf.New(x.Precision())
+		b := new(strings.Builder)
+		b.Grow(x.Precision())
+		f.w = b
 	} else {
 		f.w = stateWrapper{s}
 	}
@@ -643,14 +641,10 @@ func (x *Big) Format(s fmt.State, c rune) {
 		if f.prec == noPrec {
 			f.prec = 0
 		}
+		f.prec += x.Precision()
 		// %f's precision means "number of digits after the radix"
 		if x.exp < 0 {
-			f.prec -= x.exp
-			if trail := x.Precision() + x.exp; trail >= f.prec {
-				f.prec += trail
-			}
-		} else {
-			f.prec += x.Precision()
+			f.prec += x.exp
 		}
 		f.format(x, plain, noE)
 	case 'g':
@@ -709,7 +703,8 @@ func (x *Big) Format(s fmt.State, c rune) {
 	}
 
 	if tmpbuf {
-		f.w.(*buf.B).WriteTo(s)
+		// fmt's internal state type implements stringWriter I think.
+		io.WriteString(s, f.w.(*strings.Builder).String())
 	}
 }
 
@@ -798,7 +793,7 @@ func (x *Big) Uint64() (uint64, bool) {
 	// shrink it enough. See issue #20.
 	if !x.isCompact() {
 		xb := x.Int(nil)
-		return xb.Uint64(), arith.IsUint64(xb)
+		return xb.Uint64(), xb.IsUint64()
 	}
 
 	b := x.compact
@@ -889,12 +884,12 @@ func (x *Big) MarshalText() ([]byte, error) {
 	if debug {
 		x.validate()
 	}
-
 	var (
-		b = buf.New(x.Precision())
+		b = new(bytes.Buffer)
 		f = formatter{w: b, prec: noPrec, width: noWidth}
 		e = sciE[x.Context.OperatingMode]
 	)
+	b.Grow(x.Precision())
 	f.format(x, normal, e)
 	return b.Bytes(), nil
 }
@@ -909,11 +904,11 @@ func (z *Big) Neg(x *Big) *Big {
 	if debug {
 		x.validate()
 	}
-
-	if !z.checkNaNs(x, x, negation) {
+	if !z.invalidContext(z.Context) && !z.checkNaNs(x, x, negation) {
+		xform := x.form // copy in case z == x
 		z.copyAbs(x)
 		if !z.IsFinite() || z.compact != 0 || z.Context.RoundingMode == ToNegativeInf {
-			z.form = x.form ^ signbit
+			z.form = xform ^ signbit
 		}
 	}
 	return z.Context.round(z)
@@ -1088,7 +1083,7 @@ func (z *Big) SetBigMantScale(value *big.Int, scale int) *Big {
 	z.compact = c.Inflated
 	z.precision = arith.BigLength(value)
 
-	if arith.IsUint64(value) {
+	if value.IsUint64() {
 		if v := value.Uint64(); v != c.Inflated {
 			z.compact = v
 		}
@@ -1382,10 +1377,11 @@ func (x *Big) Signbit() bool {
 // OperatingMode.
 func (x *Big) String() string {
 	var (
-		b = buf.New(x.Precision())
+		b = new(strings.Builder)
 		f = formatter{w: b, prec: noPrec, width: noWidth}
 		e = sciE[x.Context.OperatingMode]
 	)
+	b.Grow(x.Precision())
 	f.format(x, normal, e)
 	return b.String()
 }
@@ -1426,7 +1422,7 @@ func (x *Big) validate() {
 	switch x.form {
 	case finite, finite | signbit:
 		if x.isInflated() {
-			if arith.IsUint64(&x.unscaled) && x.unscaled.Uint64() != c.Inflated {
+			if x.unscaled.IsUint64() && x.unscaled.Uint64() != c.Inflated {
 				panic(fmt.Sprintf("inflated but unscaled == %d", x.unscaled.Uint64()))
 			}
 			if x.unscaled.Sign() < 0 {

@@ -2,6 +2,7 @@
 package time
 
 import (
+	_ "github.com/araddon/dateparse"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
 )
