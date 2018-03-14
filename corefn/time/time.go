@@ -27,8 +27,8 @@ var After = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks whether time A is after B",
 		Example: `
-(after "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
-(after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
+(after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
+(after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "false"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -48,8 +48,8 @@ var Before = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks whether time A is before B",
 		Example: `
-(before "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
-(before "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
+(before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "false"
+(before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -70,8 +70,8 @@ var BetweenTimes = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
 		Example: `
-(betweenTimes "2006-01-02T19:04:05Z" "2006-01-01T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "false"
-(betweenTimes "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "true"
+(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
+(betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -91,7 +91,10 @@ var ParseTime = interpreter.TaFunction{
 		},
 		Returns:     block.TimeKind,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
-		Example:     ``,
+		Example: `
+(parseTime "2018-01-02T19:04:05Z")                              // returns "2018-01-02 19:04:05 +0000 UTC"
+(parseTime "20:04:05Z" "HH:mm:ss")                              // returns "2018-01-02 20:04:05 +0000 UTC"
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		var date time.Time

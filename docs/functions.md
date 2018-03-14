@@ -140,8 +140,8 @@ Tests if the first argument is greather or equal then the following
 ### after(Time, Time)Bool
 Checks whether time A is after B
 ```
-(after "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
-(after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
+(after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
+(after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "false"
 ```
 
 ### append(List, Kind(127), Kind(127)...)List
@@ -154,8 +154,8 @@ Adds an item to the list and returns the list
 ### before(Time, Time)Bool
 Checks whether time A is before B
 ```
-(before "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
-(before "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
+(before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "false"
+(before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
 ```
 
 ### between(Time, Time, Time, Time...)Bool
@@ -181,8 +181,8 @@ Tests if the arguments are between the second last and the last argument
 ### betweentimes(Time, Time, Time)Bool
 Evaluates whether a timestamp is between minTime and maxTime
 ```
-(betweenTimes "2006-01-02T19:04:05Z" "2006-01-01T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "false"
-(betweenTimes "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "true"
+(betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
+(betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "true"
 ```
 
 ### ceil(Decimal)Decimal
@@ -328,10 +328,11 @@ Returns wether the first argument does not exist in the following arguments
 (notContains "World" "Hello World" "Hello Universe")                 // returns false
 ```
 
-### parsetime(Time)Time
+### parsetime(String, String...)Time
 Evaluates whether a timestamp is between minTime and maxTime
 ```
-
+(parseTime "2018-01-02T19:04:05Z")                              // returns "2018-01-02 19:04:05 +0000 UTC"
+(parseTime "20:04:05Z" "HH:mm:ss")                              // returns "2018-01-02 20:04:05 +0000 UTC"
 ```
 
 ### push(List, Kind(127), Kind(127)...)List
