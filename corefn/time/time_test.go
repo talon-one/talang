@@ -12,5 +12,9 @@ func TestAfter(t *testing.T) {
 		`after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
 		block.NewBool(true),
+	}, helpers.Test{
+		`after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z"`,
+		nil,
+		block.NewBool(false),
 	})
 }
