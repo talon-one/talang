@@ -8,5 +8,14 @@ func AllOperations() []interpreter.TaFunction {
 		Before,
 		BetweenTimes,
 		ParseTime,
+		Date,
+		Hour,
+		Minute,
+		Month,
+		MonthDay,
+		WeekDay,
+		Year,
+		FormatTime,
+		MatchTime,
 	}
 }
