@@ -4,6 +4,10 @@ go:
   - "1.10.x"
   - master
 
+cache:
+  directories:
+    - _testdata
+
 matrix:
   allow_failures:
     - go: master
@@ -17,15 +21,15 @@ notifications:
 addons:
   apt:
     sources:
-      - deadsnakes # source required so it finds the package definition below
+      - deadsnakes # for python 3.6
     packages:
       - python3.6
 
 before_script:
-  - cd _testdata && ./tables.py 500 && cd ..
+  - ./_testdata/generate.bash
   - GO_FILES=$(find . -type f -iname '*.go')
   - go get -u -t ./...
 
 script:
   - test -z $(gofmt -s -l $GO_FILES)
-  - go test -v tags=ddebug -timeout=12h -short -race ./...
+  - travis_wait 30 go test -tags=ddebug -c; ./decimal.test -test.v -test.timeout=30m -test.short ./...

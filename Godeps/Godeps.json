@@ -17,19 +17,23 @@
 		},
 		{
 			"ImportPath": "github.com/ericlagergren/decimal",
-			"Rev": "fbd018672cf3dde5dc92b676021a0150ecd20410"
+			"Comment": "v3.1-19-g9de02cb",
+			"Rev": "9de02cb5004ae21b328caf5fd6e0c1665579dbde"
 		},
 		{
 			"ImportPath": "github.com/ericlagergren/decimal/internal/arith",
-			"Rev": "fbd018672cf3dde5dc92b676021a0150ecd20410"
+			"Comment": "v3.1-19-g9de02cb",
+			"Rev": "9de02cb5004ae21b328caf5fd6e0c1665579dbde"
 		},
 		{
 			"ImportPath": "github.com/ericlagergren/decimal/internal/arith/checked",
-			"Rev": "fbd018672cf3dde5dc92b676021a0150ecd20410"
+			"Comment": "v3.1-19-g9de02cb",
+			"Rev": "9de02cb5004ae21b328caf5fd6e0c1665579dbde"
 		},
 		{
 			"ImportPath": "github.com/ericlagergren/decimal/internal/c",
-			"Rev": "fbd018672cf3dde5dc92b676021a0150ecd20410"
+			"Comment": "v3.1-19-g9de02cb",
+			"Rev": "9de02cb5004ae21b328caf5fd6e0c1665579dbde"
 		},
 		{
 			"ImportPath": "github.com/pkg/errors",

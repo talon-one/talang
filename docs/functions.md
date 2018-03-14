@@ -140,8 +140,8 @@ Tests if the first argument is greather or equal then the following
 ### after(Time, Time)Bool
 Checks whether time A is after B
 ```
-(+ "Hello" " " "World")                                           // returns "Hello World"
-(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
+(after "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
+(after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
 ```
 
 ### append(List, Kind(127), Kind(127)...)List
@@ -149,6 +149,23 @@ Adds an item to the list and returns the list
 ```
 (push (list "Hello World" "Hello Universe") "Hello Human")        // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
 (push (list 1 2) 3 4)                                             // returns a list containing 1, 2, 3 and 4
+```
+
+### before(Time, Time)Bool
+Checks whether time A is before B
+```
+(before "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
+(before "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
+```
+
+### between(Time, Time, Time, Time...)Bool
+Tests if the arguments are between the second last and the last argument
+```
+(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        // returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
+(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
+(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
+(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
+(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
 ### between(Decimal, Decimal, Decimal, Decimal...)Bool
@@ -161,14 +178,11 @@ Tests if the arguments are between the second last and the last argument
 (between 1 4 0 3)                                               // returns false, (1 is between 0 and 3, 4 is not)
 ```
 
-### between(Time, Time, Time, Time...)Bool
-Tests if the arguments are between the second last and the last argument
+### betweentimes(Time, Time, Time)Bool
+Evaluates whether a timestamp is between minTime and maxTime
 ```
-(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        // returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
-(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
-(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
-(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
-(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
+(betweenTimes "2006-01-02T19:04:05Z" "2006-01-01T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "false"
+(betweenTimes "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z" "2006-01-03T19:04:05Z")                                // returns "true"
 ```
 
 ### ceil(Decimal)Decimal
@@ -312,6 +326,12 @@ Returns wether the first argument does not exist in the following arguments
 (notContains "Hello" "World")                                        // returns true
 (notContains "Hello" "Hello World" "Hello Universe")                 // returns false
 (notContains "World" "Hello World" "Hello Universe")                 // returns false
+```
+
+### parsetime(Time)Time
+Evaluates whether a timestamp is between minTime and maxTime
+```
+
 ```
 
 ### push(List, Kind(127), Kind(127)...)List
