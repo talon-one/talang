@@ -240,6 +240,13 @@ Returns a specific item from a list
 (item (list 1 true Hello) 3)                                      // fails
 ```
 
+### join(List, String)String
+Create a string by joining together a list of strings with `glue`
+```
+(join (list hello world) "-")										// returns "hello-world"
+(join (list hello world) ",")										// returns "hello,world"
+```
+
 ### kv(Block...)Map
 Create a map with any key value pairs passed as arguments.
 ```
