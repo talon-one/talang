@@ -1,3 +1,7 @@
+workspace:
+  base: /pipeline
+  path: src/github.com/talon-one/talang
+
 pipeline:
   build: &builder
     group: build
