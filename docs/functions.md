@@ -22,29 +22,29 @@ Tests if the arguments are not the same
 ### *(Decimal, Decimal, Decimal...)Decimal
 Multiplies the arguments
 ```lisp
-(* 1 2)                                                          // returns 2
-(* 1 2 3)                                                        // returns 6
+(* 1 2)                                                          ; returns 2
+(* 1 2 3)                                                        ; returns 6
 ```
 
 ### +(Decimal, Decimal, Decimal...)Decimal
 Adds the arguments
 ```lisp
-(+ 1 1)                                                          // returns 2
-(+ 1 2 3)                                                        // returns 6
+(+ 1 1)                                                          ; returns 2
+(+ 1 2 3)                                                        ; returns 6
 ```
 
 ### +(String, String, String...)String
 Concat strings
 ```lisp
-(+ "Hello" " " "World")                                          // returns "Hello World"
-(+ "Hello" " " (toString (+ 1 2)))                               // returns "Hello 3"
+(+ "Hello" " " "World")                                          ; returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
 ```
 
 ### -(Decimal, Decimal, Decimal...)Decimal
 Subtracts the arguments
 ```lisp
-(- 1 1)                                                          // returns 0
-(- 1 2 3)                                                        // returns -4
+(- 1 1)                                                          ; returns 0
+(- 1 2 3)                                                        ; returns -4
 ```
 
 ### .(Atom, Atom...)Any
@@ -57,8 +57,8 @@ Access a variable in the binding
 ### /(Decimal, Decimal, Decimal...)Decimal
 Divides the arguments
 ```lisp
-(/ 1 2)                                                          // returns 0.5
-(/ 1 2 3)                                                        // returns 0.166666
+(/ 1 2)                                                          ; returns 0.5
+(/ 1 2 3)                                                        ; returns 0.166666
 ```
 
 ### <(Decimal, Decimal, Decimal...)Bool
@@ -153,8 +153,8 @@ Checks whether time A is after B
 ### append(List, Kind(127), Kind(127)...)List
 Adds an item to the list and returns the list
 ```lisp
-(push (list "Hello World" "Hello Universe") "Hello Human")       // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
-(push (list 1 2) 3 4)                                            // returns a list containing 1, 2, 3 and 4
+(push (list "Hello World" "Hello Universe") "Hello Human")       ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(push (list 1 2) 3 4)                                            ; returns a list containing 1, 2, 3 and 4
 ```
 
 ### before(Time, Time)Bool
@@ -194,35 +194,35 @@ Evaluates whether a timestamp is between minTime and maxTime
 ### ceil(Decimal)Decimal
 Ceil the decimal argument
 ```lisp
-(ceil 2)                                                         // returns 2
-(ceil 2.4)                                                       // returns 3
-(ceil 2.5)                                                       // returns 3
-(ceil 2.9)                                                       // returns 3
-(ceil -2.7)                                                      // returns -2
-(ceil -2)                                                        // returns -2
+(ceil 2)                                                         ; returns 2
+(ceil 2.4)                                                       ; returns 3
+(ceil 2.5)                                                       ; returns 3
+(ceil 2.9)                                                       ; returns 3
+(ceil -2.7)                                                      ; returns -2
+(ceil -2)                                                        ; returns -2
 ```
 
 ### concat(String, String, String...)String
 Concat strings
 ```lisp
-(+ "Hello" " " "World")                                          // returns "Hello World"
-(+ "Hello" " " (toString (+ 1 2)))                               // returns "Hello 3"
+(+ "Hello" " " "World")                                          ; returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
 ```
 
 ### contains(String, String, String...)Bool
 Returns wether the first argument exists in the following arguments
 ```lisp
-(contains "Hello" "Hello World")                                 // returns true
-(contains "Hello" "World")                                       // returns false
-(contains "Hello" "Hello World" "Hello Universe")                // returns true
-(contains "World" "Hello World" "Hello Universe")                // returns false
+(contains "Hello" "Hello World")                                 ; returns true
+(contains "Hello" "World")                                       ; returns false
+(contains "Hello" "Hello World" "Hello Universe")                ; returns true
+(contains "World" "Hello World" "Hello Universe")                ; returns false
 ```
 
 ### count(List)Decimal
 Return the number of items in the input list
 ```lisp
-(count (list 1 2 3 4))											 // returns "4"
-(count (list 1))												 // returns "1"
+(count (list 1 2 3 4))											 ; returns "4"
+(count (list 1))												 ; returns "1"
 ```
 
 ### date(Time)String
@@ -240,35 +240,35 @@ Extract days from now from time
 ### drop(List)List
 Create a list containing all but the last item in the input list
 ```lisp
-(drop (list "Hello World" "Hello Universe"))                     // returns a list containing "Hello World"
-(drop (list 1 true Hello))                                       // returns a list containing 1 and true
+(drop (list "Hello World" "Hello Universe"))                     ; returns a list containing "Hello World"
+(drop (list 1 true Hello))                                       ; returns a list containing 1 and true
 ```
 
 ### endswith(String, String, String...)Bool
 Returns wether the first argument is the suffix of the following arguments
 ```lisp
-(endsWith "World" "Hello World")                                 // returns true
-(endsWith "World" "Hello Universe")                              // returns false
-(endsWith "World" "Hello World" "Hello Universe")                // returns false
-(endsWith "World" "Hello World" "By World")                      // returns true
+(endsWith "World" "Hello World")                                 ; returns true
+(endsWith "World" "Hello Universe")                              ; returns false
+(endsWith "World" "Hello World" "Hello Universe")                ; returns false
+(endsWith "World" "Hello World" "By World")                      ; returns true
 ```
 
 ### firstname(String)String
 Extract all but the last word (space-separated) from a string
 ```lisp
-(firstName "Alex Unger")                                         // returns "Alex"
-(firstName "Mr Foo Bar")                                         // returns "Mr"
+(firstName "Alex Unger")                                         ; returns "Alex"
+(firstName "Mr Foo Bar")                                         ; returns "Mr"
 ```
 
 ### floor(Decimal)Decimal
 Floor the decimal argument
 ```lisp
-(floor 2)                                                        // returns 2
-(floor 2.4)                                                      // returns 2
-(floor 2.5)                                                      // returns 2
-(floor 2.9)                                                      // returns 2
-(floor -2.7)                                                     // returns -3
-(floor -2)                                                       // returns -2
+(floor 2)                                                        ; returns 2
+(floor 2.4)                                                      ; returns 2
+(floor 2.5)                                                      ; returns 2
+(floor 2.9)                                                      ; returns 2
+(floor -2.7)                                                     ; returns -3
+(floor -2)                                                       ; returns -2
 ```
 
 ### formattime(Time)String
@@ -280,8 +280,8 @@ Create an RFC3339 timestamp, the inverse of parseTime
 ### head(List)Any
 Returns the first item in the list
 ```lisp
-(head (list "Hello World" "Hello Universe"))                     // returns "Hello World"
-(head (list 1 true Hello))                                       // returns 1
+(head (list "Hello World" "Hello Universe"))                     ; returns "Hello World"
+(head (list 1 true Hello))                                       ; returns 1
 ```
 
 ### hour(Time)String
@@ -293,48 +293,48 @@ Extract the hour (00-23) from a time
 ### isempty(List)Bool
 Check if a list is empty
 ```lisp
-isEmpty (list hello world)				                         // returns "false"
+isEmpty (list hello world)                                       ; returns "false"
 ```
 
 ### item(List, Decimal)Any
 Returns a specific item from a list
 ```lisp
-(item (list "Hello World" "Hello Universe") 0)                   // returns "Hello World"
-(item (list 1 true Hello) 1)                                     // returns true
-(item (list 1 true Hello) 3)                                     // fails
+(item (list "Hello World" "Hello Universe") 0)                   ; returns "Hello World"
+(item (list 1 true Hello) 1)                                     ; returns true
+(item (list 1 true Hello) 3)                                     ; fails
 ```
 
 ### join(List, String)String
 Create a string by joining together a list of strings with `glue`
 ```lisp
-(join (list hello world) "-")									 // returns "hello-world"
-(join (list hello world) ",")									 // returns "hello,world"
+(join (list hello world) "-")									 ; returns "hello-world"
+(join (list hello world) ",")									 ; returns "hello,world"
 ```
 
 ### kv(Block...)Map
 Create a map with any key value pairs passed as arguments.
 ```lisp
-(kv (Key1 "Hello World") (Key2 true) (Key3 123))                 // returns a Map with the keys key1, key2, key3
+(kv (Key1 "Hello World") (Key2 true) (Key3 123))                 ; returns a Map with the keys key1, key2, key3
 ```
 
 ### lastname(String)String
 Extract the last word (space-separated) from a string
 ```lisp
-(lastName "Alex Unger")                                          // returns "Unger"
-(lastName "Mr Foo Bar")                                          // returns "Bar"
+(lastName "Alex Unger")                                          ; returns "Unger"
+(lastName "Mr Foo Bar")                                          ; returns "Bar"
 ```
 
 ### list(Atom, Atom...)List
 Create a list out of the children
 ```lisp
-(list "Hello World" "Hello Universe")                            // returns a list with string items
-(list 1 true Hello)                                              // returns a list with an int, bool and string
+(list "Hello World" "Hello Universe")                            ; returns a list with string items
+(list 1 true Hello)                                              ; returns a list with an int, bool and string
 ```
 
 ### map(List, String, Block)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
-(map  (list "World" "Universe") x (+ "Hello " (. x)))            // returns a list containing "Hello World" and "Hello Universe"
+(map  (list "World" "Universe") x (+ "Hello " (. x)))            ; returns a list containing "Hello World" and "Hello Universe"
 ```
 
 ### matchtime(Time, Time, String)Bool
@@ -346,13 +346,13 @@ matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   // returns "tru
 ### max(List)Decimal
 Find the largest number in the list
 ```lisp
-(max  (list 3 4 1 3 7 1 17 15 2))                                // returns 17
+(max  (list 3 4 1 3 7 1 17 15 2))                                ; returns 17
 ```
 
 ### min(List)Decimal
 Find the lowest number in the list
 ```lisp
-(min  (list 3 4 1 3 7 1 17 15 2))                                // returns 1
+(min  (list 3 4 1 3 7 1 17 15 2))                                ; returns 1
 ```
 
 ### minute(Time)String
@@ -364,8 +364,8 @@ Extract the hour (00-23) from a time
 ### mod(Decimal, Decimal, Decimal...)Decimal
 Modulo the arguments
 ```lisp
-(mod 1 2)                                                        // returns 1
-(mod 3 8 2)                                                      // returns 1
+(mod 1 2)                                                        ; returns 1
+(mod 3 8 2)                                                      ; returns 1
 ```
 
 ### month(Time)String
@@ -389,17 +389,17 @@ No operation
 ### not(Bool)Bool
 Inverts the argument
 ```lisp
-(not false)                                                      // returns "true"
-(not (not false))                                                // returns "false"
+(not false)                                                      ; returns "true"
+(not (not false))                                                ; returns "false"
 ```
 
 ### notcontains(String, String, String...)Bool
 Returns wether the first argument does not exist in the following arguments
 ```lisp
-(notContains "Hello" "Hello World")                              // returns false
-(notContains "Hello" "World")                                    // returns true
-(notContains "Hello" "Hello World" "Hello Universe")             // returns false
-(notContains "World" "Hello World" "Hello Universe")             // returns false
+(notContains "Hello" "Hello World")                              ; returns false
+(notContains "Hello" "World")                                    ; returns true
+(notContains "Hello" "Hello World" "Hello Universe")             ; returns false
+(notContains "World" "Hello World" "Hello Universe")             ; returns false
 ```
 
 ### parsetime(String, String...)Time
@@ -412,15 +412,15 @@ Evaluates whether a timestamp is between minTime and maxTime
 ### push(List, Kind(127), Kind(127)...)List
 Adds an item to the list and returns the list
 ```lisp
-(push (list "Hello World" "Hello Universe") "Hello Human")       // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
-(push (list 1 2) 3 4)                                            // returns a list containing 1, 2, 3 and 4
+(push (list "Hello World" "Hello Universe") "Hello Human")       ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(push (list 1 2) 3 4)                                            ; returns a list containing 1, 2, 3 and 4
 ```
 
 ### reverse(List)List
 Reverses the order of items in a given list
 ```lisp
-(reverse (list 1 2 3 4))										 // returns "(4 3 2 1)"
-(reverse (list 1))												 // returns "(1)"
+(reverse (list 1 2 3 4))										 ; returns "(4 3 2 1)"
+(reverse (list 1))												 ; returns "(1)"
 ```
 
 ### set(String, Kind(127), Kind(127)...)Null
@@ -433,23 +433,23 @@ Set a variable in the binding
 ### sort(List, Bool...)List
 Sort a list ascending, set the second argument to true for descending order
 ```lisp
-(sort  (list "World" "Universe"))                                // returns a list containing "Universe" and "World"
-(sort  (list "World" "Universe") true)                           // returns a list containing "World" and "Universe"
+(sort  (list "World" "Universe"))                                ; returns a list containing "Universe" and "World"
+(sort  (list "World" "Universe") true)                           ; returns a list containing "World" and "Universe"
 ```
 
 ### split(String, String)List
 Create a list of strings by splitting the given string at each occurence of `sep`
 ```lisp
-(split "1,2,3,a" ",")				                             // returns "[1 2 3 a]"
+(split "1,2,3,a" ",")				                             ; returns "[1 2 3 a]"
 ```
 
 ### startswith(String, String, String...)Bool
 Returns wether the first argument is the prefix of the following arguments
 ```lisp
-(startsWith "Hello" "Hello World")                               // returns true
-(startsWith "Hello" "World")                                     // returns false
-(startsWith "Hello" "Hello World" "Hello Universe")              // returns true
-(startsWith "Hello" "Hello World" "Hell Universe")               // returns false
+(startsWith "Hello" "Hello World")                               ; returns true
+(startsWith "Hello" "World")                                     ; returns false
+(startsWith "Hello" "Hello World" "Hello Universe")              ; returns true
+(startsWith "Hello" "Hello World" "Hell Universe")               ; returns false
 ```
 
 ### subduration(Time, Decimal, String)Time
@@ -461,15 +461,15 @@ Extract days from now from time
 ### tail(List)List
 Returns list without the first item
 ```lisp
-(tail (list "Hello World" "Hello Universe"))                     // returns a list containing "Hello Universe"
-(tail (list 1 true Hello))                                       // returns a list containing true and Hello
+(tail (list "Hello World" "Hello Universe"))                     ; returns a list containing "Hello Universe"
+(tail (list 1 true Hello))                                       ; returns a list containing true and Hello
 ```
 
 ### tostring(Kind(15))String
 Converts the parameter to a string
 ```lisp
-(toString 1)                                                     // returns "1"
-(toString true)                                                  // returns "true"
+(toString 1)                                                     ; returns "1"
+(toString true)                                                  ; returns "true"
 ```
 
 ### weekday(Time)String
@@ -487,9 +487,9 @@ Extract the year from a time
 ### ~(String, String, String...)Bool
 Returns wether the first argument (regex) matches all of the following arguments
 ```lisp
-(~ "[a-z\s]*" "Hello World")                                     // returns true
-(~ "[a-z\s]*" "Hello W0rld")                                     // returns false
-(~ "[a-z\s]*" "Hello World" "Hello Universe")                    // returns true
-(~ "[a-z\s]*" "Hello W0rld" "Hello Universe")                    // returns false
+(~ "[a-z\s]*" "Hello World")                                     ; returns true
+(~ "[a-z\s]*" "Hello W0rld")                                     ; returns false
+(~ "[a-z\s]*" "Hello World" "Hello Universe")                    ; returns true
+(~ "[a-z\s]*" "Hello W0rld" "Hello Universe")                    ; returns false
 ```
 

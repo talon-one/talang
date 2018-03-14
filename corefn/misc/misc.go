@@ -35,8 +35,8 @@ var ToString = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Converts the parameter to a string",
 		Example: `
-(toString 1)                                                     // returns "1"
-(toString true)                                                  // returns "true"
+(toString 1)                                                     ; returns "1"
+(toString true)                                                  ; returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -53,8 +53,8 @@ var Not = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Inverts the argument",
 		Example: `
-(not false)                                                      // returns "true"
-(not (not false))                                                // returns "false"
+(not false)                                                      ; returns "true"
+(not (not false))                                                ; returns "false"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
