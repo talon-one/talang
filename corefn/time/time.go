@@ -2,6 +2,7 @@
 package time
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/araddon/dateparse"
@@ -128,7 +129,27 @@ var Hour = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		return block.NewString(jodaTime.Format("HH", args[0].Time)), nil
+		hour := strconv.Itoa(args[0].Time.Hour())
+		return block.NewString(hour), nil
+	},
+}
+
+var Minute = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "minute",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.StringKind,
+		Description: "Extract the hour (00-23) from a time",
+		Example: `
+(minute 2018-01-14T19:04:05Z)                                // returns "04"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		minute := strconv.Itoa(args[0].Time.Minute())
+		return block.NewString(minute), nil
 	},
 }
 
@@ -164,7 +185,8 @@ var Month = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		return block.NewString(jodaTime.Format("M", args[0].Time)), nil
+		month := strconv.Itoa(int(args[0].Time.Month()))
+		return block.NewString(month), nil
 	},
 }
 
@@ -182,7 +204,8 @@ var MonthDay = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		return block.NewString(jodaTime.Format("d", args[0].Time)), nil
+		monthDay := strconv.Itoa(int(args[0].Time.Day()))
+		return block.NewString(monthDay), nil
 	},
 }
 
@@ -219,7 +242,8 @@ var Year = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		return block.NewString(jodaTime.Format("yyyy", args[0].Time)), nil
+		year := strconv.Itoa(int(args[0].Time.Year()))
+		return block.NewString(year), nil
 	},
 }
 

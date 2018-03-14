@@ -131,7 +131,7 @@ func TestHour(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`hour 2018-03-11T00:04:05Z`,
 		nil,
-		block.NewString("00"),
+		block.NewString("0"),
 	}, helpers.Test{
 		`hour 2018-03-11T23:04:05Z`,
 		nil,
@@ -139,6 +139,18 @@ func TestHour(t *testing.T) {
 	}, helpers.Test{
 		`hour 2018-03-11T04:04:05Z`,
 		nil,
-		block.NewString("04"),
+		block.NewString("4"),
+	})
+}
+
+func TestMinute(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`minute 2018-03-11T00:04:05Z`,
+		nil,
+		block.NewString("4"),
+	}, helpers.Test{
+		`minute 2018-03-11T00:52:05Z`,
+		nil,
+		block.NewString("52"),
 	})
 }
