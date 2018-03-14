@@ -275,13 +275,33 @@ var MatchTime = interpreter.TaFunction{
 			block.StringKind, // layout
 		},
 		Returns:     block.BoolKind,
-		Description: "Checks if two times match for a given layour",
+		Description: "Checks if two times match for a given layout",
 		Example: `
-
+matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD				// returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		layout := args[2].String
 		return block.NewBool(jodaTime.Format(layout, args[0].Time) == jodaTime.Format(layout, args[1].Time)), nil
+	},
+}
+
+// TODO: test coverage. Days returns a float64 to be consistent, this need to be dealt with.
+var Days = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "days",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Extract days from now from time",
+		Example: `
+(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		now := args[0].Time.Sub(time.Now())
+		return block.NewDecimalFromFloat((now.Hours() / 24)), nil
 	},
 }

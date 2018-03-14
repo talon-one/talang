@@ -11,6 +11,7 @@ func AllOperations() []interpreter.TaFunction {
 		Hour,
 		Minute,
 		Date,
+		Days,
 		Month,
 		MonthDay,
 		WeekDay,
