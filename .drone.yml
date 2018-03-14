@@ -13,20 +13,20 @@ pipeline:
       event: push
 
 
-workspace:
-  base: /pipeline
-  path: src/github.com/talon-one/talang
-
-pipeline:
-  build: &builder
-    group: build
-    image: eu.gcr.io/talon-farm2/talon-one/docker-go-node/master:latest
-    pull: true
-    environment:
-    commands:
-      - go test ./...
-    when:
-      event: push
+#workspace:
+#  base: /pipeline
+#  path: src/github.com/talon-one/talang
+#
+#pipeline:
+#  build: &builder
+#    group: build
+#    image: eu.gcr.io/talon-farm2/talon-one/docker-go-node/master:latest
+#    pull: true
+#    environment:
+#    commands:
+#      - go test ./...
+#    when:
+#      event: push
 
   # Notification for regular pushes
   #slack_regular:
