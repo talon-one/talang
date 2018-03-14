@@ -19,5 +19,6 @@ func AllOperations() []interpreter.TaFunction {
 		MatchTime,
 		Days,
 		AddDuration,
+		SubDuration,
 	}
 }

@@ -332,6 +332,31 @@ var AddDuration = interpreter.TaFunction{
 	},
 }
 
+var SubDuration = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "subDuration",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,    // since
+			block.DecimalKind, // ammount
+			block.StringKind,  // units
+		},
+		Returns:     block.TimeKind,
+		Description: "Extract days from now from time",
+		Example: `
+(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		duration, err := makeDuration(args[1], args[2].String)
+		fmt.Println(duration)
+		if err != nil {
+			return nil, err
+		}
+		return block.NewTime(args[0].Time.Add(-1 * duration)), nil
+	},
+}
+
 func makeDuration(n *block.Block, unit string) (time.Duration, error) {
 	var multiplier int64
 	switch unit {

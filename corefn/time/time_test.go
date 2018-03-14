@@ -189,3 +189,16 @@ func TestAddDuration(t *testing.T) {
 		helpers.Error{},
 	})
 }
+
+func TestSubDuration(t *testing.T) {
+	_time1, _ := time.Parse(time.RFC3339, "2018-03-11T00:03:05Z")
+	helpers.RunTests(t, helpers.Test{
+		`subDuration 2018-03-11T00:04:05Z 1 "minutes"`,
+		nil,
+		block.NewTime(_time1),
+	}, helpers.Test{
+		`subDuration 2018-03-14T02:04:05Z 5 "eons"`,
+		nil,
+		helpers.Error{},
+	})
+}
