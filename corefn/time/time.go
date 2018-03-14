@@ -2,9 +2,12 @@
 package time
 
 import (
+	"time"
+
 	"github.com/araddon/dateparse"
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/vjeantet/jodaTime"
 )
 
 func init() {
@@ -81,18 +84,28 @@ var BetweenTimes = interpreter.TaFunction{
 var ParseTime = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "parseTime",
-		IsVariadic: false,
+		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.StringKind, // time string
+			block.StringKind, // signature
 		},
 		Returns:     block.TimeKind,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
 		Example:     ``,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		date, err := dateparse.ParseAny(args[0].String)
-		if err != nil {
-			return nil, err
+		var date time.Time
+		var err error
+		if len(args) > 1 {
+			date, err = jodaTime.Parse(args[1].String, args[0].String)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			date, err = dateparse.ParseAny(args[0].String)
+			if err != nil {
+				return nil, err
+			}
 		}
 		return block.NewTime(date), nil
 	},

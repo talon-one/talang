@@ -2,8 +2,10 @@ package time_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/araddon/dateparse"
+	"github.com/vjeantet/jodaTime"
 
 	"github.com/talon-one/talang/block"
 	helpers "github.com/talon-one/talang/testhelpers"
@@ -46,15 +48,34 @@ func TestBetweenTimes(t *testing.T) {
 }
 
 func TestParseTime(t *testing.T) {
-	// time, _ := time.Parse(time.RFC3339, "2018-01-02T19:04:05Z")
-	time, _ := dateparse.ParseAny("2018-01-02T19:04:05Z")
+	_time, _ := dateparse.ParseAny("2018-01-02T19:04:05Z")
 	helpers.RunTests(t, helpers.Test{
-		`parseTime 2018-01-02T19:04:05Z`,
+		`parseTime "2018-01-02T19:04:05Z"`,
 		nil,
-		block.NewTime(time),
+		block.NewTime(_time),
 	}, helpers.Test{
-		`parseTime 2018-01-02T19:04:05Z`,
+		`parseTime "2018-01-02T19:04:05Z"`,
 		nil,
-		block.NewTime(time),
+		block.NewTime(_time),
+	}, helpers.Test{
+		`parseTime "-42"`,
+		nil,
+		helpers.Error{},
+	}, helpers.Test{
+		`parseTime 10:30:31 HH:mm:ss`,
+		nil,
+		block.NewTime(mustParseJodaTime("HH:mm:ss", "10:30:31")),
+	}, helpers.Test{
+		`parseTime 10:30:31 OO:TT:{{`,
+		nil,
+		helpers.Error{},
 	})
+}
+
+func mustParseJodaTime(layout string, date string) time.Time {
+	time, err := jodaTime.Parse(layout, date)
+	if err != nil {
+		panic(err)
+	}
+	return time
 }
