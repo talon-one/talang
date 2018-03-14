@@ -154,3 +154,15 @@ func TestMinute(t *testing.T) {
 		block.NewString("52"),
 	})
 }
+
+func TestMatchTime(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD`,
+		nil,
+		block.NewBool(true),
+	}, helpers.Test{
+		`matchTime 2018-04-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD`,
+		nil,
+		block.NewBool(false),
+	})
+}

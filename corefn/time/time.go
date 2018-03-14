@@ -264,3 +264,24 @@ var FormatTime = interpreter.TaFunction{
 		return block.NewString(args[0].Time.Format(time.RFC3339)), nil
 	},
 }
+
+var MatchTime = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "matchTime",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.TimeKind,   // timestamp1
+			block.TimeKind,   // timestamp1
+			block.StringKind, // layout
+		},
+		Returns:     block.BoolKind,
+		Description: "Checks if two times match for a given layour",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		layout := args[2].String
+		return block.NewBool(jodaTime.Format(layout, args[0].Time) == jodaTime.Format(layout, args[1].Time)), nil
+	},
+}
