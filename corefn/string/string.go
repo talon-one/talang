@@ -200,7 +200,7 @@ var Regexp = interpreter.TaFunction{
 var LastName = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "lastName",
-		IsVariadic: true,
+		IsVariadic: false,
 		Arguments: []block.Kind{
 			block.StringKind,
 		},
@@ -220,15 +220,15 @@ var LastName = interpreter.TaFunction{
 var FirstName = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "firstName",
-		IsVariadic: true,
+		IsVariadic: false,
 		Arguments: []block.Kind{
 			block.StringKind,
 		},
 		Returns:     block.StringKind,
 		Description: "Extract all but the last word (space-separated) from a string",
 		Example: `
-(lastName "Alex Unger")					// returns "Alex"
-(lastName "Mr Foo Bar")					// returns "Mr"
+(firstName "Alex Unger")					// returns "Alex"
+(firstName "Mr Foo Bar")					// returns "Mr"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

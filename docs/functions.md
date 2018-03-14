@@ -61,20 +61,20 @@ Divides the arguments
 (/ 1 2 3)                                                       // returns 0.166666
 ```
 
-### <(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less then the following
-```
-(< 0 1)                                                         // returns true
-(< 1 1)                                                         // returns false
-(< 2 1)                                                         // returns false
-```
-
 ### <(Time, Time, Time...)Bool
 Tests if the first argument is less then the following
 ```
 (< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns true
 (< 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns false
 (< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)               // returns false
+```
+
+### <(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is less then the following
+```
+(< 0 1)                                                         // returns true
+(< 1 1)                                                         // returns false
+(< 2 1)                                                         // returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -158,16 +158,6 @@ Checks whether time A is before B
 (before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)                                // returns "true"
 ```
 
-### between(Time, Time, Time, Time...)Bool
-Tests if the arguments are between the second last and the last argument
-```
-(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        // returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
-(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
-(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
-(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
-(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
-```
-
 ### between(Decimal, Decimal, Decimal, Decimal...)Bool
 Tests if the arguments are between the second last and the last argument
 ```
@@ -176,6 +166,16 @@ Tests if the arguments are between the second last and the last argument
 (between 0 0 2)                                                 // returns false
 (between 2 0 2)                                                 // returns false
 (between 1 4 0 3)                                               // returns false, (1 is between 0 and 3, 4 is not)
+```
+
+### between(Time, Time, Time, Time...)Bool
+Tests if the arguments are between the second last and the last argument
+```
+(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        // returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
+(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
+(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
+(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        // returns false
+(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z) // returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
 ### betweentimes(Time, Time, Time)Bool
@@ -225,6 +225,12 @@ Extract the date in YYYY-MM-DD format from a time.
 (betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                // returns "false"
 ```
 
+### days(Time)Decimal
+Extract days from now from time
+```
+(days 2018-03-18T00:04:05Z)										// returns "3.423892107645601701193527333089150488376617431640625"
+```
+
 ### drop(List)List
 Create a list containing all but the last item in the input list
 ```
@@ -239,6 +245,13 @@ Returns wether the first argument is the suffix of the following arguments
 (endsWith "World" "Hello Universe")                                // returns false
 (endsWith "World" "Hello World" "Hello Universe")                  // returns false
 (endsWith "World" "Hello World" "By World")                        // returns true
+```
+
+### firstname(String)String
+Extract all but the last word (space-separated) from a string
+```
+(firstName "Alex Unger")					// returns "Alex"
+(firstName "Mr Foo Bar")					// returns "Mr"
 ```
 
 ### floor(Decimal)Decimal
@@ -271,6 +284,12 @@ Extract the hour (00-23) from a time
 (hour 2018-01-14T19:04:05Z)                                // returns "19"
 ```
 
+### isempty(List)Bool
+Check if a list is empty
+```
+
+```
+
 ### item(List, Decimal)Any
 Returns a specific item from a list
 ```
@@ -292,6 +311,13 @@ Create a map with any key value pairs passed as arguments.
 (kv (Key1 "Hello World") (Key2 true) (Key3 123))               // returns a Map with the keys key1, key2, key3
 ```
 
+### lastname(String)String
+Extract the last word (space-separated) from a string
+```
+(lastName "Alex Unger")					// returns "Unger"
+(lastName "Mr Foo Bar")					// returns "Bar"
+```
+
 ### list(Atom, Atom...)List
 Create a list out of the children
 ```
@@ -306,9 +332,9 @@ Create a new list by evaluating the given block for each item in the input list
 ```
 
 ### matchtime(Time, Time, String)Bool
-Checks if two times match for a given layour
+Checks if two times match for a given layout
 ```
-
+matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD				// returns "true"
 ```
 
 ### max(List)Decimal

@@ -11,12 +11,12 @@ func AllOperations() []interpreter.TaFunction {
 		Hour,
 		Minute,
 		Date,
-		Days,
 		Month,
 		MonthDay,
 		WeekDay,
 		Year,
 		FormatTime,
 		MatchTime,
+		Days,
 	}
 }
