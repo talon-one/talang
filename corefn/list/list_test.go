@@ -400,3 +400,18 @@ func TestIsEmpty(t *testing.T) {
 		},
 	)
 }
+
+func TestSplit(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`split "1,2,3,a" ","`,
+			nil,
+			block.NewList(
+				block.NewString("1"),
+				block.NewString("2"),
+				block.NewString("3"),
+				block.NewString("a"),
+			),
+		},
+	)
+}

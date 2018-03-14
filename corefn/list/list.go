@@ -382,7 +382,7 @@ var IsEmpty = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Check if a list is empty",
 		Example: `
-
+isEmpty (list hello world)				// returns "false"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -390,5 +390,30 @@ var IsEmpty = interpreter.TaFunction{
 			return block.NewBool(true), nil
 		}
 		return block.NewBool(false), nil
+	},
+}
+
+var Split = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "split",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.StringKind,
+			block.StringKind,
+		},
+		Returns:     block.ListKind,
+		Description: "Create a list of strings by splitting the given string at each occurence of `sep`",
+		Example: `
+(split "1,2,3,a" ",")				// returns "[1 2 3 a]"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := block.NewList()
+		srcs := strings.Split(args[0].String, args[1].String)
+		list.Children = make([]*block.Block, len(srcs))
+		for i := 0; i < len(list.Children); i++ {
+			list.Children[i] = block.NewString(srcs[i])
+		}
+		return list, nil
 	},
 }

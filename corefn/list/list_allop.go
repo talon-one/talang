@@ -19,5 +19,6 @@ func AllOperations() []interpreter.TaFunction {
 		Reverse,
 		Join,
 		IsEmpty,
+		Split,
 	}
 }
