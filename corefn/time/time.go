@@ -45,8 +45,8 @@ var Before = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Checks whether time A is before B",
 		Example: `
-(after "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
-(after "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
+(before "2006-01-02T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "false"
+(before "2006-01-01T19:04:05Z" "2006-01-02T15:04:05Z")                                // returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
