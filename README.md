@@ -1,4 +1,4 @@
-# talang ![status](build.svg) ![coverage](coverage.svg)
+# talang
 
 
 ### Setup a git precommit hook
