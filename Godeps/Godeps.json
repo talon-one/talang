@@ -59,6 +59,10 @@
 			"ImportPath": "github.com/talon-one/runes",
 			"Comment": "1.0-1-gdc70f5b",
 			"Rev": "dc70f5b5741b21f09722d7b8898d14b926b1aa14"
+		},
+		{
+			"ImportPath": "github.com/vjeantet/jodaTime",
+			"Rev": "be924ce213fb35f66c810b61e051965eb78b82d0"
 		}
 	]
 }
