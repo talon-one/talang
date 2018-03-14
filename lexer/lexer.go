@@ -69,7 +69,7 @@ parse:
 			if len(operation) == 0 {
 				operation = tokenString
 			} else {
-				children = append(children, block.New(tokenString))
+				children = append(children, block.NewString(tokenString))
 			}
 
 			if rest == str {

@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang/block"
@@ -154,6 +155,71 @@ func TestLexer(t *testing.T) {
 		},
 	}
 
+	for i := 0; i < len(tests); i++ {
+		s, err := Lex(tests[i].input)
+		if err != nil {
+			panic(err)
+		}
+		require.Equal(t, true, tests[i].expected.Equal(s), "Input `%s' failed, was `%s'", tests[i].input, s.Stringify())
+	}
+}
+
+func TestForcedString(t *testing.T) {
+	timeMustParse := func(s string) time.Time {
+		tm, err := time.Parse(time.RFC3339, s)
+		if err != nil {
+			panic(err)
+		}
+		return tm
+	}
+
+	tests := []struct {
+		input    string
+		expected *block.Block
+	}{
+		{
+			`+ "1" "2"`,
+			block.New("+",
+				block.NewString("1"),
+				block.NewString("2"),
+			),
+		},
+		{
+			`+ 1 2`,
+			block.New("+",
+				block.NewDecimalFromInt(1),
+				block.NewDecimalFromInt(2),
+			),
+		},
+		{
+			`+ "true" "false"`,
+			block.New("+",
+				block.NewString("true"),
+				block.NewString("false"),
+			),
+		},
+		{
+			`+ true false`,
+			block.New("+",
+				block.NewBool(true),
+				block.NewBool(false),
+			),
+		},
+		{
+			`+ "2007-01-02T00:00:00Z" "2007-01-02T00:00:00Z"`,
+			block.New("+",
+				block.NewString("2007-01-02T00:00:00Z"),
+				block.NewString("2007-01-02T00:00:00Z"),
+			),
+		},
+		{
+			`+ 2007-01-02T00:00:00Z 2007-01-02T00:00:00Z`,
+			block.New("+",
+				block.NewTime(timeMustParse("2007-01-02T00:00:00Z")),
+				block.NewTime(timeMustParse("2007-01-02T00:00:00Z")),
+			),
+		},
+	}
 	for i := 0; i < len(tests); i++ {
 		s, err := Lex(tests[i].input)
 		if err != nil {

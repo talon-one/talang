@@ -32,7 +32,7 @@ func TestEqual(t *testing.T) {
 			block.NewBool(true),
 		},
 		helpers.Test{
-			`(= "2006-01-02T15:04:05Z" "2006-01-02T15:04:05Z")`,
+			`(= 2006-01-02T15:04:05Z 2006-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(true),
 		},
@@ -77,7 +77,7 @@ func TestNotEqual(t *testing.T) {
 			block.NewBool(false),
 		},
 		helpers.Test{
-			`(!= "2006-01-02T15:04:05Z" "2006-01-02T15:04:05Z")`,
+			`(!= 2006-01-02T15:04:05Z 2006-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(false),
 		},
@@ -127,22 +127,22 @@ func TestGreaterThanDecimal(t *testing.T) {
 func TestGreaterThanTime(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`(> "2006-01-02T15:04:05Z")`,
+			`(> 2006-01-02T15:04:05Z)`,
 			nil,
-			lexer.MustLex(`> "2006-01-02T15:04:05Z"`),
+			lexer.MustLex(`> 2006-01-02T15:04:05Z`),
 		},
 		helpers.Test{
-			`(> "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
-			nil,
-			block.NewBool(false),
-		},
-		helpers.Test{
-			`(> "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(false),
 		},
 		helpers.Test{
-			`(> "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(> 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
+			nil,
+			block.NewBool(false),
+		},
+		helpers.Test{
+			`(> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(true),
 		},
@@ -177,22 +177,22 @@ func TestLessThanDecimal(t *testing.T) {
 func TestLessThanTime(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`(< "2006-01-02T15:04:05Z")`,
+			`(< 2006-01-02T15:04:05Z)`,
 			nil,
-			lexer.MustLex(`< "2006-01-02T15:04:05Z"`),
+			lexer.MustLex(`< 2006-01-02T15:04:05Z`),
 		},
 		helpers.Test{
-			`(< "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(true),
 		},
 		helpers.Test{
-			`(< "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(< 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(false),
 		},
 		helpers.Test{
-			`(< "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(false),
 		},
@@ -227,22 +227,22 @@ func TestGreaterThanOrEqualDecimal(t *testing.T) {
 func TestGreaterThanOrEqualTime(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`(>= "2006-01-02T15:04:05Z")`,
+			`(>= 2006-01-02T15:04:05Z)`,
 			nil,
-			lexer.MustLex(`>= "2006-01-02T15:04:05Z"`),
+			lexer.MustLex(`>= 2006-01-02T15:04:05Z`),
 		},
 		helpers.Test{
-			`(>= "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(false),
 		},
 		helpers.Test{
-			`(>= "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(true),
 		},
 		helpers.Test{
-			`(>= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(true),
 		},
@@ -277,22 +277,22 @@ func TestLessThanOrEqualDecimal(t *testing.T) {
 func TestLessThanOrEqualTime(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`(<= "2006-01-02T15:04:05Z")`,
+			`(<= 2006-01-02T15:04:05Z)`,
 			nil,
-			lexer.MustLex(`<= "2006-01-02T15:04:05Z"`),
+			lexer.MustLex(`<= 2006-01-02T15:04:05Z`),
 		},
 		helpers.Test{
-			`(<= "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
-			nil,
-			block.NewBool(true),
-		},
-		helpers.Test{
-			`(<= "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(<= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(true),
 		},
 		helpers.Test{
-			`(<= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")`,
+			`(<= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
+			nil,
+			block.NewBool(true),
+		},
+		helpers.Test{
+			`(<= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)`,
 			nil,
 			block.NewBool(false),
 		},
@@ -332,27 +332,27 @@ func TestBetweenDecimal(t *testing.T) {
 func TestBetweenTime(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`(between "2007-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z")`,
+			`(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)`,
 			nil,
 			block.NewBool(true),
 		},
 		helpers.Test{
-			`(between "2007-01-02T00:00:00Z" "2008-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z")`,
+			`(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)`,
 			nil,
 			block.NewBool(true),
 		},
 		helpers.Test{
-			`(between "2006-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2008-01-02T00:00:00Z")`,
+			`(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)`,
 			nil,
 			block.NewBool(false),
 		},
 		helpers.Test{
-			`(between "2008-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2008-01-02T00:00:00Z")`,
+			`(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)`,
 			nil,
 			block.NewBool(false),
 		},
 		helpers.Test{
-			`(between "2007-01-02T00:00:00Z" "2010-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z")`,
+			`(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)`,
 			nil,
 			block.NewBool(false),
 		},
