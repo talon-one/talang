@@ -61,14 +61,6 @@ Divides the arguments
 (/ 1 2 3)                                                       // returns 0.166666
 ```
 
-### <(Time, Time, Time...)Bool
-Tests if the first argument is less then the following
-```
-(< "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns true
-(< "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
-(< "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
-```
-
 ### <(Decimal, Decimal, Decimal...)Bool
 Tests if the first argument is less then the following
 ```
@@ -77,12 +69,12 @@ Tests if the first argument is less then the following
 (< 2 1)                                                         // returns false
 ```
 
-### <=(Time, Time, Time...)Bool
-Tests if the first argument is less or equal then the following
+### <(Time, Time, Time...)Bool
+Tests if the first argument is less then the following
 ```
-(<= "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
-(<= "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
-(<= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns false
+(< "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns true
+(< "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
+(< "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -91,6 +83,14 @@ Tests if the first argument is less or equal then the following
 (<= 0 1)                                                        // returns true
 (<= 1 1)                                                        // returns true
 (<= 2 1)                                                        // returns false
+```
+
+### <=(Time, Time, Time...)Bool
+Tests if the first argument is less or equal then the following
+```
+(<= "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
+(<= "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns true
+(<= "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")              // returns false
 ```
 
 ### =(Atom, Atom, Atom...)Bool
@@ -105,20 +105,20 @@ Tests if the arguments are the same
 (= "Hello" "Hello" "Bye")                                       // returns false
 ```
 
-### >(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is greather then the following
-```
-(> 0 1)                                                         // returns false
-(> 1 1)                                                         // returns false
-(> 2 1)                                                         // returns true
-```
-
 ### >(Time, Time, Time...)Bool
 Tests if the first argument is greather then the following
 ```
 (> "2006-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
 (> "2007-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns false
 (> "2008-01-02T15:04:05Z" "2007-01-02T15:04:05Z")               // returns true
+```
+
+### >(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is greather then the following
+```
+(> 0 1)                                                         // returns false
+(> 1 1)                                                         // returns false
+(> 2 1)                                                         // returns true
 ```
 
 ### >=(Time, Time, Time...)Bool
@@ -137,21 +137,18 @@ Tests if the first argument is greather or equal then the following
 (>= 2 1)                                                        // returns true
 ```
 
+### after(Time, Time)Bool
+Checks whether time A is after B
+```
+(+ "Hello" " " "World")                                           // returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                                // returns "Hello 3"
+```
+
 ### append(List, Kind(127), Kind(127)...)List
 Adds an item to the list and returns the list
 ```
 (push (list "Hello World" "Hello Universe") "Hello Human")        // returns a list containing "Hello World", "Hello Universe" and "Hello Human"
 (push (list 1 2) 3 4)                                             // returns a list containing 1, 2, 3 and 4
-```
-
-### between(Time, Time, Time, Time...)Bool
-Tests if the arguments are between the second last and the last argument
-```
-(between "2007-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z")                        // returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
-(between "2007-01-02T00:00:00Z" "2008-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z") // returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
-(between "2006-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2008-01-02T00:00:00Z")                        // returns false
-(between "2008-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2008-01-02T00:00:00Z")                        // returns false
-(between "2007-01-02T00:00:00Z" "2010-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z") // returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
 ### between(Decimal, Decimal, Decimal, Decimal...)Bool
@@ -162,6 +159,16 @@ Tests if the arguments are between the second last and the last argument
 (between 0 0 2)                                                 // returns false
 (between 2 0 2)                                                 // returns false
 (between 1 4 0 3)                                               // returns false, (1 is between 0 and 3, 4 is not)
+```
+
+### between(Time, Time, Time, Time...)Bool
+Tests if the arguments are between the second last and the last argument
+```
+(between "2007-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z")                        // returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
+(between "2007-01-02T00:00:00Z" "2008-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z") // returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
+(between "2006-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2008-01-02T00:00:00Z")                        // returns false
+(between "2008-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2008-01-02T00:00:00Z")                        // returns false
+(between "2007-01-02T00:00:00Z" "2010-01-02T00:00:00Z" "2006-01-02T00:00:00Z" "2009-01-02T00:00:00Z") // returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
 ### ceil(Decimal)Decimal
