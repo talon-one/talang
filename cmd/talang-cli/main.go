@@ -62,7 +62,7 @@ func main() {
 
 	t := terminal.NewTerminal(os.Stdout, prompt)
 
-	io.WriteString(t, "Welcome to talang cli enter .help to get some help, .exit to exit.\n")
+	io.WriteString(t, "Welcome to talang cli! Enter .help to get some help, .exit to exit.\n")
 
 	for {
 		line, err := t.ReadLine()
