@@ -333,8 +333,8 @@ var Count = interpreter.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Return the number of items in the input list",
 		Example: `
-(count (list 1 2 3 4))											 ; returns "4"
-(count (list 1))												 ; returns "1"
+(count (list 1 2 3 4))                                           ; returns "4"
+(count (list 1))                                                 ; returns "1"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -353,8 +353,8 @@ var Reverse = interpreter.TaFunction{
 		Returns:     block.ListKind,
 		Description: "Reverses the order of items in a given list",
 		Example: `
-(reverse (list 1 2 3 4))										 ; returns "4 3 2 1"
-(reverse (list 1))												 ; returns "1"
+(reverse (list 1 2 3 4))                                         ; returns "4 3 2 1"
+(reverse (list 1))                                               ; returns "1"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -430,8 +430,8 @@ var Split = interpreter.TaFunction{
 		Returns:     block.ListKind,
 		Description: "Create a list of strings by splitting the given string at each occurence of `sep`",
 		Example: `
-(split "1,2,3,a" ",")				                             ; returns "1 2 3 a"
-(split "1-2-3-a" "-")				                             ; returns "1 2 3 a"
+(split "1,2,3,a" ",")                                            ; returns "1 2 3 a"
+(split "1-2-3-a" "-")                                            ; returns "1 2 3 a"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

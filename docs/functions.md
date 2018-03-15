@@ -231,8 +231,8 @@ Returns wether the first argument exists in the following arguments
 ### count(List)Decimal
 Return the number of items in the input list
 ```lisp
-(count (list 1 2 3 4))											 ; returns "4"
-(count (list 1))												 ; returns "1"
+(count (list 1 2 3 4))                                           ; returns "4"
+(count (list 1))                                                 ; returns "1"
 ```
 
 ### date(Time)String
@@ -244,7 +244,7 @@ Extract the date in YYYY-MM-DD format from a time.
 ### days(Time)Decimal
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
+(days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 ```
 
 ### do(Kind(127), Block)Any
@@ -450,8 +450,8 @@ Adds an item to the list and returns the list
 ### reverse(List)List
 Reverses the order of items in a given list
 ```lisp
-(reverse (list 1 2 3 4))										 ; returns "4 3 2 1"
-(reverse (list 1))												 ; returns "1"
+(reverse (list 1 2 3 4))                                         ; returns "4 3 2 1"
+(reverse (list 1))                                               ; returns "1"
 ```
 
 ### set(String, Kind(127), Kind(127)...)Null
@@ -471,8 +471,8 @@ Sort a list ascending, set the second argument to true for descending order
 ### split(String, String)List
 Create a list of strings by splitting the given string at each occurence of `sep`
 ```lisp
-(split "1,2,3,a" ",")				                             ; returns "1 2 3 a"
-(split "1-2-3-a" "-")				                             ; returns "1 2 3 a"
+(split "1,2,3,a" ",")                                            ; returns "1 2 3 a"
+(split "1-2-3-a" "-")                                            ; returns "1 2 3 a"
 ```
 
 ### startsWith(String, String, String...)Bool

@@ -298,7 +298,7 @@ var Days = interpreter.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
+(days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

@@ -201,7 +201,7 @@ var Ceil = interpreter.TaFunction{
 (ceil 2.9)                                                       ; returns 3
 (ceil -2.7)                                                      ; returns -2
 (ceil -2)                                                        ; returns -2
-		`,
+`,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
