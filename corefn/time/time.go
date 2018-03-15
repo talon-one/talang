@@ -180,7 +180,7 @@ var Month = interpreter.TaFunction{
 			block.TimeKind,
 		},
 		Returns:     block.StringKind,
-		Description: "Extract the month (1-11) from a time",
+		Description: "Extract the month (1-12) from a time",
 		Example: `
 (month 2018-01-02T19:04:05Z)                                     ; returns "1"
 `,
