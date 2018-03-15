@@ -384,7 +384,8 @@ var Or = interpreter.TaFunction{
 		Returns:     token.Bool,
 		Description: "Evaluates ",
 		Example: `
-
+(or false false false true false)                                ; returns true
+(or false false)                                                 ; returns false
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {

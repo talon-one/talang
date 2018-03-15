@@ -462,7 +462,8 @@ Returns wether the first argument does not exist in the following arguments
 ### or(Atom...)Bool
 Evaluates 
 ```lisp
-
+(or false false false true false)                                ; returns true
+(or false false)                                                 ; returns false
 ```
 
 ### parseTime(String, String...)Time
