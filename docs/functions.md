@@ -140,7 +140,9 @@ Tests if the first argument is greather or equal then the following
 ### addDuration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625"
+(addDuration 2018-03-18T00:04:05Z 3 minutes)                     ; returns "2018-03-18T00:07:05Z"
+(addDuration 2018-03-18T00:04:05Z 2 hours)                       ; returns "2018-03-18T02:04:05Z"
+(addDuration 2018-03-18T00:04:05Z 18 days)                       ; returns "2018-04-05T00:04:05Z"
 ```
 
 ### after(Time, Time)Bool
@@ -242,7 +244,7 @@ Extract the date in YYYY-MM-DD format from a time.
 ### days(Time)Decimal
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 ```
 
 ### do(Kind(127), Block)Any
@@ -314,6 +316,7 @@ Extract the hour (00-23) from a time
 Check if a list is empty
 ```lisp
 isEmpty (list hello world)                                       ; returns "false"
+isEmpty (list)                                                   ; returns "true"
 ```
 
 ### item(List, Decimal)Any
@@ -468,7 +471,8 @@ Sort a list ascending, set the second argument to true for descending order
 ### split(String, String)List
 Create a list of strings by splitting the given string at each occurence of `sep`
 ```lisp
-(split "1,2,3,a" ",")				                             ; returns "[1 2 3 a]"
+(split "1,2,3,a" ",")				                             ; returns "1 2 3 a"
+(split "1-2-3-a" "-")				                             ; returns "1 2 3 a"
 ```
 
 ### startsWith(String, String, String...)Bool
@@ -483,7 +487,9 @@ Returns wether the first argument is the prefix of the following arguments
 ### subDuration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
+(subDuration 2018-03-18T00:04:05Z 12 minutes)                    ; returns "2018-03-17T23:52:05Z"
+(subDuration 2018-03-18T00:04:05Z 17 hours)                      ; returns "2018-03-17T07:04:05Z"
+(subDuration 2018-03-18T00:04:05Z 22 days)                       ; returns "2018-02-24T00:04:05Z"
 ```
 
 ### tail(List)List
