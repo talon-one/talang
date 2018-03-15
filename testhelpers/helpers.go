@@ -1,6 +1,7 @@
 package testhelpers
 
 import (
+	"errors"
 	"log"
 	"os"
 	"testing"
@@ -8,7 +9,22 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang"
 	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/interpreter"
 )
+
+func init() {
+	interpreter.RegisterCoreFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name:    "panic",
+				Returns: block.AnyKind,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+				return nil, errors.New("panic")
+			},
+		},
+	)
+}
 
 func MustNewInterpreterWithLogger() *talang.Interpreter {
 	interp := talang.MustNewInterpreter()

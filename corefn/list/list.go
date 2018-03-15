@@ -444,3 +444,67 @@ var Split = interpreter.TaFunction{
 		return list, nil
 	},
 }
+
+var Exists = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "exists",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.StringKind,
+			block.BlockKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Test if any item in a list matches a predicate",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := args[0]
+		bindingName := args[1].String
+		blockToRun := args[2]
+
+		size := len(list.Children)
+		scope := interp.NewScope()
+
+		for i := 0; i < size; i++ {
+			scope.Set(bindingName, list.Children[i])
+
+			var result block.Block
+			block.Copy(&result, blockToRun)
+			if err := scope.Evaluate(&result); err != nil {
+				return nil, err
+			}
+			if !result.IsBool() {
+				return nil, errors.Errorf("Invalid type in block, expected type: BoolKind got %s", result.Kind.String())
+			}
+			if result.Bool == true {
+				return block.NewBool(true), nil
+			}
+		}
+		return block.NewBool(false), nil
+	},
+}
+
+var ExistsLegacy = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "exists",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.BlockKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Test if any item in a list matches a predicate",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		if len(args[1].Children) > 1 && args[1].Children[0].IsBlock() {
+			return Exists.Func(interp, args[0], args[1].Children[0], args[1].Children[1])
+		}
+		return nil, errors.New("Missing or invalid binding")
+	},
+}

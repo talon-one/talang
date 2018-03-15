@@ -407,12 +407,11 @@ func TestJoin(t *testing.T) {
 			nil,
 			helpers.Error{},
 		},
-		// FIX - the interpreter parses "1" as a decimal, should be a string.
-		// helpers.Test{
-		// 	`join (list "1" "2" "3") -`,
-		// 	nil,
-		// 	block.NewString("1-2-3"),
-		// },
+		helpers.Test{
+			`join (list "1" "2" "3") -`,
+			nil,
+			block.NewString("1-2-3"),
+		},
 	)
 }
 
@@ -440,6 +439,46 @@ func TestIsEmpty(t *testing.T) {
 			`isEmpty (list)`,
 			nil,
 			block.NewBool(true),
+		},
+	)
+}
+
+func TestExists(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`exists (list hello world) Lst (= (. Lst) "hello")`,
+			nil,
+			block.NewBool(true),
+		}, helpers.Test{
+			`exists (list hello world) Lst (= (. Lst) "world")`,
+			nil,
+			block.NewBool(true),
+		}, helpers.Test{
+			`exists (list hello world) Lst (= (. Lst) "universes")`,
+			nil,
+			block.NewBool(false),
+		}, helpers.Test{
+			`exists (list hello world) Lst (+ (. Lst) "world")`,
+			nil,
+			helpers.Error{},
+		}, helpers.Test{
+			`exists (list hello world) Lst (panic)`,
+			nil,
+			helpers.Error{},
+		},
+	)
+}
+
+func TestExistsLegacy(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`exists (list hello world) ((Lst) (= (. Lst) "hello"))`,
+			nil,
+			block.NewBool(true),
+		}, helpers.Test{
+			`exists (list hello world) (panic)`,
+			nil,
+			helpers.Error{},
 		},
 	)
 }

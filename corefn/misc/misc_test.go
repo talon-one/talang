@@ -1,27 +1,11 @@
 package misc_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/talon-one/talang/block"
-	"github.com/talon-one/talang/interpreter"
 	helpers "github.com/talon-one/talang/testhelpers"
 )
-
-func init() {
-	interpreter.RegisterCoreFunction(
-		interpreter.TaFunction{
-			CommonSignature: interpreter.CommonSignature{
-				Name:    "panic",
-				Returns: block.AnyKind,
-			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-				return nil, errors.New("panic")
-			},
-		},
-	)
-}
 
 func TestNoop(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{

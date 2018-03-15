@@ -21,5 +21,7 @@ func AllOperations() []interpreter.TaFunction {
 		Join,
 		IsEmpty,
 		Split,
+		Exists,
+		ExistsLegacy,
 	}
 }
