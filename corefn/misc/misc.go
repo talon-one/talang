@@ -61,3 +61,28 @@ var Not = interpreter.TaFunction{
 		return block.NewBool(!args[0].Bool), nil
 	},
 }
+
+var Catch = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: "catch",
+		Arguments: []block.Kind{
+			block.AnyKind,
+			block.AnyKind,
+		},
+		Returns:     block.AnyKind,
+		Description: "Evaluate & return the second argument. If any errors occur, return the first argument instead",
+		Example: `
+catch "Edward" (. Profile Name)                                  ; returns "Edward"
+catch 22 (. Profile Age)                                         ; returns 46
+catch 22 2                                                       ; returns 22
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		scope := interp.NewScope()
+		err := scope.Evaluate(args[1])
+		if err != nil {
+			return args[0], nil
+		}
+		return args[1], nil
+	},
+}
