@@ -61,20 +61,20 @@ Divides the arguments
 (/ 1 2 3)                                                        ; returns 0.166666
 ```
 
-### <(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less then the following
-```lisp
-(< 0 1)                                                          ; returns true
-(< 1 1)                                                          ; returns false
-(< 2 1)                                                          ; returns false
-```
-
 ### <(Time, Time, Time...)Bool
 Tests if the first argument is less then the following
 ```lisp
 (< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
 (< 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 (< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
+```
+
+### <(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is less then the following
+```lisp
+(< 0 1)                                                          ; returns true
+(< 1 1)                                                          ; returns false
+(< 2 1)                                                          ; returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -105,14 +105,6 @@ Tests if the arguments are the same
 (= "Hello" "Hello" "Bye")                                        ; returns false
 ```
 
-### >(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is greather then the following
-```lisp
-(> 0 1)                                                          ; returns false
-(> 1 1)                                                          ; returns false
-(> 2 1)                                                          ; returns true
-```
-
 ### >(Time, Time, Time...)Bool
 Tests if the first argument is greather then the following
 ```lisp
@@ -121,12 +113,12 @@ Tests if the first argument is greather then the following
 (> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
 ```
 
-### >=(Time, Time, Time...)Bool
-Tests if the first argument is greather or equal then the following
+### >(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is greather then the following
 ```lisp
-(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
-(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
-(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+(> 0 1)                                                          ; returns false
+(> 1 1)                                                          ; returns false
+(> 2 1)                                                          ; returns true
 ```
 
 ### >=(Decimal, Decimal, Decimal...)Bool
@@ -135,6 +127,14 @@ Tests if the first argument is greather or equal then the following
 (>= 0 1)                                                         ; returns false
 (>= 1 1)                                                         ; returns true
 (>= 2 1)                                                         ; returns true
+```
+
+### >=(Time, Time, Time...)Bool
+Tests if the first argument is greather or equal then the following
+```lisp
+(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
+(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
 ```
 
 ### addDuration(Time, Decimal, String)Time
@@ -152,6 +152,13 @@ Checks whether time A is after B
 (after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "false"
 ```
 
+### and(Atom...)Bool
+Evaluates whether a series of predicates are all true
+```lisp
+(and false (> 2 1))                                              ; returns true
+(and false false)                                                ; returns false
+```
+
 ### append(List, Collection|Atom, Collection|Atom...)List
 Adds an item to the list and returns the list
 ```lisp
@@ -166,16 +173,6 @@ Checks whether time A is before B
 (before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "true"
 ```
 
-### between(Time, Time, Time, Time...)Bool
-Tests if the arguments are between the second last and the last argument
-```lisp
-(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
-(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
-(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
-(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
-(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
-```
-
 ### between(Decimal, Decimal, Decimal, Decimal...)Bool
 Tests if the arguments are between the second last and the last argument
 ```lisp
@@ -184,6 +181,16 @@ Tests if the arguments are between the second last and the last argument
 (between 0 0 2)                                                  ; returns false
 (between 2 0 2)                                                  ; returns false
 (between 1 4 0 3)                                                ; returns false, (1 is between 0 and 3, 4 is not)
+```
+
+### between(Time, Time, Time, Time...)Bool
+Tests if the arguments are between the second last and the last argument
+```lisp
+(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
+(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
+(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
+(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
+(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
 ### betweenTimes(Time, Time, Time)Bool
@@ -247,16 +254,16 @@ Extract days from now from time
 (days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 ```
 
-### do(Collection|Atom, Token)Any
-Apply a block to a value
-```lisp
-do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
-```
-
 ### do(Collection|Atom, String, Token)Any
 Apply a block to a value
 ```lisp
 do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
+```
+
+### do(Collection|Atom, Token)Any
+Apply a block to a value
+```lisp
+do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 ```
 
 ### drop(List)List
@@ -380,16 +387,16 @@ Create a list out of the children
 (list 1 true Hello)                                              ; returns a list with an int, bool and string
 ```
 
-### map(List, String, Token)List
-Create a new list by evaluating the given block for each item in the input list
-```lisp
-(map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
-```
-
 ### map(List, Token)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
 (map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
+```
+
+### map(List, String, Token)List
+Create a new list by evaluating the given block for each item in the input list
+```lisp
+(map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
 ```
 
 ### matchTime(Time, Time, String)Bool
@@ -460,7 +467,7 @@ Returns wether the first argument does not exist in the following arguments
 ```
 
 ### or(Atom...)Bool
-Evaluates 
+Evaluates whether at least one predicate is true
 ```lisp
 (or false false false true false)                                ; returns true
 (or false false)                                                 ; returns false

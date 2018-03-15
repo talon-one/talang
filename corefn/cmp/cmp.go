@@ -382,7 +382,7 @@ var Or = interpreter.TaFunction{
 			token.Atom,
 		},
 		Returns:     token.Bool,
-		Description: "Evaluates ",
+		Description: "Evaluates whether at least one predicate is true",
 		Example: `
 (or false false false true false)                                ; returns true
 (or false false)                                                 ; returns false
@@ -402,5 +402,36 @@ var Or = interpreter.TaFunction{
 			}
 		}
 		return (token.NewBool(false)), nil
+	},
+}
+
+var And = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "and",
+		IsVariadic: true,
+		Arguments: []token.Kind{
+			token.Atom,
+		},
+		Returns:     token.Bool,
+		Description: "Evaluates whether a series of predicates are all true",
+		Example: `
+(and false (> 2 1))                                              ; returns true
+(and false false)                                                ; returns false
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		for i := 0; i < len(args); i++ {
+			err := interp.Evaluate(args[i])
+			if err != nil {
+				errors.New("Error evaluating block")
+			}
+			if args[i].Kind != token.Bool {
+				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
+			}
+			if args[i].Bool == false {
+				return (token.NewBool(false)), nil
+			}
+		}
+		return (token.NewBool(true)), nil
 	},
 }

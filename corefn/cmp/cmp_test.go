@@ -401,3 +401,46 @@ func TestOr(t *testing.T) {
 		},
 	)
 }
+
+func TestAnd(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`and false false false false false`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`and true true true`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`and (. List True) true`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewMap(map[string]*token.TaToken{
+					"True":  token.NewBool(true),
+					"False": token.NewBool(false),
+				}),
+			}),
+			token.NewBool(true),
+		}, helpers.Test{
+			`and false false`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`and true`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`and (> 1 1)`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`and (> 2 1) true`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`and (+ 2 2)`,
+			nil,
+			helpers.Error{},
+		},
+	)
+}
