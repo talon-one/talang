@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -103,18 +105,19 @@ func main() {
 			returns = returns[:len(returns)-4]
 		}
 
+		packageName := getPackageName(f.Func)
 		// some warnings if some data is missing
 		if len(strings.TrimSpace(f.Description)) <= 0 {
-			log.Printf("WARNING: func `%s' has no `Description`", f.Name)
+			log.Printf("WARNING: func `%s' has no `Description`", filepath.Join(packageName, f.Name))
 		}
 		if len(strings.TrimSpace(f.Example)) <= 0 {
-			log.Printf("WARNING: func `%s' has no `Example`", f.Name)
+			log.Printf("WARNING: func `%s' has no `Example`", filepath.Join(packageName, f.Name))
 		}
 		if strings.IndexRune(f.Description, '\t') >= 0 {
-			log.Printf("WARNING: func's `%s' `Description` has a TAB character in it", f.Name)
+			log.Printf("WARNING: func's `%s' `Description` has a TAB character in it", filepath.Join(packageName, f.Name))
 		}
 		if strings.IndexRune(f.Example, '\t') >= 0 {
-			log.Printf("WARNING: func's `%s' `Example` has a TAB character in it", f.Name)
+			log.Printf("WARNING: func's `%s' `Example` has a TAB character in it", filepath.Join(packageName, f.Name))
 		}
 
 		fns[i] = fn{
@@ -175,4 +178,17 @@ func main() {
 	default:
 		panic("Unknown output format")
 	}
+}
+
+func getPackageName(f interface{}) string {
+	args := strings.Split(runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name(), "/")
+	for i := len(args) - 1; i >= 0; i-- {
+		if len(args[i]) > 0 {
+			pos := strings.Index(args[i], ".")
+			if pos > -1 {
+				return args[i][:pos]
+			}
+		}
+	}
+	return ""
 }
