@@ -324,22 +324,44 @@ func Copy(dst *Block, src *Block) {
 }
 
 func (b *Block) Stringify() string {
-	text := b.String
+	var builder strings.Builder
+	var children []string
 	if l := len(b.Children); l > 0 {
-		items := make([]string, l)
+		children = make([]string, l)
 		for i, item := range b.Children {
-			items[i] = item.Stringify()
-		}
-		if len(b.String) > 0 {
-			text = b.String + " " + strings.Join(items, " ")
-		} else {
-			text = strings.Join(items, " ")
+			children[i] = item.Stringify()
 		}
 	}
 	if b.IsBlock() {
-		return fmt.Sprintf("(%s)", text)
+		builder.WriteString("(")
+		if len(b.String) > 0 {
+			builder.WriteString(b.String)
+			if len(children) > 0 {
+				builder.WriteString(" ")
+			}
+		}
+		builder.WriteString(strings.Join(children, " "))
+		builder.WriteString(")")
+	} else if b.IsList() {
+		builder.WriteString("[")
+		builder.WriteString(strings.Join(children, ", "))
+		builder.WriteString("]")
+	} else if b.IsMap() {
+		builder.WriteString("{")
+		var keys []string
+		if l := len(b.Keys); l > 0 {
+			keys = make([]string, l)
+			for i, item := range b.Keys {
+				keys[i] = fmt.Sprintf("%s:%s", item, children[i])
+			}
+		}
+		builder.WriteString(strings.Join(keys, ", "))
+		builder.WriteString("}")
+	} else if len(b.String) > 0 {
+		builder.WriteString(b.String)
 	}
-	return text
+
+	return builder.String()
 }
 
 func (b *Block) Equal(a *Block) bool {

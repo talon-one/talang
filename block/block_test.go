@@ -348,14 +348,34 @@ func TestSetMapItem(t *testing.T) {
 }
 
 func TestStringify(t *testing.T) {
-	block := New("+", New("1"), New("2"))
+	block := New("+", NewDecimalFromInt(1), NewDecimalFromInt(2))
 	require.Equal(t, "(+ 1 2)", block.Stringify())
 
-	block = New("+", New("-", New("1"), New("2")), New("3"))
+	block = &Block{
+		String: "noop",
+		Kind:   BlockKind,
+	}
+	require.Equal(t, "(noop)", block.Stringify())
+
+	block = New("+", New("-", NewDecimalFromInt(1), NewDecimalFromInt(2)), NewDecimalFromInt(3))
 	require.Equal(t, "(+ (- 1 2) 3)", block.Stringify())
 
-	block = New("", New("-", New("1"), New("2")), New("3"))
+	block = New("", New("-", NewDecimalFromInt(1), NewDecimalFromInt(2)), NewDecimalFromInt(3))
 	require.Equal(t, "((- 1 2) 3)", block.Stringify())
+
+	block = NewList(NewDecimalFromInt(1), NewDecimalFromInt(2), NewDecimalFromInt(3))
+	require.Equal(t, "[1, 2, 3]", block.Stringify())
+
+	block = NewString("Hello")
+	require.Equal(t, "Hello", block.Stringify())
+
+	block = NewMap(map[string]*Block{
+		"Key1": NewMap(map[string]*Block{
+			"SubKey1": NewDecimalFromInt(1),
+		}),
+		"Key2": NewString("Hello"),
+	})
+	require.Equal(t, "{Key1:{SubKey1:1}, Key2:Hello}", block.Stringify())
 }
 
 func TestEqual(t *testing.T) {
