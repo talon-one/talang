@@ -15,20 +15,27 @@ import (
 )
 
 type commandDef struct {
-	function    func(string)
+	function    func([]string)
 	description string
 }
 
 var commands map[string]*commandDef
 
-var whitespace, _ = regexp.Compile(`\\s+`)
+var whitespace = regexp.MustCompile(`\s+`)
 
-func firstWord(input string) (string, string) {
-	parts := whitespace.Split(strings.Trim(input, " "), 2)
-	if len(parts) == 1 {
-		return parts[0], ""
+func parseArgs(input string) []string {
+	parts := whitespace.Split(input, -1)
+
+	args := make([]string, 0, len(parts))
+
+	for i := 0; i < len(parts); i++ {
+		p := strings.TrimSpace(parts[i])
+		if len(p) > 0 {
+			args = append(args, p)
+		}
 	}
-	return parts[0], parts[1]
+
+	return args
 }
 
 func isPromptCommand(l string) (command string, is bool) {
@@ -37,12 +44,16 @@ func isPromptCommand(l string) (command string, is bool) {
 }
 
 func runCommand(call string) error {
-	name, args := firstWord(call)
-	com := commands[name]
-	if com == nil {
+	args := parseArgs(call)
+
+	if len(args) <= 0 {
 		return errors.New("unknown command: '" + call + "'")
 	}
-	com.function(args)
+	com, ok := commands[strings.ToLower(args[0])]
+	if ok == false {
+		return errors.New("unknown command: '" + call + "'")
+	}
+	com.function(args[1:])
 	return nil
 }
 
@@ -97,14 +108,14 @@ func printFunction(fn *interpreter.TaFunction, examples bool) string {
 }
 
 func createCommands() {
-	commands = map[string]*commandDef{}
+	commands = make(map[string]*commandDef)
 
 	//
 	// General cli commands
 	//
 
 	commandHelp := commandDef{
-		function: func(args string) {
+		function: func(args []string) {
 			var sortedCommands []string
 			for comname := range commands {
 				sortedCommands = append(sortedCommands, comname)
@@ -121,7 +132,7 @@ func createCommands() {
 	}
 
 	commandQuit := commandDef{
-		function: func(args string) {
+		function: func(args []string) {
 			/**
 			 * Using the quit command is the proper way of exiting the cli.
 			 * If any cleanup is required it should be done here.
@@ -134,9 +145,9 @@ func createCommands() {
 	}
 
 	commandDebug := commandDef{
-		function: func(args string) {
+		function: func(args []string) {
 			if interp.Logger == nil {
-				interp.Logger = log.New(term.Stdout(), "", 0)
+				interp.Logger = log.New(out(), "", 0)
 				printOut("Debug mode enabled")
 			} else {
 				interp.Logger = nil
@@ -147,9 +158,9 @@ func createCommands() {
 	}
 
 	commandFn := commandDef{
-		function: func(args string) {
+		function: func(args []string) {
 			if len(args) > 0 {
-				if !fn(term.Stdout(), args) {
+				if !fn(out(), strings.Join(args, " ")) {
 					printOut(color.RedString("Unable to find a function matching `%s'", args))
 				}
 			} else {

@@ -51,6 +51,21 @@ func main() {
 
 	allHints = append(fnHints, cmdHints...)
 
+	defer func() {
+		if err := recover(); err != nil {
+			if _, ok := err.(runtime.Error); ok {
+				panic(err)
+			}
+			printErr(err.(error))
+		}
+	}()
+
+	args := flag.Args()
+	if len(args) > 0 {
+		evaluateLine(strings.Join(args, " "))
+		return
+	}
+
 	beginTerm()
 	defer endTerm()
 
@@ -69,30 +84,25 @@ func main() {
 
 		line = strings.TrimSpace(line)
 		if len(line) > 0 {
-			defer func() {
-				if err := recover(); err != nil {
-					if _, ok := err.(runtime.Error); ok {
-						panic(err)
-					}
-					printErr(err.(error))
-				}
-			}()
+			evaluateLine(line)
+		}
+	}
+}
 
-			if command, ok := isPromptCommand(line); ok {
-				if err := runCommand(command); err != nil {
-					printOut(err.Error())
-				}
+func evaluateLine(line string) {
+	if command, ok := isPromptCommand(line); ok {
+		if err := runCommand(command); err != nil {
+			printOut(err.Error())
+		}
+	} else {
+		parsed, err := talang.Parse(line)
+		if err != nil {
+			printErr(err)
+		} else {
+			if err := interp.Evaluate(parsed); err != nil {
+				printErr(err)
 			} else {
-				parsed, err := talang.Parse(line)
-				if err != nil {
-					printErr(err)
-				} else {
-					if err := interp.Evaluate(parsed); err != nil {
-						printErr(err)
-					} else {
-						printResult(parsed.Stringify())
-					}
-				}
+				printResult(parsed.Stringify())
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/user"
@@ -41,16 +42,24 @@ func endTerm() {
 	term.Close()
 }
 
+func out() (o io.Writer) {
+	o = os.Stdout
+	if term != nil {
+		o = term.Stdout()
+	}
+	return o
+}
+
 func printOut(msg string, args ...interface{}) {
-	fmt.Fprintf(term.Stdout(), msg+"\n", args...)
+	fmt.Fprintf(out(), msg+"\n", args...)
 }
 
 func printResult(msg string) {
-	fmt.Fprintln(term.Stdout(), color.GreenString(msg))
+	fmt.Fprintln(out(), color.GreenString(msg))
 }
 
 func printErr(e error) {
-	fmt.Fprintln(term.Stderr(), color.RedString(e.Error()))
+	fmt.Fprintln(out(), color.RedString(e.Error()))
 }
 
 // User history file helpers
