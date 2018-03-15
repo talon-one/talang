@@ -1,15 +1,20 @@
 SHELL := /bin/bash
 
-build:
-	@go get golang.org/x/tools/cmd/stringer
-	go generate ./...
-	go run interpreter/generate_docs.go -dir=./docs/
+build: docs
+	go build -o ./cmd/talang-cli/talang-cli ./cmd/talang-cli
 
-precommithook: build
+precommithook: docs
 	git add docs/functions.md
 	find . -name '*_allop.go' | xargs git add
 
-test: build
+docs: generate
+	go run interpreter/generate_docs.go -dir=./docs/
+
+generate:
+	@go get golang.org/x/tools/cmd/stringer
+	go generate ./...
+
+test: generate
 	go test -race -count=1 -cover ./...
 
 metalint: test
