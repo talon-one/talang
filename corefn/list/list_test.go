@@ -238,6 +238,31 @@ func TestMap(t *testing.T) {
 	})
 }
 
+func TestMapLegacy(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`map (. List) ((x) (+ (. x Name) " " (. x Surname)))`,
+		block.NewMap(map[string]*block.Block{
+			"List": block.NewList(
+				block.NewMap(map[string]*block.Block{
+					"Name":    block.NewString("Joe"),
+					"Surname": block.NewString("Doe"),
+					"Id":      block.NewDecimalFromInt(0),
+				}),
+				block.NewMap(map[string]*block.Block{
+					"Name":    block.NewString("Alice"),
+					"Surname": block.NewString("Wonder"),
+					"Id":      block.NewDecimalFromInt(1),
+				}),
+			),
+		}),
+		block.NewList(block.NewString("Joe Doe"), block.NewString("Alice Wonder")),
+	}, helpers.Test{
+		"map (list 1 2 3) (4)",
+		nil,
+		helpers.Error{},
+	})
+}
+
 func TestSort(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 	interp.Binding = block.NewMap(map[string]*block.Block{
@@ -391,16 +416,6 @@ func TestJoin(t *testing.T) {
 	)
 }
 
-func TestIsEmpty(t *testing.T) {
-	helpers.RunTests(t,
-		helpers.Test{
-			`isEmpty (list hello world)`,
-			nil,
-			block.NewBool(false),
-		},
-	)
-}
-
 func TestSplit(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
@@ -412,6 +427,19 @@ func TestSplit(t *testing.T) {
 				block.NewString("3"),
 				block.NewString("a"),
 			),
+		},
+	)
+}
+func TestIsEmpty(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`isEmpty (list hello world)`,
+			nil,
+			block.NewBool(false),
+		}, helpers.Test{
+			`isEmpty (list)`,
+			nil,
+			block.NewBool(true),
 		},
 	)
 }

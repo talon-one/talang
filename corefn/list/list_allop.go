@@ -20,5 +20,6 @@ func AllOperations() []interpreter.TaFunction {
 		Join,
 		IsEmpty,
 		Split,
+		MapLegacy,
 	}
 }

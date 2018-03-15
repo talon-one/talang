@@ -8,5 +8,7 @@ func AllOperations() []interpreter.TaFunction {
 		ToString,
 		Not,
 		Catch,
+		Do,
+		DoLegacy,
 	}
 }

@@ -9,6 +9,20 @@ import (
 	helpers "github.com/talon-one/talang/testhelpers"
 )
 
+func init() {
+	interpreter.RegisterCoreFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name:    "panic",
+				Returns: block.AnyKind,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+				return nil, errors.New("panic")
+			},
+		},
+	)
+}
+
 func TestNoop(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		"noop",
@@ -85,16 +99,42 @@ func TestCatch(t *testing.T) {
 	)
 }
 
-func init() {
-	interpreter.RegisterCoreFunction(
-		interpreter.TaFunction{
-			CommonSignature: interpreter.CommonSignature{
-				Name:    "panic",
-				Returns: block.AnyKind,
-			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-				return nil, errors.New("panic")
-			},
-		},
-	)
+func TestDo(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		"do (list 1 2 3) Lst (. Lst)",
+		nil,
+		block.NewList(
+			block.NewDecimalFromInt(1),
+			block.NewDecimalFromInt(2),
+			block.NewDecimalFromInt(3),
+		),
+	}, helpers.Test{
+		"do 4 x (panic)",
+		nil,
+		helpers.Error{},
+	})
+}
+
+func TestDoLegacy(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		"do (list 1 2 3) ((Lst) (. Lst))",
+		nil,
+		block.NewList(
+			block.NewDecimalFromInt(1),
+			block.NewDecimalFromInt(2),
+			block.NewDecimalFromInt(3),
+		),
+	}, helpers.Test{
+		"do 4 ((x) (panic))",
+		nil,
+		helpers.Error{},
+	}, helpers.Test{
+		"do 4 (x (panic))",
+		nil,
+		helpers.Error{},
+	}, helpers.Test{
+		"do 4 (panic)",
+		nil,
+		helpers.Error{},
+	})
 }

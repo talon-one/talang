@@ -3,6 +3,8 @@
 package misc
 
 import (
+	"errors"
+
 	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
 )
@@ -84,5 +86,55 @@ catch 22 2                                                       ; returns 22
 			return args[0], nil
 		}
 		return args[1], nil
+	},
+}
+
+var Do = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: "do",
+		Arguments: []block.Kind{
+			block.AtomKind | block.CollectionKind,
+			block.StringKind,
+			block.BlockKind,
+		},
+		Returns:     block.AnyKind,
+		Description: "Apply a block to a value",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		value := args[0]
+		bindingName := args[1].String
+		blockToRun := args[2]
+
+		scope := interp.NewScope()
+		scope.Set(bindingName, value)
+
+		if err := scope.Evaluate(blockToRun); err != nil {
+			return nil, err
+		}
+		return blockToRun, nil
+	},
+}
+
+var DoLegacy = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: "do",
+		Arguments: []block.Kind{
+			block.AtomKind | block.CollectionKind,
+			block.BlockKind,
+		},
+		Returns:     block.AnyKind,
+		Description: "Apply a block to a value",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		if len(args[1].Children) == 2 && args[1].Children[0].IsBlock() {
+			return Do.Func(interp, args[0], args[1].Children[0], args[1].Children[1])
+		}
+		return nil, errors.New("Missing or invalid binding")
 	},
 }

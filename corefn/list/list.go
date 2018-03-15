@@ -24,7 +24,6 @@ var List = interpreter.TaFunction{
 		IsVariadic: true,
 		Arguments: []block.Kind{
 			block.AtomKind,
-			block.AtomKind,
 		},
 		Returns:     block.ListKind,
 		Description: "Create a list out of the children",
@@ -167,7 +166,7 @@ var Map = interpreter.TaFunction{
 		Returns:     block.ListKind,
 		Description: "Create a new list by evaluating the given block for each item in the input list",
 		Example: `
-(map  (list "World" "Universe") x (+ "Hello " (. x)))            ; returns a list containing "Hello World" and "Hello Universe"
+(map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -190,6 +189,27 @@ var Map = interpreter.TaFunction{
 			values = append(values, &result)
 		}
 		return block.NewList(values...), nil
+	},
+}
+
+var MapLegacy = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: Map.Name,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.BlockKind,
+		},
+		Returns:     Map.Returns,
+		Description: Map.Description,
+		Example: `
+(map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		if len(args[1].Children) == 2 && args[1].Children[0].IsBlock() {
+			return Map.Func(interp, args[0], args[1].Children[0], args[1].Children[1])
+		}
+		return nil, errors.New("Missing or invalid binding")
 	},
 }
 
@@ -235,6 +255,7 @@ var Min = interpreter.TaFunction{
 		Description: "Find the lowest number in the list",
 		Example: `
 (min  (list 3 4 1 3 7 1 17 15 2))                                ; returns 1
+(min  (list 3 4 -1 3 7 1 17 0 2))                                ; returns -1
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -266,6 +287,7 @@ var Max = interpreter.TaFunction{
 		Description: "Find the largest number in the list",
 		Example: `
 (max  (list 3 4 1 3 7 1 17 15 2))                                ; returns 17
+(max  (list 4 2 9 2 27 1 2 422))                                 ; returns 422
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -293,7 +315,10 @@ var Append = interpreter.TaFunction{
 		Arguments:   Push.Arguments,
 		Returns:     Push.Returns,
 		Description: Push.Description,
-		Example:     Push.Example,
+		Example: `
+(append (list "Hello World" "Hello Universe") "Hello Human")     ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(append (list 1 2) 3 4)                                          ; returns a list containing 1, 2, 3 and 4
+`,
 	},
 	Func: Push.Func,
 }
@@ -328,8 +353,8 @@ var Reverse = interpreter.TaFunction{
 		Returns:     block.ListKind,
 		Description: "Reverses the order of items in a given list",
 		Example: `
-(reverse (list 1 2 3 4))										 ; returns "(4 3 2 1)"
-(reverse (list 1))												 ; returns "(1)"
+(reverse (list 1 2 3 4))										 ; returns "4 3 2 1"
+(reverse (list 1))												 ; returns "1"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
