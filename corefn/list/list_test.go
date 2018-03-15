@@ -612,7 +612,7 @@ func TestEveryLegacy(t *testing.T) {
 			}),
 			block.NewBool(false),
 		}, helpers.Test{
-			`every (. List) ((Item) (= (panic) 1))`,
+			`every (. List) (panic)`,
 			block.NewMap(map[string]*block.Block{
 				"List": block.NewList(
 					block.NewMap(map[string]*block.Block{
