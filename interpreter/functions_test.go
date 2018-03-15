@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func getError(result interface{}, err error) error {
@@ -21,10 +21,10 @@ func TestRegisterFunction(t *testing.T) {
 	require.NoError(t, interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "MyFN",
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello World"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello World"), nil
 		},
 	}))
 
@@ -34,10 +34,10 @@ func TestRegisterFunction(t *testing.T) {
 	require.Error(t, interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "myfn",
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello Universe"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello Universe"), nil
 		}}))
 	require.Equal(t, "Hello World", interp.MustLexAndEvaluate("myfn").String)
 
@@ -45,10 +45,10 @@ func TestRegisterFunction(t *testing.T) {
 	require.NoError(t, interp.UpdateFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "MyFn",
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello Galaxy"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello Galaxy"), nil
 		}}))
 	require.Equal(t, "Hello Galaxy", interp.MustLexAndEvaluate("myfn").String)
 
@@ -67,13 +67,13 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "MyFN1",
 			IsVariadic: true,
-			Arguments: []block.Kind{
-				block.Any,
+			Arguments: []token.Kind{
+				token.Any,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello World"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello World"), nil
 		},
 	}))
 
@@ -83,10 +83,10 @@ func TestVariadicFunctionWith0Parameters(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "MyFN2",
 			IsVariadic: true,
-			Returns:    block.String,
+			Returns:    token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello World"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello World"), nil
 		},
 	}))
 
@@ -98,13 +98,13 @@ func TestFuncWithWrongParameter(t *testing.T) {
 	require.NoError(t, interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "MyFN1",
-			Arguments: []block.Kind{
-				block.Any,
+			Arguments: []token.Kind{
+				token.Any,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello World"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello World"), nil
 		},
 	}))
 
@@ -114,17 +114,17 @@ func TestFuncWithWrongParameter(t *testing.T) {
 func TestBinding(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"Root1": block.NewMap(map[string]*block.TaToken{
-			"Decimal": block.NewDecimalFromInt(2),
-			"String":  block.NewString("Hello"),
-			"List":    block.NewList(block.NewString("Item1"), block.NewString("Item2")),
-			"Map": block.NewMap(map[string]*block.TaToken{
-				"Decimal": block.NewDecimalFromInt(2),
-				"String":  block.NewString("Hello"),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"Root1": token.NewMap(map[string]*token.TaToken{
+			"Decimal": token.NewDecimalFromInt(2),
+			"String":  token.NewString("Hello"),
+			"List":    token.NewList(token.NewString("Item1"), token.NewString("Item2")),
+			"Map": token.NewMap(map[string]*token.TaToken{
+				"Decimal": token.NewDecimalFromInt(2),
+				"String":  token.NewString("Hello"),
 			}),
 		}),
-		"Root2": block.NewMap(map[string]*block.TaToken{}),
+		"Root2": token.NewMap(map[string]*token.TaToken{}),
 	})
 
 	b := interp.MustLexAndEvaluate("(+ (. Root1 Decimal) 2)")
@@ -158,9 +158,9 @@ func TestBinding(t *testing.T) {
 func TestFuncInBinding(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"Root": block.NewMap(map[string]*block.TaToken{
-			"2": block.NewDecimalFromInt(2),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"Root": token.NewMap(map[string]*token.TaToken{
+			"2": token.NewDecimalFromInt(2),
 		}),
 	})
 
@@ -172,9 +172,9 @@ func TestFuncInBinding(t *testing.T) {
 func TestSetBinding(t *testing.T) {
 	t.Run("RootLevel", func(t *testing.T) {
 		interp := helpers.MustNewInterpreterWithLogger()
-		interp.Binding = block.NewMap(map[string]*block.TaToken{
-			"Root": block.NewMap(map[string]*block.TaToken{
-				"Key": block.NewDecimalFromInt(1),
+		interp.Binding = token.NewMap(map[string]*token.TaToken{
+			"Root": token.NewMap(map[string]*token.TaToken{
+				"Key": token.NewDecimalFromInt(1),
 			}),
 		})
 		require.Equal(t, "1", interp.MustLexAndEvaluate(". Root Key").String)
@@ -183,9 +183,9 @@ func TestSetBinding(t *testing.T) {
 	})
 	t.Run("DeepLevel", func(t *testing.T) {
 		interp := helpers.MustNewInterpreterWithLogger()
-		interp.Binding = block.NewMap(map[string]*block.TaToken{
-			"Root": block.NewMap(map[string]*block.TaToken{
-				"Key": block.NewDecimalFromInt(1),
+		interp.Binding = token.NewMap(map[string]*token.TaToken{
+			"Root": token.NewMap(map[string]*token.TaToken{
+				"Key": token.NewDecimalFromInt(1),
 			}),
 		})
 		interp.MustLexAndEvaluate("set Root Key 2")
@@ -212,20 +212,20 @@ func TestRootFuncAccessScopeBinding(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn",
-			Arguments: []block.Kind{
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Hello " + args[0].String), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Hello " + args[0].String), nil
 		},
 	})
 
 	scope := interp.NewScope()
 
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"Name": block.NewString("Joe"),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"Name": token.NewString("Joe"),
 	})
 
 	require.Equal(t, "Hello Joe", scope.MustLexAndEvaluate("fn (. Name)").String)
@@ -236,13 +236,13 @@ func TestFuncErrorInChild(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn1",
-			Arguments: []block.Kind{
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Test1"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Test1"), nil
 		},
 	})
 
@@ -250,7 +250,7 @@ func TestFuncErrorInChild(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn2",
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 			return nil, errors.New("SomeError")
 		},
 	})
@@ -264,13 +264,13 @@ func TestVariadicFunctionErrorInChild(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "fn1",
 			IsVariadic: true,
-			Arguments: []block.Kind{
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString("Test1"), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString("Test1"), nil
 		},
 	})
 
@@ -278,7 +278,7 @@ func TestVariadicFunctionErrorInChild(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn2",
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 			return nil, errors.New("SomeError")
 		},
 	})
@@ -292,10 +292,10 @@ func TestFunctionUnexpectedReturn(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn1",
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewBool(true), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewBool(true), nil
 		},
 	})
 
@@ -308,12 +308,12 @@ func TestFunctionNoReturnValue(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn1",
-			Returns: block.Any,
+			Returns: token.Any,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 			return nil, nil
 		},
 	})
 
-	require.Equal(t, block.Null, interp.MustLexAndEvaluate("fn1").Kind)
+	require.Equal(t, token.Null, interp.MustLexAndEvaluate("fn1").Kind)
 }

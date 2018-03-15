@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/token"
 )
 
 func (interp *Interpreter) RegisterTemplate(signatures ...TaTemplate) error {
@@ -70,18 +70,18 @@ var templateSignature = TaFunction{
 	CommonSignature: CommonSignature{
 		Name:       "!",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.Any,
+		Arguments: []token.Kind{
+			token.String,
+			token.Any,
 		},
-		Returns:     block.Any,
+		Returns:     token.Any,
 		Description: "Resolve a template",
 		Example: `
 (! Template1)                                                    ; executes the Template1
 (! Template2 "Hello World")                                      ; executes Template2 with "Hello World" as parameter
 `,
 	},
-	Func: func(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		walker := templateWalker{interp: interp}
 		blockText := strings.ToLower(args[0].String)
 		// iterate trough all functions
@@ -102,7 +102,7 @@ var templateSignature = TaFunction{
 				continue
 			}
 			if interp.Logger != nil {
-				interp.Logger.Printf("Running template `%s' with `%v'\n", template.String(), block.BlockArguments(children).ToHumanReadable())
+				interp.Logger.Printf("Running template `%s' with `%v'\n", template.String(), token.BlockArguments(children).ToHumanReadable())
 			}
 			b := template.Template
 			if len(args) > 1 {
@@ -116,7 +116,7 @@ var templateSignature = TaFunction{
 	},
 }
 
-func replaceVariables(b *block.TaToken, args ...*block.TaToken) (int, error) {
+func replaceVariables(b *token.TaToken, args ...*token.TaToken) (int, error) {
 	total := 0
 
 	var replaced int
@@ -135,7 +135,7 @@ replace:
 	return total, nil
 }
 
-func replaceVariable(source *block.TaToken, name string, replace *block.TaToken) (replaced int) {
+func replaceVariable(source *token.TaToken, name string, replace *token.TaToken) (replaced int) {
 	if len(source.Children) <= 0 {
 		return replaced
 	}

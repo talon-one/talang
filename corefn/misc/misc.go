@@ -5,8 +5,8 @@ package misc
 import (
 	"errors"
 
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/token"
 )
 
 func init() {
@@ -18,12 +18,12 @@ func init() {
 var Noop = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:        "noop",
-		Arguments:   []block.Kind{},
-		Returns:     block.Any,
+		Arguments:   []token.Kind{},
+		Returns:     token.Any,
 		Description: "No operation",
 		Example:     `(noop)`,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		return nil, nil
 	},
 }
@@ -31,47 +31,47 @@ var Noop = interpreter.TaFunction{
 var ToString = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "toString",
-		Arguments: []block.Kind{
-			block.Decimal | block.String | block.Bool | block.Time,
+		Arguments: []token.Kind{
+			token.Decimal | token.String | token.Bool | token.Time,
 		},
-		Returns:     block.String,
+		Returns:     token.String,
 		Description: "Converts the parameter to a string",
 		Example: `
 (toString 1)                                                     ; returns "1"
 (toString true)                                                  ; returns "true"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-		return block.NewString(args[0].String), nil
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		return token.NewString(args[0].String), nil
 	},
 }
 
 var Not = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "not",
-		Arguments: []block.Kind{
-			block.Bool,
+		Arguments: []token.Kind{
+			token.Bool,
 		},
-		Returns:     block.Bool,
+		Returns:     token.Bool,
 		Description: "Inverts the argument",
 		Example: `
 (not false)                                                      ; returns "true"
 (not (not false))                                                ; returns "false"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-		return block.NewBool(!args[0].Bool), nil
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		return token.NewBool(!args[0].Bool), nil
 	},
 }
 
 var Catch = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "catch",
-		Arguments: []block.Kind{
-			block.Any,
-			block.Any,
+		Arguments: []token.Kind{
+			token.Any,
+			token.Any,
 		},
-		Returns:     block.Any,
+		Returns:     token.Any,
 		Description: "Evaluate & return the second argument. If any errors occur, return the first argument instead",
 		Example: `
 catch "Edward" (. Profile Name)                                  ; returns "Edward"
@@ -79,7 +79,7 @@ catch 22 (. Profile Age)                                         ; returns 46
 catch 22 2                                                       ; returns 22
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		scope := interp.NewScope()
 		err := scope.Evaluate(args[1])
 		if err != nil {
@@ -92,18 +92,18 @@ catch 22 2                                                       ; returns 22
 var Do = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "do",
-		Arguments: []block.Kind{
-			block.Atom | block.Collection,
-			block.String,
-			block.Token,
+		Arguments: []token.Kind{
+			token.Atom | token.Collection,
+			token.String,
+			token.Token,
 		},
-		Returns:     block.Any,
+		Returns:     token.Any,
 		Description: "Apply a block to a value",
 		Example: `
 do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		value := args[0]
 		bindingName := args[1].String
 		blockToRun := args[2]
@@ -121,17 +121,17 @@ do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
 var DoLegacy = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "do",
-		Arguments: []block.Kind{
-			block.Atom | block.Collection,
-			block.Token,
+		Arguments: []token.Kind{
+			token.Atom | token.Collection,
+			token.Token,
 		},
-		Returns:     block.Any,
+		Returns:     token.Any,
 		Description: "Apply a block to a value",
 		Example: `
 do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		if len(args[1].Children) == 2 && args[1].Children[0].IsBlock() {
 			return Do.Func(interp, args[0], args[1].Children[0], args[1].Children[1])
 		}

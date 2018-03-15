@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/lexer"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func TestTemplate(t *testing.T) {
@@ -16,12 +16,12 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template1",
-			Returns: block.Decimal,
+			Returns: token.Decimal,
 		},
 		Template: *lexer.MustLex("(* 2 (. Variable1))"),
 	}))
 
-	var result *block.TaToken
+	var result *token.TaToken
 
 	require.NoError(t, interp.GenericSet("Variable1", 1))
 	result = interp.MustLexAndEvaluate("(+ 1 (! Template1))")
@@ -39,15 +39,15 @@ func TestFormatedTemplate(t *testing.T) {
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "MultiplyWith2",
-			Arguments: []block.Kind{
-				block.Decimal,
+			Arguments: []token.Kind{
+				token.Decimal,
 			},
-			Returns: block.Decimal,
+			Returns: token.Decimal,
 		},
 		Template: *lexer.MustLex("(* 2 (# 0))"),
 	}))
 
-	var result *block.TaToken
+	var result *token.TaToken
 
 	result = interp.MustLexAndEvaluate("(+ 1 (! MultiplyWith2 2))")
 	require.Equal(t, true, result.IsDecimal())
@@ -63,10 +63,10 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "MultiplyWith2",
-			Arguments: []block.Kind{
-				block.Decimal,
+			Arguments: []token.Kind{
+				token.Decimal,
 			},
-			Returns: block.Decimal,
+			Returns: token.Decimal,
 		},
 		Template: *lexer.MustLex("(* 2 (# 0))"),
 	}))
@@ -80,10 +80,10 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 // 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 // 		CommonSignature: interpreter.CommonSignature{
 // 			Name: "MultiplyWith2",
-// 			Arguments: []block.Kind{
-// 				block.DecimalKind,
+// 			Arguments: []token.Kind{
+// 				token.DecimalKind,
 // 			},
-// 			Returns: block.DecimalKind,
+// 			Returns: token.DecimalKind,
 // 		},
 // 		Template: *lexer.MustLex("(* 2 (# 0))"),
 // 	}))
@@ -92,7 +92,7 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 // 		CommonSignature: interpreter.CommonSignature{
 // 			Name: "FN",
 // 		},
-// 		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+// 		Func: func(interp *interpreter.Interpreter, args ...*token.Block) (*token.Block, error) {
 // 			return nil, errors.New("SomeError")
 // 		},
 // 	})

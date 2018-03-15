@@ -7,19 +7,19 @@ import (
 	"github.com/araddon/dateparse"
 	"github.com/vjeantet/jodaTime"
 
-	"github.com/talon-one/talang/block"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func TestAfter(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
-		block.NewBool(true),
+		token.NewBool(true),
 	}, helpers.Test{
 		`after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
-		block.NewBool(false),
+		token.NewBool(false),
 	})
 }
 
@@ -27,11 +27,11 @@ func TestBefore(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
-		block.NewBool(false),
+		token.NewBool(false),
 	}, helpers.Test{
 		`before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z`,
 		nil,
-		block.NewBool(true),
+		token.NewBool(true),
 	})
 }
 
@@ -39,11 +39,11 @@ func TestBetweenTimes(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z`,
 		nil,
-		block.NewBool(true),
+		token.NewBool(true),
 	}, helpers.Test{
 		`betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z`,
 		nil,
-		block.NewBool(false),
+		token.NewBool(false),
 	})
 }
 
@@ -52,11 +52,11 @@ func TestParseTime(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`parseTime "2018-01-02T19:04:05Z"`,
 		nil,
-		block.NewTime(_time),
+		token.NewTime(_time),
 	}, helpers.Test{
 		`parseTime "2018-01-02T19:04:05Z"`,
 		nil,
-		block.NewTime(_time),
+		token.NewTime(_time),
 	}, helpers.Test{
 		`parseTime "-42"`,
 		nil,
@@ -64,7 +64,7 @@ func TestParseTime(t *testing.T) {
 	}, helpers.Test{
 		`parseTime 10:30:31 HH:mm:ss`,
 		nil,
-		block.NewTime(mustParseJodaTime("HH:mm:ss", "10:30:31")),
+		token.NewTime(mustParseJodaTime("HH:mm:ss", "10:30:31")),
 	}, helpers.Test{
 		`parseTime 10:30:31 OO:TT:{{`,
 		nil,
@@ -84,7 +84,7 @@ func TestDate(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`date 2018-01-02T19:04:05Z`,
 		nil,
-		block.NewString("2018-01-02"),
+		token.NewString("2018-01-02"),
 	})
 }
 
@@ -92,7 +92,7 @@ func TestMonth(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`month 2018-01-02T19:04:05Z`,
 		nil,
-		block.NewString("1"),
+		token.NewString("1"),
 	})
 }
 
@@ -100,7 +100,7 @@ func TestYear(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`year 2018-01-02T19:04:05Z`,
 		nil,
-		block.NewString("2018"),
+		token.NewString("2018"),
 	})
 }
 
@@ -108,14 +108,14 @@ func TestMonthDay(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`monthDay 2018-01-14T19:04:05Z`,
 		nil,
-		block.NewString("14"),
+		token.NewString("14"),
 	})
 }
 func TestWeekDay(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`weekDay 2018-03-11T19:04:05Z`,
 		nil,
-		block.NewString("0"),
+		token.NewString("0"),
 	})
 }
 
@@ -123,7 +123,7 @@ func TestFormatTime(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`formatTime 2018-03-11T19:04:05Z`,
 		nil,
-		block.NewString("2018-03-11T19:04:05Z"),
+		token.NewString("2018-03-11T19:04:05Z"),
 	})
 }
 
@@ -131,15 +131,15 @@ func TestHour(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`hour 2018-03-11T00:04:05Z`,
 		nil,
-		block.NewString("0"),
+		token.NewString("0"),
 	}, helpers.Test{
 		`hour 2018-03-11T23:04:05Z`,
 		nil,
-		block.NewString("23"),
+		token.NewString("23"),
 	}, helpers.Test{
 		`hour 2018-03-11T04:04:05Z`,
 		nil,
-		block.NewString("4"),
+		token.NewString("4"),
 	})
 }
 
@@ -147,11 +147,11 @@ func TestMinute(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`minute 2018-03-11T00:04:05Z`,
 		nil,
-		block.NewString("4"),
+		token.NewString("4"),
 	}, helpers.Test{
 		`minute 2018-03-11T00:52:05Z`,
 		nil,
-		block.NewString("52"),
+		token.NewString("52"),
 	})
 }
 
@@ -159,11 +159,11 @@ func TestMatchTime(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD`,
 		nil,
-		block.NewBool(true),
+		token.NewBool(true),
 	}, helpers.Test{
 		`matchTime 2018-04-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD`,
 		nil,
-		block.NewBool(false),
+		token.NewBool(false),
 	})
 }
 
@@ -174,15 +174,15 @@ func TestAddDuration(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`addDuration 2018-03-11T00:04:05Z 1 "minutes"`,
 		nil,
-		block.NewTime(_time1),
+		token.NewTime(_time1),
 	}, helpers.Test{
 		`addDuration 2018-03-12T00:04:05Z 2 "hours"`,
 		nil,
-		block.NewTime(_time2),
+		token.NewTime(_time2),
 	}, helpers.Test{
 		`addDuration 2018-03-14T02:04:05Z 5 "days"`,
 		nil,
-		block.NewTime(_time3),
+		token.NewTime(_time3),
 	}, helpers.Test{
 		`addDuration 2018-03-14T02:04:05Z 5 "eons"`,
 		nil,
@@ -195,7 +195,7 @@ func TestSubDuration(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`subDuration 2018-03-11T00:04:05Z 1 "minutes"`,
 		nil,
-		block.NewTime(_time1),
+		token.NewTime(_time1),
 	}, helpers.Test{
 		`subDuration 2018-03-14T02:04:05Z 5 "eons"`,
 		nil,

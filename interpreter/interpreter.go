@@ -9,13 +9,13 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/token"
 
 	lexer "github.com/talon-one/talang/lexer"
 )
 
 type Interpreter struct {
-	Binding   *block.TaToken
+	Binding   *token.TaToken
 	Context   context.Context
 	Parent    *Interpreter
 	Functions []TaFunction
@@ -42,7 +42,7 @@ func MustNewInterpreter() *Interpreter {
 	return interp
 }
 
-func (interp *Interpreter) LexAndEvaluate(str string) (*block.TaToken, error) {
+func (interp *Interpreter) LexAndEvaluate(str string) (*token.TaToken, error) {
 	t, err := lexer.Lex(str)
 	if err != nil {
 		return t, err
@@ -51,7 +51,7 @@ func (interp *Interpreter) LexAndEvaluate(str string) (*block.TaToken, error) {
 	return t, err
 }
 
-func (interp *Interpreter) MustLexAndEvaluate(str string) *block.TaToken {
+func (interp *Interpreter) MustLexAndEvaluate(str string) *token.TaToken {
 	t, err := interp.LexAndEvaluate(str)
 	if err != nil {
 		panic(err)
@@ -59,7 +59,7 @@ func (interp *Interpreter) MustLexAndEvaluate(str string) *block.TaToken {
 	return t
 }
 
-func (interp *Interpreter) Evaluate(b *block.TaToken) error {
+func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 	if b == nil || b.IsEmpty() {
 		return errors.New("Empty term")
 	}
@@ -97,7 +97,7 @@ func (interp *Interpreter) Evaluate(b *block.TaToken) error {
 	return nil
 }
 
-func (interp *Interpreter) MustEvaluate(b *block.TaToken) {
+func (interp *Interpreter) MustEvaluate(b *token.TaToken) {
 	if err := interp.Evaluate(b); err != nil {
 		panic(err)
 	}
@@ -111,12 +111,12 @@ const (
 	errorInChildrenEvaluation notMatchingDetail = iota
 )
 
-func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*block.TaToken) (bool, notMatchingDetail, []*block.TaToken, error) {
+func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*token.TaToken) (bool, notMatchingDetail, []*token.TaToken, error) {
 	if sig.lowerName != lowerName {
 		return false, invalidName, nil, nil
 	}
 
-	var children []*block.TaToken
+	var children []*token.TaToken
 	argc := len(args)
 	sigargc := len(sig.Arguments)
 	if !sig.IsVariadic {
@@ -131,7 +131,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 
 	willEvaluate := false
 	for i, j := 0, 0; i < argc; i++ {
-		if sig.Arguments[j]&block.Token == 0 && args[i].IsBlock() {
+		if sig.Arguments[j]&token.Token == 0 && args[i].IsBlock() {
 			willEvaluate = true
 			break
 		}
@@ -143,9 +143,9 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 
 	if willEvaluate {
 		// make a copy of the children
-		children = make([]*block.TaToken, argc)
+		children = make([]*token.TaToken, argc)
 		for i, child := range args {
-			children[i] = new(block.TaToken)
+			children[i] = new(token.TaToken)
 			*children[i] = *child
 		}
 	} else {
@@ -153,7 +153,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 	}
 
 	for i, j := 0, 0; i < len(children); i++ {
-		if sig.Arguments[j]&block.Token == 0 && children[i].IsBlock() {
+		if sig.Arguments[j]&token.Token == 0 && children[i].IsBlock() {
 			if err := interp.Evaluate(children[i]); err != nil {
 				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 			}
@@ -164,13 +164,13 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 		}
 	}
 
-	if sig.MatchesArguments(block.Arguments(children)) {
+	if sig.MatchesArguments(token.Arguments(children)) {
 		return true, 0, children, nil
 	}
 	return false, invalidSignature, nil, nil
 }
 
-func (interp *Interpreter) callFunc(b *block.TaToken) (bool, error) {
+func (interp *Interpreter) callFunc(b *token.TaToken) (bool, error) {
 	walker := funcWalker{interp: interp}
 	blockText := strings.ToLower(b.String)
 	// iterate trough all functions
@@ -196,7 +196,7 @@ func (interp *Interpreter) callFunc(b *block.TaToken) (bool, error) {
 			return false, err
 		}
 		if interp.Logger != nil {
-			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), block.BlockArguments(children).ToHumanReadable())
+			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.BlockArguments(children).ToHumanReadable())
 		}
 		result, err := fn.Func(interp, children...)
 		if err != nil {
@@ -206,7 +206,7 @@ func (interp *Interpreter) callFunc(b *block.TaToken) (bool, error) {
 			return false, errors.Errorf("Error in function %s: %v", fn.Name, err)
 		}
 		if result == nil {
-			result = block.NewNull()
+			result = token.NewNull()
 		}
 		if fn.CommonSignature.Returns&result.Kind != result.Kind {
 			if interp.Logger != nil {
@@ -217,7 +217,7 @@ func (interp *Interpreter) callFunc(b *block.TaToken) (bool, error) {
 		if interp.Logger != nil {
 			interp.Logger.Printf("Updating value to `%s' (%s)\n", result.Stringify(), result.Kind.String())
 		}
-		block.Copy(b, result)
+		token.Copy(b, result)
 		if b.IsBlock() {
 			return true, interp.Evaluate(b)
 		}
@@ -229,21 +229,21 @@ func (interp *Interpreter) callFunc(b *block.TaToken) (bool, error) {
 	return false, nil
 }
 
-func (interp *Interpreter) Get(key string) *block.TaToken {
+func (interp *Interpreter) Get(key string) *token.TaToken {
 	if interp.Binding != nil {
 		return interp.Binding.MapItem(key)
 	}
-	return block.NewNull()
+	return token.NewNull()
 }
 
-func (interp *Interpreter) Set(key string, value *block.TaToken) {
+func (interp *Interpreter) Set(key string, value *token.TaToken) {
 	if interp.Binding == nil {
-		interp.Binding = block.NewMap(map[string]*block.TaToken{})
+		interp.Binding = token.NewMap(map[string]*token.TaToken{})
 	}
 	interp.Binding.SetMapItem(key, value)
 }
 
-func genericSetConv(value interface{}) (*block.TaToken, error) {
+func genericSetConv(value interface{}) (*token.TaToken, error) {
 	reflectValue := reflect.ValueOf(value)
 	reflectType := reflectValue.Type()
 	for reflectType.Kind() == reflect.Ptr {
@@ -253,7 +253,7 @@ func genericSetConv(value interface{}) (*block.TaToken, error) {
 
 	switch reflectType.Kind() {
 	case reflect.Struct:
-		m := make(map[string]*block.TaToken)
+		m := make(map[string]*token.TaToken)
 		for i := 0; i < reflectType.NumField(); i++ {
 			if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
 				structValue, err := genericSetConv(reflectValue.Field(i).Interface())
@@ -263,9 +263,9 @@ func genericSetConv(value interface{}) (*block.TaToken, error) {
 				m[fieldStruct.Name] = structValue
 			}
 		}
-		return block.NewMap(m), nil
+		return token.NewMap(m), nil
 	case reflect.Map:
-		m := make(map[string]*block.TaToken)
+		m := make(map[string]*token.TaToken)
 		if reflectType.Key().Kind() != reflect.String {
 			return nil, errors.New("A different key than `string' is not supported")
 		}
@@ -276,10 +276,10 @@ func genericSetConv(value interface{}) (*block.TaToken, error) {
 				return nil, err
 			}
 		}
-		return block.NewMap(m), nil
+		return token.NewMap(m), nil
 	case reflect.Slice:
 		size := reflectValue.Len()
-		s := make([]*block.TaToken, size, size)
+		s := make([]*token.TaToken, size, size)
 		for i := 0; i < size; i++ {
 			var err error
 			s[i], err = genericSetConv(reflectValue.Index(i).Interface())
@@ -287,7 +287,7 @@ func genericSetConv(value interface{}) (*block.TaToken, error) {
 				return nil, err
 			}
 		}
-		return block.NewList(s...), nil
+		return token.NewList(s...), nil
 	case reflect.Int:
 		fallthrough
 	case reflect.Int8:
@@ -307,15 +307,15 @@ func genericSetConv(value interface{}) (*block.TaToken, error) {
 	case reflect.Uint32:
 		fallthrough
 	case reflect.Uint64:
-		return block.NewDecimalFromString(fmt.Sprintf("%v", value)), nil
+		return token.NewDecimalFromString(fmt.Sprintf("%v", value)), nil
 	case reflect.String:
-		return block.NewString(value.(string)), nil
+		return token.NewString(value.(string)), nil
 	case reflect.Bool:
-		return block.NewBool(value.(bool)), nil
+		return token.NewBool(value.(bool)), nil
 	case reflect.Float32:
-		return block.NewDecimalFromFloat(float64(value.(float32))), nil
+		return token.NewDecimalFromFloat(float64(value.(float32))), nil
 	case reflect.Float64:
-		return block.NewDecimalFromFloat(value.(float64)), nil
+		return token.NewDecimalFromFloat(value.(float64)), nil
 	}
 	return nil, errors.Errorf("Unknown type `%T'", value)
 }

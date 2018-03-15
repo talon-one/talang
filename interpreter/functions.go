@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/token"
 )
 
 var coreFunctions []TaFunction
@@ -105,11 +105,11 @@ var bindingSignature = TaFunction{
 	CommonSignature: CommonSignature{
 		Name:       ".",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.Atom,
-			block.Atom,
+		Arguments: []token.Kind{
+			token.Atom,
+			token.Atom,
 		},
-		Returns:     block.Any,
+		Returns:     token.Any,
 		Description: "Access a variable in the binding",
 		Example: `
 (. Key1)                                                         ; returns the data assigned to Key1
@@ -119,7 +119,7 @@ var bindingSignature = TaFunction{
 	Func: bindingFunc,
 }
 
-func bindingFunc(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+func bindingFunc(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 	argc := len(args)
 	if interp.Binding != nil {
 		value := interp.Binding
@@ -157,12 +157,12 @@ var setBindingSignature = TaFunction{
 	CommonSignature: CommonSignature{
 		Name:       "set",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.Atom | block.Collection,
-			block.Atom | block.Collection,
+		Arguments: []token.Kind{
+			token.String,
+			token.Atom | token.Collection,
+			token.Atom | token.Collection,
 		},
-		Returns:     block.Null,
+		Returns:     token.Null,
 		Description: "Set a variable in the binding",
 		Example: `
 (set Key1 "Hello World")                                         ; sets Key1 to "Hello World"
@@ -172,24 +172,24 @@ var setBindingSignature = TaFunction{
 	Func: setBindingFunc,
 }
 
-func setBindingFunc(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+func setBindingFunc(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 	argc := len(args)
 	if argc < 2 {
 		return nil, errors.New("invalid or missing arguments")
 	}
 	if interp.Binding == nil {
-		interp.Binding = block.NewMap(map[string]*block.TaToken{})
+		interp.Binding = token.NewMap(map[string]*token.TaToken{})
 	}
 
 	value := interp.Binding
 	for i := 0; i < argc-2; i++ {
 		child := value.MapItem(args[i].String)
 		if child.IsNull() {
-			child = block.NewMap(map[string]*block.TaToken{})
+			child = token.NewMap(map[string]*token.TaToken{})
 			value.SetMapItem(args[i].String, child)
 		}
 		value = child
 	}
 	value.SetMapItem(args[argc-2].String, args[argc-1])
-	return block.NewNull(), nil
+	return token.NewNull(), nil
 }

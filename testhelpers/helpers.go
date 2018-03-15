@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang"
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/token"
 )
 
 func init() {
@@ -17,9 +17,9 @@ func init() {
 		interpreter.TaFunction{
 			CommonSignature: interpreter.CommonSignature{
 				Name:    "panic",
-				Returns: block.Any,
+				Returns: token.Any,
 			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+			Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 				return nil, errors.New("panic")
 			},
 		},
@@ -36,7 +36,7 @@ func MustNewInterpreter() *talang.Interpreter {
 	return talang.MustNewInterpreter()
 }
 
-func MustBlock(result *block.TaToken, err error) *block.TaToken {
+func MustBlock(result *token.TaToken, err error) *token.TaToken {
 	if err != nil {
 		panic(err)
 	}
@@ -53,7 +53,7 @@ func (Error) Error() string { return "" }
 
 type Test struct {
 	Input    string
-	Binding  *block.TaToken
+	Binding  *token.TaToken
 	Expected interface{}
 }
 
@@ -69,7 +69,7 @@ func RunTestsWithInterpreter(t *testing.T, interp *talang.Interpreter, tests ...
 		switch b := test.Expected.(type) {
 		case error:
 			require.Error(t, err, "Test %d failed", i)
-		case *block.TaToken:
+		case *token.TaToken:
 			require.EqualValues(t, true, b.Equal(result), "Test #%d failed, Expected %s was %s", i, b.Stringify(), result.Stringify())
 		}
 	}

@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/talon-one/talang/block"
+	"github.com/talon-one/talang/token"
 )
 
-type TaFunc func(*Interpreter, ...*block.TaToken) (*block.TaToken, error)
+type TaFunc func(*Interpreter, ...*token.TaToken) (*token.TaToken, error)
 
 type CommonSignature struct {
 	IsVariadic  bool
-	Arguments   []block.Kind
+	Arguments   []token.Kind
 	Name        string
 	lowerName   string
-	Returns     block.Kind
+	Returns     token.Kind
 	Description string
 	Example     string
 }
@@ -26,7 +26,7 @@ type TaFunction struct {
 
 type TaTemplate struct {
 	CommonSignature
-	Template block.TaToken
+	Template token.TaToken
 }
 
 func (s *CommonSignature) String() string {
@@ -61,7 +61,7 @@ func (a *CommonSignature) Equal(b *CommonSignature) bool {
 	return a.lowerName == b.lowerName
 }
 
-func (sig *CommonSignature) MatchesArguments(args []block.Kind) bool {
+func (sig *CommonSignature) MatchesArguments(args []token.Kind) bool {
 	if !sig.IsVariadic {
 		if len(args) != len(sig.Arguments) {
 			return false
@@ -97,7 +97,7 @@ func (a *TaFunction) Equal(b *TaFunction) bool {
 	return a.CommonSignature.Equal(&b.CommonSignature)
 }
 
-func (s *TaFunction) MatchesArguments(args []block.Kind) bool {
+func (s *TaFunction) MatchesArguments(args []token.Kind) bool {
 	return s.CommonSignature.MatchesArguments(args)
 }
 
@@ -109,6 +109,6 @@ func (a *TaTemplate) Equal(b *TaTemplate) bool {
 	return a.CommonSignature.Equal(&b.CommonSignature)
 }
 
-func (s *TaTemplate) MatchesArguments(args []block.Kind) bool {
+func (s *TaTemplate) MatchesArguments(args []token.Kind) bool {
 	return s.CommonSignature.MatchesArguments(args)
 }

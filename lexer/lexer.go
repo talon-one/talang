@@ -3,11 +3,11 @@ package lexer
 import (
 	"unicode/utf8"
 
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/lexer/unquote"
+	"github.com/talon-one/talang/token"
 )
 
-func MustLex(str string) *block.TaToken {
+func MustLex(str string) *token.TaToken {
 	block, err := Lex(str)
 	if err != nil {
 		panic(err)
@@ -15,9 +15,9 @@ func MustLex(str string) *block.TaToken {
 	return block
 }
 
-func Lex(str string) (*block.TaToken, error) {
+func Lex(str string) (*token.TaToken, error) {
 	// the first word is always the operation
-	var children []*block.TaToken
+	var children []*token.TaToken
 	var operation string
 
 parse:
@@ -41,7 +41,7 @@ parse:
 				if len(operation) == 0 {
 					operation = str[start:i]
 				} else {
-					children = append(children, block.New(str[start:i]))
+					children = append(children, token.New(str[start:i]))
 				}
 			}
 			var j int
@@ -69,7 +69,7 @@ parse:
 			if len(operation) == 0 {
 				operation = tokenString
 			} else {
-				children = append(children, block.NewString(tokenString))
+				children = append(children, token.NewString(tokenString))
 			}
 
 			if rest == str {
@@ -84,7 +84,7 @@ parse:
 				return nil, err
 			}
 			if !nestedScope.IsEmpty() {
-				nestedScope.Kind = block.Token
+				nestedScope.Kind = token.Token
 				children = append(children, nestedScope)
 			}
 
@@ -99,11 +99,11 @@ parse:
 		if len(operation) == 0 {
 			operation = str[start:]
 		} else {
-			children = append(children, block.New(str[start:]))
+			children = append(children, token.New(str[start:]))
 		}
 	}
 
 end:
 
-	return block.New(operation, children...), nil
+	return token.New(operation, children...), nil
 }

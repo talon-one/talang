@@ -8,8 +8,8 @@ import (
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/lexer"
 
-	"github.com/talon-one/talang/block"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func TestList(t *testing.T) {
@@ -17,12 +17,12 @@ func TestList(t *testing.T) {
 		helpers.Test{
 			"list Hello World",
 			nil,
-			block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewList(token.NewString("Hello"), token.NewString("World")),
 		},
 		helpers.Test{
 			`list "Hello World" "Hello Universe"`,
 			nil,
-			block.NewList(block.NewString("Hello World"), block.NewString("Hello Universe")),
+			token.NewList(token.NewString("Hello World"), token.NewString("Hello Universe")),
 		},
 	)
 }
@@ -31,24 +31,24 @@ func TestHead(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"head (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
-			block.NewString("Hello"),
+			token.NewString("Hello"),
 		},
 		helpers.Test{
 			"head (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello")),
 			}),
-			block.NewString("Hello"),
+			token.NewString("Hello"),
 		},
 		helpers.Test{
 			"head (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(),
 			}),
-			block.NewNull(),
+			token.NewNull(),
 		},
 	)
 }
@@ -57,24 +57,24 @@ func TestTail(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"tail (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
-			block.NewList(block.NewString("World")),
+			token.NewList(token.NewString("World")),
 		},
 		helpers.Test{
 			"tail (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello")),
 			}),
-			block.NewList(),
+			token.NewList(),
 		},
 		helpers.Test{
 			"tail (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(),
 			}),
-			block.NewList(),
+			token.NewList(),
 		},
 	)
 }
@@ -83,24 +83,24 @@ func TestDrop(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"drop (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
-			block.NewList(block.NewString("Hello")),
+			token.NewList(token.NewString("Hello")),
 		},
 		helpers.Test{
 			"drop (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello")),
 			}),
-			block.NewList(),
+			token.NewList(),
 		},
 		helpers.Test{
 			"drop (. List)",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(),
 			}),
-			block.NewList(),
+			token.NewList(),
 		},
 	)
 }
@@ -109,36 +109,36 @@ func TestItem(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			"item (. List) 0",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
-			block.NewString("Hello"),
+			token.NewString("Hello"),
 		},
 		helpers.Test{
 			"item (. List) 1",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
-			block.NewString("World"),
+			token.NewString("World"),
 		},
 		helpers.Test{
 			"item (. List) -1",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
 			helpers.Error{},
 		},
 		helpers.Test{
 			"item (. List) 2",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
 			helpers.Error{},
 		},
 		helpers.Test{
 			"item (. List) A",
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 			}),
 			lexer.MustLex("item (. List) A"),
 		},
@@ -147,16 +147,16 @@ func TestItem(t *testing.T) {
 
 func TestPush(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 	})
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn",
-			Arguments: []block.Kind{
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
 		Template: *lexer.MustLex(`(# 0)`),
 	}))
@@ -176,23 +176,23 @@ func TestPush(t *testing.T) {
 
 	newList := interp.MustLexAndEvaluate("push (. List) and")
 
-	interp.Binding.MapItem("List").Children[0] = block.NewString("Dude!")
+	interp.Binding.MapItem("List").Children[0] = token.NewString("Dude!")
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Dude! World"), interp.Binding.MapItem("List"))
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
 }
 
 func TestAppend(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"List": block.NewList(block.NewString("Hello"), block.NewString("World")),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"List": token.NewList(token.NewString("Hello"), token.NewString("World")),
 	})
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn",
-			Arguments: []block.Kind{
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
 		Template: *lexer.MustLex(`(# 0)`),
 	}))
@@ -212,7 +212,7 @@ func TestAppend(t *testing.T) {
 
 	newList := interp.MustLexAndEvaluate("append (. List) and")
 
-	interp.Binding.MapItem("List").Children[0] = block.NewString("Dude!")
+	interp.Binding.MapItem("List").Children[0] = token.NewString("Dude!")
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Dude! World"), interp.Binding.MapItem("List"))
 	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
 }
@@ -220,42 +220,42 @@ func TestAppend(t *testing.T) {
 func TestMap(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`map (. List) x (+ (. x Name) " " (. x Surname))`,
-		block.NewMap(map[string]*block.TaToken{
-			"List": block.NewList(
-				block.NewMap(map[string]*block.TaToken{
-					"Name":    block.NewString("Joe"),
-					"Surname": block.NewString("Doe"),
-					"Id":      block.NewDecimalFromInt(0),
+		token.NewMap(map[string]*token.TaToken{
+			"List": token.NewList(
+				token.NewMap(map[string]*token.TaToken{
+					"Name":    token.NewString("Joe"),
+					"Surname": token.NewString("Doe"),
+					"Id":      token.NewDecimalFromInt(0),
 				}),
-				block.NewMap(map[string]*block.TaToken{
-					"Name":    block.NewString("Alice"),
-					"Surname": block.NewString("Wonder"),
-					"Id":      block.NewDecimalFromInt(1),
+				token.NewMap(map[string]*token.TaToken{
+					"Name":    token.NewString("Alice"),
+					"Surname": token.NewString("Wonder"),
+					"Id":      token.NewDecimalFromInt(1),
 				}),
 			),
 		}),
-		block.NewList(block.NewString("Joe Doe"), block.NewString("Alice Wonder")),
+		token.NewList(token.NewString("Joe Doe"), token.NewString("Alice Wonder")),
 	})
 }
 
 func TestMapLegacy(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		`map (. List) ((x) (+ (. x Name) " " (. x Surname)))`,
-		block.NewMap(map[string]*block.TaToken{
-			"List": block.NewList(
-				block.NewMap(map[string]*block.TaToken{
-					"Name":    block.NewString("Joe"),
-					"Surname": block.NewString("Doe"),
-					"Id":      block.NewDecimalFromInt(0),
+		token.NewMap(map[string]*token.TaToken{
+			"List": token.NewList(
+				token.NewMap(map[string]*token.TaToken{
+					"Name":    token.NewString("Joe"),
+					"Surname": token.NewString("Doe"),
+					"Id":      token.NewDecimalFromInt(0),
 				}),
-				block.NewMap(map[string]*block.TaToken{
-					"Name":    block.NewString("Alice"),
-					"Surname": block.NewString("Wonder"),
-					"Id":      block.NewDecimalFromInt(1),
+				token.NewMap(map[string]*token.TaToken{
+					"Name":    token.NewString("Alice"),
+					"Surname": token.NewString("Wonder"),
+					"Id":      token.NewDecimalFromInt(1),
 				}),
 			),
 		}),
-		block.NewList(block.NewString("Joe Doe"), block.NewString("Alice Wonder")),
+		token.NewList(token.NewString("Joe Doe"), token.NewString("Alice Wonder")),
 	}, helpers.Test{
 		"map (list 1 2 3) (4)",
 		nil,
@@ -265,23 +265,23 @@ func TestMapLegacy(t *testing.T) {
 
 func TestSort(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"List": block.NewList(
-			block.NewString("World"),
-			block.NewDecimalFromInt(2),
-			block.NewString("Hello"),
-			block.NewDecimalFromInt(1),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"List": token.NewList(
+			token.NewString("World"),
+			token.NewDecimalFromInt(2),
+			token.NewString("Hello"),
+			token.NewDecimalFromInt(1),
 		),
 	})
-	require.EqualValues(t, block.NewList(block.NewDecimalFromInt(1), block.NewDecimalFromInt(2), block.NewString("Hello"), block.NewString("World")), interp.MustLexAndEvaluate("sort (. List)"))
+	require.EqualValues(t, token.NewList(token.NewDecimalFromInt(1), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewString("World")), interp.MustLexAndEvaluate("sort (. List)"))
 
 	// integrity check
-	require.EqualValues(t, block.NewList(block.NewString("World"), block.NewDecimalFromInt(2), block.NewString("Hello"), block.NewDecimalFromInt(1)), interp.Get("List"))
+	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewDecimalFromInt(1)), interp.Get("List"))
 
-	require.EqualValues(t, block.NewList(block.NewString("World"), block.NewString("Hello"), block.NewDecimalFromInt(2), block.NewDecimalFromInt(1)), interp.MustLexAndEvaluate("sort (. List) true"))
+	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewString("Hello"), token.NewDecimalFromInt(2), token.NewDecimalFromInt(1)), interp.MustLexAndEvaluate("sort (. List) true"))
 
 	// integrity check
-	require.EqualValues(t, block.NewList(block.NewString("World"), block.NewDecimalFromInt(2), block.NewString("Hello"), block.NewDecimalFromInt(1)), interp.Get("List"))
+	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewDecimalFromInt(1)), interp.Get("List"))
 }
 
 func TestMin(t *testing.T) {
@@ -289,12 +289,12 @@ func TestMin(t *testing.T) {
 		helpers.Test{
 			`min (list 100 4 3 10 6000 90 99)`,
 			nil,
-			block.NewDecimalFromInt(3),
+			token.NewDecimalFromInt(3),
 		},
 		helpers.Test{
 			`min (list 100 4 3 10 6000 Hello 90 99)`,
 			nil,
-			block.NewDecimalFromInt(3),
+			token.NewDecimalFromInt(3),
 		},
 		helpers.Test{
 			`min (list Hello World)`,
@@ -309,12 +309,12 @@ func TestMax(t *testing.T) {
 		helpers.Test{
 			`max (list 100 4 3 10 6000 90 99)`,
 			nil,
-			block.NewDecimalFromInt(6000),
+			token.NewDecimalFromInt(6000),
 		},
 		helpers.Test{
 			`max (list 100 4 3 10 6000 Hello 90 99)`,
 			nil,
-			block.NewDecimalFromInt(6000),
+			token.NewDecimalFromInt(6000),
 		},
 		helpers.Test{
 			`max (list Hello World)`,
@@ -329,12 +329,12 @@ func TestCount(t *testing.T) {
 		helpers.Test{
 			`count (list 1 2 3 4)`,
 			nil,
-			block.NewDecimalFromInt(4),
+			token.NewDecimalFromInt(4),
 		},
 		helpers.Test{
 			`count (list hola hola amigos)`,
 			nil,
-			block.NewDecimalFromInt(3),
+			token.NewDecimalFromInt(3),
 		},
 	)
 }
@@ -344,11 +344,11 @@ func TestReverse(t *testing.T) {
 		helpers.Test{
 			`reverse (list 1 2 3 4)`,
 			nil,
-			block.NewList(
-				block.NewDecimalFromInt(4),
-				block.NewDecimalFromInt(3),
-				block.NewDecimalFromInt(2),
-				block.NewDecimalFromInt(1),
+			token.NewList(
+				token.NewDecimalFromInt(4),
+				token.NewDecimalFromInt(3),
+				token.NewDecimalFromInt(2),
+				token.NewDecimalFromInt(1),
 			),
 		},
 	)
@@ -357,13 +357,13 @@ func TestReverse(t *testing.T) {
 func BenchmarkReverse(b *testing.B) {
 	tests := []struct {
 		input    string
-		expected *block.TaToken
+		expected *token.TaToken
 	}{
-		{"reverse (list 1 2 3 4)", block.NewList(
-			block.NewDecimalFromInt(4),
-			block.NewDecimalFromInt(3),
-			block.NewDecimalFromInt(2),
-			block.NewDecimalFromInt(1),
+		{"reverse (list 1 2 3 4)", token.NewList(
+			token.NewDecimalFromInt(4),
+			token.NewDecimalFromInt(3),
+			token.NewDecimalFromInt(2),
+			token.NewDecimalFromInt(1),
 		)},
 	}
 
@@ -381,26 +381,26 @@ func TestJoin(t *testing.T) {
 		helpers.Test{
 			`join (list hello world) -`,
 			nil,
-			block.NewString("hello-world"),
+			token.NewString("hello-world"),
 		},
 		helpers.Test{
 			`join (. lol) -`,
-			block.NewMap(map[string]*block.TaToken{
-				"lol": block.NewList(block.NewString("lol")),
+			token.NewMap(map[string]*token.TaToken{
+				"lol": token.NewList(token.NewString("lol")),
 			}),
-			block.NewString("lol"),
+			token.NewString("lol"),
 		},
 		helpers.Test{
 			`join (. lol) -`,
-			block.NewMap(map[string]*block.TaToken{
-				"lol": block.NewList(block.NewString("lo ll")),
+			token.NewMap(map[string]*token.TaToken{
+				"lol": token.NewList(token.NewString("lo ll")),
 			}),
-			block.NewString("lo ll"),
+			token.NewString("lo ll"),
 		},
 		helpers.Test{
 			`join (list lo        l) -`,
 			nil,
-			block.NewString("lo-l"),
+			token.NewString("lo-l"),
 		},
 		helpers.Test{
 			`join (list 1 2 3) -`,
@@ -410,7 +410,7 @@ func TestJoin(t *testing.T) {
 		helpers.Test{
 			`join (list "1" "2" "3") -`,
 			nil,
-			block.NewString("1-2-3"),
+			token.NewString("1-2-3"),
 		},
 	)
 }
@@ -420,11 +420,11 @@ func TestSplit(t *testing.T) {
 		helpers.Test{
 			`split "1,2,3,a" ","`,
 			nil,
-			block.NewList(
-				block.NewString("1"),
-				block.NewString("2"),
-				block.NewString("3"),
-				block.NewString("a"),
+			token.NewList(
+				token.NewString("1"),
+				token.NewString("2"),
+				token.NewString("3"),
+				token.NewString("a"),
 			),
 		},
 	)
@@ -434,11 +434,11 @@ func TestIsEmpty(t *testing.T) {
 		helpers.Test{
 			`isEmpty (list hello world)`,
 			nil,
-			block.NewBool(false),
+			token.NewBool(false),
 		}, helpers.Test{
 			`isEmpty (list)`,
 			nil,
-			block.NewBool(true),
+			token.NewBool(true),
 		},
 	)
 }
@@ -448,15 +448,15 @@ func TestExists(t *testing.T) {
 		helpers.Test{
 			`exists (list hello world) Item (= (. Item) "hello")`,
 			nil,
-			block.NewBool(true),
+			token.NewBool(true),
 		}, helpers.Test{
 			`exists (list hello world) Item (= (. Item) "world")`,
 			nil,
-			block.NewBool(true),
+			token.NewBool(true),
 		}, helpers.Test{
 			`exists (list hello world) Item (= (. Item) "universes")`,
 			nil,
-			block.NewBool(false),
+			token.NewBool(false),
 		}, helpers.Test{
 			`exists (list hello world) Item (+ (. Item) "world")`,
 			nil,
@@ -474,7 +474,7 @@ func TestExistsLegacy(t *testing.T) {
 		helpers.Test{
 			`exists (list hello world) ((Item) (= (. Item) "hello"))`,
 			nil,
-			block.NewBool(true),
+			token.NewBool(true),
 		}, helpers.Test{
 			`exists (list hello world) (panic)`,
 			nil,
@@ -487,36 +487,36 @@ func TestSum(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			`sum (. List) Item (. Item Price)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
 				),
 			}),
-			block.NewDecimalFromInt(4),
+			token.NewDecimalFromInt(4),
 		}, helpers.Test{
 			`sum (. List) Item (panic)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
 				),
 			}),
 			helpers.Error{},
 		}, helpers.Test{
 			`sum (. List) Item (. Item Price)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewString("Hey"),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewString("Hey"),
 					}),
 				),
 			}),
@@ -529,56 +529,56 @@ func TestEvery(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			`every (. List) Item (= (. Item Price) 1)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
 				),
 			}),
-			block.NewBool(true),
+			token.NewBool(true),
 		}, helpers.Test{
 			`every (. List) Item (= (. Item Price) 1)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
 				),
 			}),
-			block.NewBool(false),
+			token.NewBool(false),
 		}, helpers.Test{
 			`every (. List) Item (= (panic) 1)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
 				),
 			}),
 			helpers.Error{},
 		}, helpers.Test{
 			`every (. List) Item (= (. Item SKU) "XJK_992")`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"SKU": block.NewString("XJK_992"),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"SKU": token.NewString("XJK_992"),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"SKU": block.NewString("XJK_992"),
+					token.NewMap(map[string]*token.TaToken{
+						"SKU": token.NewString("XJK_992"),
 					}),
 				),
 			}),
-			block.NewBool(true),
+			token.NewBool(true),
 		},
 	)
 }
@@ -587,56 +587,56 @@ func TestEveryLegacy(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
 			`every (. List) ((Item) (= (. Item Price) 1))`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
 				),
 			}),
-			block.NewBool(true),
+			token.NewBool(true),
 		}, helpers.Test{
 			`every (. List) ((Item) (= (. Item Price) 1))`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
 				),
 			}),
-			block.NewBool(false),
+			token.NewBool(false),
 		}, helpers.Test{
 			`every (. List) (panic)`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(2),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(2),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"Price": block.NewDecimalFromInt(1),
+					token.NewMap(map[string]*token.TaToken{
+						"Price": token.NewDecimalFromInt(1),
 					}),
 				),
 			}),
 			helpers.Error{},
 		}, helpers.Test{
 			`every (. List) ((Item) (= (. Item SKU) "XJK_992"))`,
-			block.NewMap(map[string]*block.TaToken{
-				"List": block.NewList(
-					block.NewMap(map[string]*block.TaToken{
-						"SKU": block.NewString("XJK_992"),
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"SKU": token.NewString("XJK_992"),
 					}),
-					block.NewMap(map[string]*block.TaToken{
-						"SKU": block.NewString("XJK_992"),
+					token.NewMap(map[string]*token.TaToken{
+						"SKU": token.NewString("XJK_992"),
 					}),
 				),
 			}),
-			block.NewBool(true),
+			token.NewBool(true),
 		},
 	)
 }

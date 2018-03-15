@@ -1,6 +1,6 @@
 //go:generate stringer -type=Kind
 
-package block
+package token
 
 import (
 	"fmt"

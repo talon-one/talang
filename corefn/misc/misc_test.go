@@ -3,15 +3,15 @@ package misc_test
 import (
 	"testing"
 
-	"github.com/talon-one/talang/block"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func TestNoop(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		"noop",
 		nil,
-		block.NewNull(),
+		token.NewNull(),
 	})
 }
 
@@ -19,7 +19,7 @@ func TestToString(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		"toString 1",
 		nil,
-		block.NewString("1"),
+		token.NewString("1"),
 	})
 }
 
@@ -28,17 +28,17 @@ func TestNot(t *testing.T) {
 		helpers.Test{
 			"not false",
 			nil,
-			block.NewBool(true),
+			token.NewBool(true),
 		},
 		helpers.Test{
 			"not true",
 			nil,
-			block.NewBool(false),
+			token.NewBool(false),
 		},
 		helpers.Test{
 			"not (not false)",
 			nil,
-			block.NewBool(false),
+			token.NewBool(false),
 		},
 	)
 }
@@ -48,37 +48,37 @@ func TestCatch(t *testing.T) {
 		helpers.Test{
 			`catch 22 (panic)`,
 			nil,
-			block.NewDecimalFromInt(22),
+			token.NewDecimalFromInt(22),
 		},
 		helpers.Test{
 			`catch (+ 1 1) (panic)`,
 			nil,
-			block.NewDecimalFromInt(2),
+			token.NewDecimalFromInt(2),
 		},
 		helpers.Test{
 			`catch "22" (. Profile)`,
 			nil,
-			block.NewString("22"),
+			token.NewString("22"),
 		},
 		helpers.Test{
 			`catch 22 (. Profile)`,
 			nil,
-			block.NewDecimalFromInt(22),
+			token.NewDecimalFromInt(22),
 		},
 		helpers.Test{
 			`catch 22 (+ 2 2)`,
 			nil,
-			block.NewDecimalFromInt(4),
+			token.NewDecimalFromInt(4),
 		},
 		helpers.Test{
 			`catch 22 2`,
 			nil,
-			block.NewDecimalFromInt(2),
+			token.NewDecimalFromInt(2),
 		},
 		helpers.Test{
 			`(catch (+ 2 (* 5 (- 3 4))) (+ 2 ( * 4 (panic))))`,
 			nil,
-			block.NewDecimalFromInt(-3),
+			token.NewDecimalFromInt(-3),
 		},
 	)
 }
@@ -87,10 +87,10 @@ func TestDo(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		"do (list 1 2 3) Item (. Item)",
 		nil,
-		block.NewList(
-			block.NewDecimalFromInt(1),
-			block.NewDecimalFromInt(2),
-			block.NewDecimalFromInt(3),
+		token.NewList(
+			token.NewDecimalFromInt(1),
+			token.NewDecimalFromInt(2),
+			token.NewDecimalFromInt(3),
 		),
 	}, helpers.Test{
 		"do 4 x (panic)",
@@ -103,10 +103,10 @@ func TestDoLegacy(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
 		"do (list 1 2 3) ((Item) (. Item))",
 		nil,
-		block.NewList(
-			block.NewDecimalFromInt(1),
-			block.NewDecimalFromInt(2),
-			block.NewDecimalFromInt(3),
+		token.NewList(
+			token.NewDecimalFromInt(1),
+			token.NewDecimalFromInt(2),
+			token.NewDecimalFromInt(3),
 		),
 	}, helpers.Test{
 		"do 4 ((x) (panic))",

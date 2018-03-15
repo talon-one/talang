@@ -1,4 +1,4 @@
-package block
+package token
 
 import (
 	"encoding/json"
@@ -242,35 +242,35 @@ func TestNewTime(t *testing.T) {
 	require.Equal(t, NewTime(parsedTime), New("2006-01-02T15:04:05Z"))
 }
 func TestIsDecimal(t *testing.T) {
-	block := New("1")
-	require.Equal(t, true, block.IsDecimal())
+	tkn := New("1")
+	require.Equal(t, true, tkn.IsDecimal())
 }
 
 func TestIsTime(t *testing.T) {
-	block := New("2001-01-01T01:01:01Z")
-	require.Equal(t, true, block.IsTime())
+	tkn := New("2001-01-01T01:01:01Z")
+	require.Equal(t, true, tkn.IsTime())
 }
 
 func TestIsString(t *testing.T) {
-	block := New("Hello World")
-	require.Equal(t, true, block.IsString())
+	tkn := New("Hello World")
+	require.Equal(t, true, tkn.IsString())
 }
 
 func TestIsBool(t *testing.T) {
-	block := New("false")
-	require.Equal(t, true, block.IsBool())
-	block = New("true")
-	require.Equal(t, true, block.IsBool())
+	tkn := New("false")
+	require.Equal(t, true, tkn.IsBool())
+	tkn = New("true")
+	require.Equal(t, true, tkn.IsBool())
 }
 
 func TestIsNull(t *testing.T) {
-	block := NewNull()
-	require.Equal(t, true, block.IsNull())
+	tkn := NewNull()
+	require.Equal(t, true, tkn.IsNull())
 }
 
 func TestIsEmpty(t *testing.T) {
-	var block TaToken
-	require.Equal(t, true, block.IsEmpty())
+	var tkn TaToken
+	require.Equal(t, true, tkn.IsEmpty())
 }
 
 func TestIsBlock(t *testing.T) {
@@ -324,64 +324,64 @@ func TestCopy(t *testing.T) {
 }
 
 func TestMapItem(t *testing.T) {
-	block := NewMap(map[string]*TaToken{
+	tkn := NewMap(map[string]*TaToken{
 		"Key1": NewBool(true),
 		"Key2": NewDecimalFromInt(1),
 		"Key3": NewString("Hello"),
 	})
-	require.Equal(t, NewBool(true), block.MapItem("Key1"))
+	require.Equal(t, NewBool(true), tkn.MapItem("Key1"))
 
-	require.Equal(t, NewNull(), block.MapItem("Key4"))
+	require.Equal(t, NewNull(), tkn.MapItem("Key4"))
 }
 
 func TestSetMapItem(t *testing.T) {
-	block := NewMap(map[string]*TaToken{
+	tkn := NewMap(map[string]*TaToken{
 		"Key1": NewBool(true),
 		"Key2": NewDecimalFromInt(1),
 		"Key3": NewString("Hello"),
 	})
-	block.SetMapItem("Key1", NewString("World"))
-	require.Equal(t, NewString("World"), block.MapItem("Key1"))
+	tkn.SetMapItem("Key1", NewString("World"))
+	require.Equal(t, NewString("World"), tkn.MapItem("Key1"))
 
-	block.SetMapItem("Key4", NewString("Foo"))
-	require.Equal(t, NewString("Foo"), block.MapItem("Key4"))
+	tkn.SetMapItem("Key4", NewString("Foo"))
+	require.Equal(t, NewString("Foo"), tkn.MapItem("Key4"))
 }
 
 func TestStringify(t *testing.T) {
-	block := New("+", NewDecimalFromInt(1), NewDecimalFromInt(2))
-	require.Equal(t, "(+ 1 2)", block.Stringify())
+	tkn := New("+", NewDecimalFromInt(1), NewDecimalFromInt(2))
+	require.Equal(t, "(+ 1 2)", tkn.Stringify())
 
-	block = &TaToken{
+	tkn = &TaToken{
 		String: "noop",
 		Kind:   Token,
 	}
-	require.Equal(t, "(noop)", block.Stringify())
+	require.Equal(t, "(noop)", tkn.Stringify())
 
-	block = New("+", New("-", NewDecimalFromInt(1), NewDecimalFromInt(2)), NewDecimalFromInt(3))
-	require.Equal(t, "(+ (- 1 2) 3)", block.Stringify())
+	tkn = New("+", New("-", NewDecimalFromInt(1), NewDecimalFromInt(2)), NewDecimalFromInt(3))
+	require.Equal(t, "(+ (- 1 2) 3)", tkn.Stringify())
 
-	block = New("", New("-", NewDecimalFromInt(1), NewDecimalFromInt(2)), NewDecimalFromInt(3))
-	require.Equal(t, "((- 1 2) 3)", block.Stringify())
+	tkn = New("", New("-", NewDecimalFromInt(1), NewDecimalFromInt(2)), NewDecimalFromInt(3))
+	require.Equal(t, "((- 1 2) 3)", tkn.Stringify())
 
-	block = NewList(NewDecimalFromInt(1), NewDecimalFromInt(2), NewDecimalFromInt(3))
-	require.Equal(t, "[1, 2, 3]", block.Stringify())
+	tkn = NewList(NewDecimalFromInt(1), NewDecimalFromInt(2), NewDecimalFromInt(3))
+	require.Equal(t, "[1, 2, 3]", tkn.Stringify())
 
-	block = NewString("Hello")
-	require.Equal(t, "Hello", block.Stringify())
+	tkn = NewString("Hello")
+	require.Equal(t, "Hello", tkn.Stringify())
 
 	time, err := time.Parse(time.UnixDate, "Mon Jan 2 15:04:05 MST 2006")
 	require.NoError(t, err)
 
-	block = NewTime(time)
-	require.Equal(t, "2006-01-02T15:04:05Z", block.Stringify())
+	tkn = NewTime(time)
+	require.Equal(t, "2006-01-02T15:04:05Z", tkn.Stringify())
 
-	block = NewBool(true)
-	require.Equal(t, "true", block.Stringify())
+	tkn = NewBool(true)
+	require.Equal(t, "true", tkn.Stringify())
 
-	block = NewDecimal(decimal.New(145, 1))
-	require.Equal(t, "14.5", block.Stringify())
+	tkn = NewDecimal(decimal.New(145, 1))
+	require.Equal(t, "14.5", tkn.Stringify())
 
-	block = &TaToken{
+	tkn = &TaToken{
 		Kind: Map,
 		Keys: []string{"Key1", "Key2"},
 		Children: []*TaToken{
@@ -403,7 +403,7 @@ func TestStringify(t *testing.T) {
 		},
 	}
 
-	require.Equal(t, "{Key1:{SubKey1:14.5}, Key2:Hello}", block.Stringify())
+	require.Equal(t, "{Key1:{SubKey1:14.5}, Key2:Hello}", tkn.Stringify())
 }
 
 func TestEqual(t *testing.T) {
@@ -513,16 +513,16 @@ func TestEqual(t *testing.T) {
 }
 
 func TestArguments(t *testing.T) {
-	block := New("+", New("1"), New("2"))
-	require.EqualValues(t, []Kind{Decimal, Decimal}, Arguments(block.Children))
+	tkn := New("+", New("1"), New("2"))
+	require.EqualValues(t, []Kind{Decimal, Decimal}, Arguments(tkn.Children))
 
-	block = New("+", New("Hello"), New("1"))
-	require.EqualValues(t, []Kind{String, Decimal}, Arguments(block.Children))
+	tkn = New("+", New("Hello"), New("1"))
+	require.EqualValues(t, []Kind{String, Decimal}, Arguments(tkn.Children))
 }
 
 func TestToHumanReadable(t *testing.T) {
-	block := New("+", New("1"), New("2"))
-	require.Equal(t, "1, 2", BlockArguments(block.Children).ToHumanReadable())
+	tkn := New("+", New("1"), New("2"))
+	require.Equal(t, "1, 2", BlockArguments(tkn.Children).ToHumanReadable())
 }
 
 func TestMarshaling(t *testing.T) {

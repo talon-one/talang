@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/token"
 )
 
 func init() {
@@ -19,25 +19,25 @@ var Add = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "+",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.String,
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
+			token.String,
+			token.String,
 		},
-		Returns:     block.String,
+		Returns:     token.String,
 		Description: "Concat strings",
 		Example: `
 (+ "Hello" " " "World")                                          ; returns "Hello World"
 (+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		argc := len(args)
 		values := make([]string, argc)
 		for i := 0; i < argc; i++ {
 			values[i] = args[i].String
 		}
-		return block.NewString(strings.Join(values, "")), nil
+		return token.NewString(strings.Join(values, "")), nil
 	},
 }
 
@@ -57,12 +57,12 @@ var Contains = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "contains",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.String,
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
+			token.String,
+			token.String,
 		},
-		Returns:     block.Bool,
+		Returns:     token.Bool,
 		Description: "Returns wether the first argument exists in the following arguments",
 		Example: `
 (contains "Hello" "Hello World")                                 ; returns true
@@ -71,13 +71,13 @@ var Contains = interpreter.TaFunction{
 (contains "World" "Hello World" "Hello Universe")                ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if !strings.Contains(args[0].String, args[i].String) {
-				return block.NewBool(false), nil
+				return token.NewBool(false), nil
 			}
 		}
-		return block.NewBool(true), nil
+		return token.NewBool(true), nil
 	},
 }
 
@@ -85,12 +85,12 @@ var NotContains = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "notContains",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.String,
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
+			token.String,
+			token.String,
 		},
-		Returns:     block.Bool,
+		Returns:     token.Bool,
 		Description: "Returns wether the first argument does not exist in the following arguments",
 		Example: `
 (notContains "Hello" "Hello World")                              ; returns false
@@ -99,13 +99,13 @@ var NotContains = interpreter.TaFunction{
 (notContains "World" "Hello World" "Hello Universe")             ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if strings.Contains(args[0].String, args[i].String) {
-				return block.NewBool(false), nil
+				return token.NewBool(false), nil
 			}
 		}
-		return block.NewBool(true), nil
+		return token.NewBool(true), nil
 	},
 }
 
@@ -113,12 +113,12 @@ var StartsWith = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "startsWith",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.String,
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
+			token.String,
+			token.String,
 		},
-		Returns:     block.Bool,
+		Returns:     token.Bool,
 		Description: "Returns wether the first argument is the prefix of the following arguments",
 		Example: `
 (startsWith "Hello" "Hello World")                               ; returns true
@@ -127,25 +127,25 @@ var StartsWith = interpreter.TaFunction{
 (startsWith "Hello" "Hello World" "Hell Universe")               ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if !strings.HasPrefix(args[0].String, args[i].String) {
-				return block.NewBool(false), nil
+				return token.NewBool(false), nil
 			}
 		}
-		return block.NewBool(true), nil
+		return token.NewBool(true), nil
 	},
 }
 var EndsWith = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "endsWith",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.String,
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
+			token.String,
+			token.String,
 		},
-		Returns:     block.Bool,
+		Returns:     token.Bool,
 		Description: "Returns wether the first argument is the suffix of the following arguments",
 		Example: `
 (endsWith "World" "Hello World")                                 ; returns true
@@ -154,13 +154,13 @@ var EndsWith = interpreter.TaFunction{
 (endsWith "World" "Hello World" "By World")                      ; returns true
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if !strings.HasSuffix(args[0].String, args[i].String) {
-				return block.NewBool(false), nil
+				return token.NewBool(false), nil
 			}
 		}
-		return block.NewBool(true), nil
+		return token.NewBool(true), nil
 	},
 }
 
@@ -168,12 +168,12 @@ var Regexp = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "~",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.String,
-			block.String,
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
+			token.String,
+			token.String,
 		},
-		Returns:     block.Bool,
+		Returns:     token.Bool,
 		Description: "Returns wether the first argument (regex) matches all of the following arguments",
 		Example: `
 (~ "[a-z\s]*" "Hello World")                                     ; returns true
@@ -182,18 +182,18 @@ var Regexp = interpreter.TaFunction{
 (~ "[a-z\s]*" "Hello W0rld" "Hello Universe")                    ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		re, err := regexp.Compile(args[0].String)
 		if err != nil {
-			return block.NewBool(false), err
+			return token.NewBool(false), err
 		}
 
 		for i := 1; i < len(args); i++ {
 			if !re.MatchString(args[i].String) {
-				return block.NewBool(false), nil
+				return token.NewBool(false), nil
 			}
 		}
-		return block.NewBool(true), nil
+		return token.NewBool(true), nil
 	},
 }
 
@@ -201,19 +201,19 @@ var LastName = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "lastName",
 		IsVariadic: false,
-		Arguments: []block.Kind{
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
 		},
-		Returns:     block.String,
+		Returns:     token.String,
 		Description: "Extract the last word (space-separated) from a string",
 		Example: `
 (lastName "Alex Unger")                                          ; returns "Unger"
 (lastName "Mr Foo Bar")                                          ; returns "Bar"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		words := strings.Split(args[0].String, " ")
-		return block.NewString(words[len(words)-1]), nil
+		return token.NewString(words[len(words)-1]), nil
 	},
 }
 
@@ -221,18 +221,18 @@ var FirstName = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "firstName",
 		IsVariadic: false,
-		Arguments: []block.Kind{
-			block.String,
+		Arguments: []token.Kind{
+			token.String,
 		},
-		Returns:     block.String,
+		Returns:     token.String,
 		Description: "Extract all but the last word (space-separated) from a string",
 		Example: `
 (firstName "Alex Unger")                                         ; returns "Alex"
 (firstName "Mr Foo Bar")                                         ; returns "Mr"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		words := strings.Split(args[0].String, " ")
-		return block.NewString(words[0]), nil
+		return token.NewString(words[0]), nil
 	},
 }

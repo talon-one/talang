@@ -4,8 +4,8 @@ package mapping
 import (
 	"errors"
 
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/token"
 )
 
 func init() {
@@ -18,17 +18,17 @@ var KV = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name:       "kv",
 		IsVariadic: true,
-		Arguments: []block.Kind{
-			block.Token,
+		Arguments: []token.Kind{
+			token.Token,
 		},
-		Returns:     block.Map,
+		Returns:     token.Map,
 		Description: "Create a map with any key value pairs passed as arguments.",
 		Example: `
 (kv (Key1 "Hello World") (Key2 true) (Key3 123))                 ; returns a Map with the keys key1, key2, key3
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-		m := make(map[string]*block.TaToken)
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		m := make(map[string]*token.TaToken)
 		for i := 0; i < len(args); i++ {
 			if args[i].IsBlock() && len(args[i].String) > 0 {
 				if len(args[i].Children) > 1 {
@@ -43,6 +43,6 @@ var KV = interpreter.TaFunction{
 				m[args[i].String] = value
 			}
 		}
-		return block.NewMap(m), nil
+		return token.NewMap(m), nil
 	},
 }

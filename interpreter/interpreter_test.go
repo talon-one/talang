@@ -8,9 +8,9 @@ import (
 
 	"github.com/ericlagergren/decimal"
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/block"
 	"github.com/talon-one/talang/interpreter"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func TestInterpreter(t *testing.T) {
@@ -35,7 +35,7 @@ func TestInterpreter(t *testing.T) {
 func TestInterpreterInvalidTerm(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 	require.Error(t, interp.Evaluate(nil))
-	require.Error(t, interp.Evaluate(&block.TaToken{}))
+	require.Error(t, interp.Evaluate(&token.TaToken{}))
 }
 
 func TestOverloading(t *testing.T) {
@@ -48,14 +48,14 @@ func TestOverloading(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "FN",
 			IsVariadic: false,
-			Arguments: []block.Kind{
-				block.Decimal,
-				block.Decimal,
+			Arguments: []token.Kind{
+				token.Decimal,
+				token.Decimal,
 			},
-			Returns: block.Decimal,
+			Returns: token.Decimal,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
 	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
@@ -65,14 +65,14 @@ func TestOverloading(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "FN",
 			IsVariadic: false,
-			Arguments: []block.Kind{
-				block.String,
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.New(args[0].Stringify() + args[1].Stringify()), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.New(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
 	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
@@ -86,14 +86,14 @@ func TestOverloadingNested(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "fn1",
 			IsVariadic: false,
-			Arguments: []block.Kind{
-				block.Decimal,
-				block.Decimal,
+			Arguments: []token.Kind{
+				token.Decimal,
+				token.Decimal,
 			},
-			Returns: block.Decimal,
+			Returns: token.Decimal,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
 
@@ -101,14 +101,14 @@ func TestOverloadingNested(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name:       "fn1",
 			IsVariadic: false,
-			Arguments: []block.Kind{
-				block.String,
-				block.String,
+			Arguments: []token.Kind{
+				token.String,
+				token.String,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-			return block.NewString(args[0].Stringify() + args[1].Stringify()), nil
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+			return token.NewString(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
 
@@ -116,11 +116,11 @@ func TestOverloadingNested(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn2",
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 			nestedFuncCounter++
-			return block.NewString(fmt.Sprintf("%d", nestedFuncCounter)), nil
+			return token.NewString(fmt.Sprintf("%d", nestedFuncCounter)), nil
 		},
 	})
 
@@ -144,28 +144,28 @@ func TestDoubleFuncCall(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn1",
-			Arguments: []block.Kind{
-				block.Atom,
-				block.Atom,
+			Arguments: []token.Kind{
+				token.Atom,
+				token.Atom,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 			fn1Runned = true
-			return block.NewString("A"), nil
+			return token.NewString("A"), nil
 		},
 	})
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn2",
-			Arguments: []block.Kind{
-				block.Atom,
+			Arguments: []token.Kind{
+				token.Atom,
 			},
-			Returns: block.String,
+			Returns: token.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 			fn2Runned = true
-			return block.NewString("B"), nil
+			return token.NewString("B"), nil
 		},
 	})
 	interp.MustLexAndEvaluate("fn1 fn2 1")
@@ -178,11 +178,11 @@ func TestGenericSet(t *testing.T) {
 
 	tests := []struct {
 		input    interface{}
-		expected *block.TaToken
+		expected *token.TaToken
 	}{
-		{"String", block.NewString("String")},
-		{false, block.NewBool(false)},
-		{123, block.NewDecimal(decimal.New(123, 0))},
+		{"String", token.NewString("String")},
+		{false, token.NewBool(false)},
+		{123, token.NewDecimal(decimal.New(123, 0))},
 	}
 
 	for _, test := range tests {
@@ -246,7 +246,7 @@ func TestEvaluateResultIsBlock(t *testing.T) {
 		helpers.Test{
 			`FN Hello World`,
 			nil,
-			block.New("FN", block.NewString("Hello"), block.NewString("World")),
+			token.New("FN", token.NewString("Hello"), token.NewString("World")),
 		},
 	)
 }
@@ -257,41 +257,41 @@ func TestModifiesInput(t *testing.T) {
 		interpreter.TaFunction{
 			CommonSignature: interpreter.CommonSignature{
 				Name: "fn",
-				Arguments: []block.Kind{
-					block.List,
+				Arguments: []token.Kind{
+					token.List,
 				},
-				Returns: block.Any,
+				Returns: token.Any,
 			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-				args[0].Children[0] = block.NewDecimalFromInt(1000)
+			Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+				args[0].Children[0] = token.NewDecimalFromInt(1000)
 				return nil, nil
 			},
 		},
 		interpreter.TaFunction{
 			CommonSignature: interpreter.CommonSignature{
 				Name: "fn",
-				Arguments: []block.Kind{
-					block.Decimal,
+				Arguments: []token.Kind{
+					token.Decimal,
 				},
-				Returns: block.Any,
+				Returns: token.Any,
 			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
-				args[0] = block.NewDecimalFromInt(1000)
+			Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+				args[0] = token.NewDecimalFromInt(1000)
 				return nil, nil
 			},
 		},
 	))
 
-	interp.Binding = block.NewMap(map[string]*block.TaToken{
-		"List1": block.NewList(block.NewDecimalFromInt(0), block.NewDecimalFromInt(1)),
-		"Int1":  block.NewDecimalFromInt(0),
+	interp.Binding = token.NewMap(map[string]*token.TaToken{
+		"List1": token.NewList(token.NewDecimalFromInt(0), token.NewDecimalFromInt(1)),
+		"Int1":  token.NewDecimalFromInt(0),
 	})
 
 	interp.MustLexAndEvaluate("fn (. List1)")
 	interp.MustLexAndEvaluate("fn (. Int1)")
 
-	require.Equal(t, true, interp.Get("List1").Equal(block.NewList(block.NewDecimalFromInt(0), block.NewDecimalFromInt(1))))
-	require.Equal(t, true, interp.Get("Int1").Equal(block.NewDecimalFromInt(0)))
+	require.Equal(t, true, interp.Get("List1").Equal(token.NewList(token.NewDecimalFromInt(0), token.NewDecimalFromInt(1))))
+	require.Equal(t, true, interp.Get("Int1").Equal(token.NewDecimalFromInt(0)))
 }
 
 func BenchmarkInterpreter(b *testing.B) {
