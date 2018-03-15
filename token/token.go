@@ -1,5 +1,3 @@
-//go:generate stringer -type=Kind
-
 package token
 
 import (
@@ -9,22 +7,6 @@ import (
 	"unicode"
 
 	"github.com/ericlagergren/decimal"
-)
-
-type Kind int
-
-const (
-	Decimal    Kind = 1 << iota
-	String     Kind = 1 << iota
-	Bool       Kind = 1 << iota
-	Time       Kind = 1 << iota
-	Null       Kind = 1 << iota
-	List       Kind = 1 << iota
-	Map        Kind = 1 << iota
-	Token      Kind = 1 << iota
-	Atom       Kind = Decimal | String | Bool | Time | Null
-	Collection Kind = List | Map
-	Any        Kind = Atom | Token | Collection
 )
 
 type TaToken struct {
@@ -427,3 +409,16 @@ func (b BlockArguments) ToHumanReadable() string {
 func (b BlockArguments) Len() int           { return len(b) }
 func (b BlockArguments) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 func (b BlockArguments) Less(i, j int) bool { return strings.Compare(b[i].String, b[j].String) < 0 }
+
+func (k *Kind) UnmarshalJSON(b []byte) (err error) {
+	*k = KindFromString(strings.Trim(string(b), `"`))
+	return nil
+}
+
+func (k *Kind) MarshalJSON() ([]byte, error) {
+	var builder strings.Builder
+	builder.WriteString(`"`)
+	builder.WriteString(k.String())
+	builder.WriteString(`"`)
+	return []byte(builder.String()), nil
+}
