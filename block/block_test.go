@@ -369,6 +369,18 @@ func TestStringify(t *testing.T) {
 	block = NewString("Hello")
 	require.Equal(t, "Hello", block.Stringify())
 
+	time, err := time.Parse(time.UnixDate, "Mon Jan 2 15:04:05 MST 2006")
+	require.NoError(t, err)
+
+	block = NewTime(time)
+	require.Equal(t, "2006-01-02T15:04:05Z", block.Stringify())
+
+	block = NewBool(true)
+	require.Equal(t, "true", block.Stringify())
+
+	block = NewDecimal(decimal.New(145, 1))
+	require.Equal(t, "14.5", block.Stringify())
+
 	block = NewMap(map[string]*Block{
 		"Key1": NewMap(map[string]*Block{
 			"SubKey1": NewDecimalFromInt(1),
