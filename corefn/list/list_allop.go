@@ -24,5 +24,7 @@ func AllOperations() []interpreter.TaFunction {
 		Exists,
 		ExistsLegacy,
 		Sum,
+		Every,
+		EveryLegacy,
 	}
 }

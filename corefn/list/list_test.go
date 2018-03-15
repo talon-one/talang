@@ -524,3 +524,119 @@ func TestSum(t *testing.T) {
 		},
 	)
 }
+
+func TestEvery(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`every (. List) Item (= (. Item Price) 1)`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+				),
+			}),
+			block.NewBool(true),
+		}, helpers.Test{
+			`every (. List) Item (= (. Item Price) 1)`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+				),
+			}),
+			block.NewBool(false),
+		}, helpers.Test{
+			`every (. List) Item (= (panic) 1)`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+				),
+			}),
+			helpers.Error{},
+		}, helpers.Test{
+			`every (. List) Item (= (. Item SKU) "XJK_992")`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"SKU": block.NewString("XJK_992"),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"SKU": block.NewString("XJK_992"),
+					}),
+				),
+			}),
+			block.NewBool(true),
+		},
+	)
+}
+
+func TestEveryLegacy(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`every (. List) ((Item) (= (. Item Price) 1))`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+				),
+			}),
+			block.NewBool(true),
+		}, helpers.Test{
+			`every (. List) ((Item) (= (. Item Price) 1))`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+				),
+			}),
+			block.NewBool(false),
+		}, helpers.Test{
+			`every (. List) ((Item) (= (panic) 1))`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(1),
+					}),
+				),
+			}),
+			helpers.Error{},
+		}, helpers.Test{
+			`every (. List) ((Item) (= (. Item SKU) "XJK_992"))`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"SKU": block.NewString("XJK_992"),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"SKU": block.NewString("XJK_992"),
+					}),
+				),
+			}),
+			block.NewBool(true),
+		},
+	)
+}

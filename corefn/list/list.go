@@ -551,3 +551,65 @@ sum (. List) Item (. Item Price)                                 ; returns 4 Wit
 		return block.NewDecimal(accumulator), nil
 	},
 }
+
+var Every = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "every",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.StringKind,
+			block.BlockKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Test if every item in a list matches a predicate",
+		Example: `
+every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := args[0]
+		bindingName := args[1].String
+		blockToRun := args[2]
+
+		size := len(list.Children)
+		scope := interp.NewScope()
+
+		for i := 0; i < size; i++ {
+			scope.Set(bindingName, list.Children[i])
+
+			var result block.Block
+			block.Copy(&result, blockToRun)
+			if err := scope.Evaluate(&result); err != nil {
+				return nil, err
+			}
+
+			if result.Bool == false {
+				return block.NewBool(false), nil
+			}
+		}
+		return block.NewBool(true), nil
+	},
+}
+
+var EveryLegacy = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "every",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.BlockKind,
+		},
+		Returns:     block.BoolKind,
+		Description: "Test if every item in a list matches a predicate",
+		Example: `
+every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		if len(args[1].Children) == 2 && args[1].Children[0].IsBlock() {
+			return Every.Func(interp, args[0], args[1].Children[0], args[1].Children[1])
+		}
+		return nil, errors.New("Missing or invalid binding")
+	},
+}
