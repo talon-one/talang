@@ -104,10 +104,10 @@ func main() {
 		}
 
 		// some warnings if some data is missing
-		if len(f.Description) <= 0 {
+		if len(strings.TrimSpace(f.Description)) <= 0 {
 			log.Printf("WARNING: func `%s' has no `Description`", f.Name)
 		}
-		if len(f.Example) <= 0 {
+		if len(strings.TrimSpace(f.Example)) <= 0 {
 			log.Printf("WARNING: func `%s' has no `Example`", f.Name)
 		}
 		if strings.IndexRune(f.Description, '\t') >= 0 {
