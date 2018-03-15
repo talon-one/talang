@@ -110,6 +110,12 @@ func main() {
 		if len(f.Example) <= 0 {
 			log.Printf("WARNING: func `%s' has no `Example`", f.Name)
 		}
+		if strings.IndexRune(f.Description, '\t') >= 0 {
+			log.Printf("WARNING: func's `%s' `Description` has a TAB character in it", f.Name)
+		}
+		if strings.IndexRune(f.Example, '\t') >= 0 {
+			log.Printf("WARNING: func's `%s' `Example` has a TAB character in it", f.Name)
+		}
 
 		fns[i] = fn{
 			Arguments:  arguments,
