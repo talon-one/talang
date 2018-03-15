@@ -408,6 +408,7 @@ var IsEmpty = interpreter.TaFunction{
 		Description: "Check if a list is empty",
 		Example: `
 isEmpty (list hello world)                                       ; returns "false"
+isEmpty (list)                                                   ; returns "true"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -429,7 +430,8 @@ var Split = interpreter.TaFunction{
 		Returns:     block.ListKind,
 		Description: "Create a list of strings by splitting the given string at each occurence of `sep`",
 		Example: `
-(split "1,2,3,a" ",")				                             ; returns "[1 2 3 a]"
+(split "1,2,3,a" ",")				                             ; returns "1 2 3 a"
+(split "1-2-3-a" "-")				                             ; returns "1 2 3 a"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

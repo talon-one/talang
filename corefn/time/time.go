@@ -298,7 +298,7 @@ var Days = interpreter.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
+(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -319,7 +319,9 @@ var AddDuration = interpreter.TaFunction{
 		Returns:     block.TimeKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625"
+(addDuration 2018-03-18T00:04:05Z 3 minutes)                     ; returns "2018-03-18T00:07:05Z"
+(addDuration 2018-03-18T00:04:05Z 2 hours)                       ; returns "2018-03-18T02:04:05Z"
+(addDuration 2018-03-18T00:04:05Z 18 days)                       ; returns "2018-04-05T00:04:05Z"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -344,12 +346,13 @@ var SubDuration = interpreter.TaFunction{
 		Returns:     block.TimeKind,
 		Description: "Extract days from now from time",
 		Example: `
-(days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
+(subDuration 2018-03-18T00:04:05Z 12 minutes)                    ; returns "2018-03-17T23:52:05Z"
+(subDuration 2018-03-18T00:04:05Z 17 hours)                      ; returns "2018-03-17T07:04:05Z"
+(subDuration 2018-03-18T00:04:05Z 22 days)                       ; returns "2018-02-24T00:04:05Z"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
 		duration, err := makeDuration(args[1], args[2].String)
-		fmt.Println(duration)
 		if err != nil {
 			return nil, err
 		}
