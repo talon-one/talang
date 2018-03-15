@@ -379,8 +379,8 @@ var Join = interpreter.TaFunction{
 		Returns:     block.StringKind,
 		Description: "Create a string by joining together a list of strings with `glue`",
 		Example: `
-(join (list hello world) "-")									 ; returns "hello-world"
-(join (list hello world) ",")									 ; returns "hello,world"
+(join (list hello world) "-")                                    ; returns "hello-world"
+(join (list hello world) ",")                                    ; returns "hello,world"
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

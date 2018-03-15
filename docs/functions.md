@@ -330,8 +330,8 @@ Returns a specific item from a list
 ### join(List, String)String
 Create a string by joining together a list of strings with `glue`
 ```lisp
-(join (list hello world) "-")									 ; returns "hello-world"
-(join (list hello world) ",")									 ; returns "hello,world"
+(join (list hello world) "-")                                    ; returns "hello-world"
+(join (list hello world) ",")                                    ; returns "hello,world"
 ```
 
 ### kv(Block...)Map
