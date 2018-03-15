@@ -3,7 +3,7 @@ SHELL := /bin/bash
 build: docs
 	go build -o ./cmd/talang-cli/talang-cli ./cmd/talang-cli
 
-precommithook: docs
+precommithook: docs test
 	git add docs/functions.md
 	find . -name '*_allop.go' | xargs git add
 

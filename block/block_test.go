@@ -381,13 +381,29 @@ func TestStringify(t *testing.T) {
 	block = NewDecimal(decimal.New(145, 1))
 	require.Equal(t, "14.5", block.Stringify())
 
-	block = NewMap(map[string]*Block{
-		"Key1": NewMap(map[string]*Block{
-			"SubKey1": NewDecimalFromInt(1),
-		}),
-		"Key2": NewString("Hello"),
-	})
-	require.Equal(t, "{Key1:{SubKey1:1}, Key2:Hello}", block.Stringify())
+	block = &Block{
+		Kind: MapKind,
+		Keys: []string{"Key1", "Key2"},
+		Children: []*Block{
+			&Block{
+				Kind: MapKind,
+				Keys: []string{"SubKey1"},
+				Children: []*Block{
+					&Block{
+						String:  "14.5",
+						Kind:    DecimalKind,
+						Decimal: decimal.New(145, 1),
+					},
+				},
+			},
+			&Block{
+				Kind:   StringKind,
+				String: "Hello",
+			},
+		},
+	}
+
+	require.Equal(t, "{Key1:{SubKey1:14.5}, Key2:Hello}", block.Stringify())
 }
 
 func TestEqual(t *testing.T) {

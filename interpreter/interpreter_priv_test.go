@@ -1,7 +1,6 @@
 package interpreter
 
 import (
-	"errors"
 	"log"
 	"os"
 	"testing"
@@ -17,18 +16,6 @@ import (
 func TestMatchesSignatureNonVariadic(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-
-	require.NoError(t, interp.RegisterFunction(
-		TaFunction{
-			CommonSignature: CommonSignature{
-				Name:    "panic",
-				Returns: block.AnyKind,
-			},
-			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
-				return nil, errors.New("panic")
-			},
-		},
-	))
 
 	type Expected struct {
 		Matches           bool
@@ -326,19 +313,6 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 func TestMatchesSignatureVariadic(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-
-	require.NoError(t, interp.RegisterFunction(
-		TaFunction{
-			CommonSignature: CommonSignature{
-				Name:      "panic",
-				lowerName: "panic",
-				Returns:   block.AnyKind,
-			},
-			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
-				return nil, errors.New("panic")
-			},
-		},
-	))
 
 	type Expected struct {
 		Matches           bool

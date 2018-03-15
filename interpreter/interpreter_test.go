@@ -1,7 +1,6 @@
 package interpreter_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -234,33 +233,11 @@ func TestGenericSet(t *testing.T) {
 
 func TestMustEvaluate(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterFunction(
-		interpreter.TaFunction{
-			CommonSignature: interpreter.CommonSignature{
-				Name:    "panic",
-				Returns: block.AnyKind,
-			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-				return nil, errors.New("panic")
-			},
-		},
-	))
 	b := lexer.MustLex("panic")
 	require.Panics(t, func() { interp.MustEvaluate(b) })
 }
 func TestMustLexAndEvaluate(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	require.NoError(t, interp.RegisterFunction(
-		interpreter.TaFunction{
-			CommonSignature: interpreter.CommonSignature{
-				Name:    "panic",
-				Returns: block.AnyKind,
-			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-				return nil, errors.New("panic")
-			},
-		},
-	))
 	require.Panics(t, func() { interp.MustLexAndEvaluate("panic") })
 }
 
