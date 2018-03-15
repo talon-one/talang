@@ -508,3 +508,44 @@ var ExistsLegacy = interpreter.TaFunction{
 		return nil, errors.New("Missing or invalid binding")
 	},
 }
+
+var Sum = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "sum",
+		IsVariadic: false,
+		Arguments: []block.Kind{
+			block.ListKind,
+			block.StringKind,
+			block.BlockKind,
+		},
+		Returns:     block.DecimalKind,
+		Description: "Test if any item in a list matches a predicate",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		list := args[0]
+		bindingName := args[1].String
+		blockToRun := args[2]
+		accumulator := decimal.New(0, 0)
+
+		size := len(list.Children)
+		scope := interp.NewScope()
+
+		for i := 0; i < size; i++ {
+			scope.Set(bindingName, list.Children[i])
+
+			var result block.Block
+			block.Copy(&result, blockToRun)
+			if err := scope.Evaluate(&result); err != nil {
+				return nil, err
+			}
+			if !result.IsDecimal() {
+				return nil, errors.Errorf("Invalid type in block, expected type: DecimalKind got %s", result.Kind.String())
+			}
+			accumulator = accumulator.Add(accumulator, result.Decimal)
+		}
+		return block.NewDecimal(accumulator), nil
+	},
+}

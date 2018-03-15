@@ -446,23 +446,23 @@ func TestIsEmpty(t *testing.T) {
 func TestExists(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`exists (list hello world) Lst (= (. Lst) "hello")`,
+			`exists (list hello world) Item (= (. Item) "hello")`,
 			nil,
 			block.NewBool(true),
 		}, helpers.Test{
-			`exists (list hello world) Lst (= (. Lst) "world")`,
+			`exists (list hello world) Item (= (. Item) "world")`,
 			nil,
 			block.NewBool(true),
 		}, helpers.Test{
-			`exists (list hello world) Lst (= (. Lst) "universes")`,
+			`exists (list hello world) Item (= (. Item) "universes")`,
 			nil,
 			block.NewBool(false),
 		}, helpers.Test{
-			`exists (list hello world) Lst (+ (. Lst) "world")`,
+			`exists (list hello world) Item (+ (. Item) "world")`,
 			nil,
 			helpers.Error{},
 		}, helpers.Test{
-			`exists (list hello world) Lst (panic)`,
+			`exists (list hello world) Item (panic)`,
 			nil,
 			helpers.Error{},
 		},
@@ -472,12 +472,54 @@ func TestExists(t *testing.T) {
 func TestExistsLegacy(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`exists (list hello world) ((Lst) (= (. Lst) "hello"))`,
+			`exists (list hello world) ((Item) (= (. Item) "hello"))`,
 			nil,
 			block.NewBool(true),
 		}, helpers.Test{
 			`exists (list hello world) (panic)`,
 			nil,
+			helpers.Error{},
+		},
+	)
+}
+
+func TestSum(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`sum (. List) Item (. Item Price)`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+				),
+			}),
+			block.NewDecimalFromInt(4),
+		}, helpers.Test{
+			`sum (. List) Item (panic)`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewDecimalFromInt(2),
+					}),
+				),
+			}),
+			helpers.Error{},
+		}, helpers.Test{
+			`sum (. List) Item (. Item Price)`,
+			block.NewMap(map[string]*block.Block{
+				"List": block.NewList(
+					block.NewMap(map[string]*block.Block{
+						"Price": block.NewString("Hey"),
+					}),
+				),
+			}),
 			helpers.Error{},
 		},
 	)

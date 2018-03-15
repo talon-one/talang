@@ -247,13 +247,13 @@ Extract days from now from time
 (days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 ```
 
-### do(Kind(127), Block)Any
+### do(Kind(127), String, Block)Any
 Apply a block to a value
 ```lisp
 
 ```
 
-### do(Kind(127), String, Block)Any
+### do(Kind(127), Block)Any
 Apply a block to a value
 ```lisp
 
@@ -366,16 +366,16 @@ Create a list out of the children
 (list 1 true Hello)                                              ; returns a list with an int, bool and string
 ```
 
-### map(List, Block)List
-Create a new list by evaluating the given block for each item in the input list
-```lisp
-(map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
-```
-
 ### map(List, String, Block)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
 (map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
+```
+
+### map(List, Block)List
+Create a new list by evaluating the given block for each item in the input list
+```lisp
+(map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
 ```
 
 ### matchTime(Time, Time, String)Bool
@@ -502,6 +502,12 @@ Extract days from now from time
 (subDuration 2018-03-18T00:04:05Z 12 minutes)                    ; returns "2018-03-17T23:52:05Z"
 (subDuration 2018-03-18T00:04:05Z 17 hours)                      ; returns "2018-03-17T07:04:05Z"
 (subDuration 2018-03-18T00:04:05Z 22 days)                       ; returns "2018-02-24T00:04:05Z"
+```
+
+### sum(List, String, Block)Decimal
+Test if any item in a list matches a predicate
+```lisp
+
 ```
 
 ### tail(List)List

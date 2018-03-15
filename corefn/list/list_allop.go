@@ -23,5 +23,6 @@ func AllOperations() []interpreter.TaFunction {
 		Split,
 		Exists,
 		ExistsLegacy,
+		Sum,
 	}
 }
