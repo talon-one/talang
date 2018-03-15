@@ -11,8 +11,8 @@ import (
 func (interp *Interpreter) RegisterTemplate(signatures ...TaTemplate) error {
 	for i := 0; i < len(signatures); i++ {
 		signature := signatures[i]
-		signature.Name = strings.ToLower(signature.Name)
-		if interp.GetTemplate(signature) != nil {
+		signature.sanitize()
+		if interp.GetTemplate(&signature) != nil {
 			return errors.Errorf("Template `%s' is already registered", signature.Name)
 		}
 		interp.Templates = append(interp.Templates, signature)
@@ -27,8 +27,8 @@ func (interp *Interpreter) MustRegisterTemplate(signatures ...TaTemplate) {
 }
 
 func (interp *Interpreter) UpdateTemplate(signature TaTemplate) error {
-	signature.Name = strings.ToLower(signature.Name)
-	if s := interp.GetTemplate(signature); s != nil {
+	signature.sanitize()
+	if s := interp.GetTemplate(&signature); s != nil {
 		*s = signature
 		return nil
 	}
@@ -36,7 +36,7 @@ func (interp *Interpreter) UpdateTemplate(signature TaTemplate) error {
 }
 
 func (interp *Interpreter) RemoveTemplate(signature TaTemplate) error {
-	signature.Name = strings.ToLower(signature.Name)
+	signature.sanitize()
 	for i := 0; i < len(interp.Templates); i++ {
 		if interp.Templates[i].Equal(&signature) {
 			fns := interp.Templates[:i]
@@ -47,10 +47,10 @@ func (interp *Interpreter) RemoveTemplate(signature TaTemplate) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func (interp *Interpreter) GetTemplate(signature TaTemplate) *TaTemplate {
-	signature.Name = strings.ToLower(signature.Name)
+func (interp *Interpreter) GetTemplate(signature *TaTemplate) *TaTemplate {
+	signature.sanitize()
 	for i := 0; i < len(interp.Templates); i++ {
-		if interp.Templates[i].Equal(&signature) {
+		if interp.Templates[i].Equal(signature) {
 			return &interp.Templates[i]
 		}
 	}

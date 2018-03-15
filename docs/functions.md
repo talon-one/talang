@@ -61,20 +61,20 @@ Divides the arguments
 (/ 1 2 3)                                                        ; returns 0.166666
 ```
 
-### <(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less then the following
-```lisp
-(< 0 1)                                                          ; returns true
-(< 1 1)                                                          ; returns false
-(< 2 1)                                                          ; returns false
-```
-
 ### <(Time, Time, Time...)Bool
 Tests if the first argument is less then the following
 ```lisp
 (< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
 (< 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 (< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
+```
+
+### <(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is less then the following
+```lisp
+(< 0 1)                                                          ; returns true
+(< 1 1)                                                          ; returns false
+(< 2 1)                                                          ; returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -137,7 +137,7 @@ Tests if the first argument is greather or equal then the following
 (>= 2 1)                                                         ; returns true
 ```
 
-### addduration(Time, Decimal, String)Time
+### addDuration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
 (days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625"
@@ -153,8 +153,8 @@ Checks whether time A is after B
 ### append(List, Kind(127), Kind(127)...)List
 Adds an item to the list and returns the list
 ```lisp
-(push (list "Hello World" "Hello Universe") "Hello Human")       ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
-(push (list 1 2) 3 4)                                            ; returns a list containing 1, 2, 3 and 4
+(append (list "Hello World" "Hello Universe") "Hello Human")     ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
+(append (list 1 2) 3 4)                                          ; returns a list containing 1, 2, 3 and 4
 ```
 
 ### before(Time, Time)Bool
@@ -184,11 +184,19 @@ Tests if the arguments are between the second last and the last argument
 (between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
-### betweentimes(Time, Time, Time)Bool
+### betweenTimes(Time, Time, Time)Bool
 Evaluates whether a timestamp is between minTime and maxTime
 ```lisp
 (betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
 (betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "true"
+```
+
+### catch(Any, Any)Any
+Evaluate & return the second argument. If any errors occur, return the first argument instead
+```lisp
+catch "Edward" (. Profile Name)                                  ; returns "Edward"
+catch 22 (. Profile Age)                                         ; returns 46
+catch 22 2                                                       ; returns 22
 ```
 
 ### ceil(Decimal)Decimal
@@ -237,6 +245,18 @@ Extract days from now from time
 (days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
 ```
 
+### do(Kind(127), Block)Any
+Apply a block to a value
+```lisp
+
+```
+
+### do(Kind(127), String, Block)Any
+Apply a block to a value
+```lisp
+
+```
+
 ### drop(List)List
 Create a list containing all but the last item in the input list
 ```lisp
@@ -244,7 +264,7 @@ Create a list containing all but the last item in the input list
 (drop (list 1 true Hello))                                       ; returns a list containing 1 and true
 ```
 
-### endswith(String, String, String...)Bool
+### endsWith(String, String, String...)Bool
 Returns wether the first argument is the suffix of the following arguments
 ```lisp
 (endsWith "World" "Hello World")                                 ; returns true
@@ -253,7 +273,7 @@ Returns wether the first argument is the suffix of the following arguments
 (endsWith "World" "Hello World" "By World")                      ; returns true
 ```
 
-### firstname(String)String
+### firstName(String)String
 Extract all but the last word (space-separated) from a string
 ```lisp
 (firstName "Alex Unger")                                         ; returns "Alex"
@@ -271,7 +291,7 @@ Floor the decimal argument
 (floor -2)                                                       ; returns -2
 ```
 
-### formattime(Time)String
+### formatTime(Time)String
 Create an RFC3339 timestamp, the inverse of parseTime
 ```lisp
 (formatTime 2018-01-02T19:04:05Z)                                ; returns "2018"
@@ -290,7 +310,7 @@ Extract the hour (00-23) from a time
 (hour 2018-01-14T19:04:05Z)                                      ; returns "19"
 ```
 
-### isempty(List)Bool
+### isEmpty(List)Bool
 Check if a list is empty
 ```lisp
 isEmpty (list hello world)                                       ; returns "false"
@@ -317,27 +337,33 @@ Create a map with any key value pairs passed as arguments.
 (kv (Key1 "Hello World") (Key2 true) (Key3 123))                 ; returns a Map with the keys key1, key2, key3
 ```
 
-### lastname(String)String
+### lastName(String)String
 Extract the last word (space-separated) from a string
 ```lisp
 (lastName "Alex Unger")                                          ; returns "Unger"
 (lastName "Mr Foo Bar")                                          ; returns "Bar"
 ```
 
-### list(Atom, Atom...)List
+### list(Atom...)List
 Create a list out of the children
 ```lisp
 (list "Hello World" "Hello Universe")                            ; returns a list with string items
 (list 1 true Hello)                                              ; returns a list with an int, bool and string
 ```
 
+### map(List, Block)List
+Create a new list by evaluating the given block for each item in the input list
+```lisp
+(map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
+```
+
 ### map(List, String, Block)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
-(map  (list "World" "Universe") x (+ "Hello " (. x)))            ; returns a list containing "Hello World" and "Hello Universe"
+(map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
 ```
 
-### matchtime(Time, Time, String)Bool
+### matchTime(Time, Time, String)Bool
 Checks if two times match for a given layout
 ```lisp
 matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   ; returns "true"
@@ -347,12 +373,14 @@ matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   ; returns "true
 Find the largest number in the list
 ```lisp
 (max  (list 3 4 1 3 7 1 17 15 2))                                ; returns 17
+(max  (list 4 2 9 2 27 1 2 422))                                 ; returns 422
 ```
 
 ### min(List)Decimal
 Find the lowest number in the list
 ```lisp
 (min  (list 3 4 1 3 7 1 17 15 2))                                ; returns 1
+(min  (list 3 4 -1 3 7 1 17 0 2))                                ; returns -1
 ```
 
 ### minute(Time)String
@@ -369,12 +397,12 @@ Modulo the arguments
 ```
 
 ### month(Time)String
-Extract the month (1-11) from a time
+Extract the month (1-12) from a time
 ```lisp
 (month 2018-01-02T19:04:05Z)                                     ; returns "1"
 ```
 
-### monthday(Time)String
+### monthDay(Time)String
 Extract the day (1-31) from a time
 ```lisp
 (monthDay 2018-01-14T19:04:05Z)                                  ; returns "14"
@@ -393,7 +421,7 @@ Inverts the argument
 (not (not false))                                                ; returns "false"
 ```
 
-### notcontains(String, String, String...)Bool
+### notContains(String, String, String...)Bool
 Returns wether the first argument does not exist in the following arguments
 ```lisp
 (notContains "Hello" "Hello World")                              ; returns false
@@ -402,7 +430,7 @@ Returns wether the first argument does not exist in the following arguments
 (notContains "World" "Hello World" "Hello Universe")             ; returns false
 ```
 
-### parsetime(String, String...)Time
+### parseTime(String, String...)Time
 Evaluates whether a timestamp is between minTime and maxTime
 ```lisp
 (parseTime "2018-01-02T19:04:05Z")                               ; returns "2018-01-02 19:04:05 +0000 UTC"
@@ -419,8 +447,8 @@ Adds an item to the list and returns the list
 ### reverse(List)List
 Reverses the order of items in a given list
 ```lisp
-(reverse (list 1 2 3 4))										 ; returns "(4 3 2 1)"
-(reverse (list 1))												 ; returns "(1)"
+(reverse (list 1 2 3 4))										 ; returns "4 3 2 1"
+(reverse (list 1))												 ; returns "1"
 ```
 
 ### set(String, Kind(127), Kind(127)...)Null
@@ -443,7 +471,7 @@ Create a list of strings by splitting the given string at each occurence of `sep
 (split "1,2,3,a" ",")				                             ; returns "[1 2 3 a]"
 ```
 
-### startswith(String, String, String...)Bool
+### startsWith(String, String, String...)Bool
 Returns wether the first argument is the prefix of the following arguments
 ```lisp
 (startsWith "Hello" "Hello World")                               ; returns true
@@ -452,7 +480,7 @@ Returns wether the first argument is the prefix of the following arguments
 (startsWith "Hello" "Hello World" "Hell Universe")               ; returns false
 ```
 
-### subduration(Time, Decimal, String)Time
+### subDuration(Time, Decimal, String)Time
 Extract days from now from time
 ```lisp
 (days 2018-03-18T00:04:05Z)										 ; returns "3.423892107645601701193527333089150488376617431640625"
@@ -465,7 +493,7 @@ Returns list without the first item
 (tail (list 1 true Hello))                                       ; returns a list containing true and Hello
 ```
 
-### tostring(Kind(15))String
+### toString(Kind(15))String
 Converts the parameter to a string
 ```lisp
 (toString 1)                                                     ; returns "1"

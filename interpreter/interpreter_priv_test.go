@@ -71,7 +71,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -97,7 +98,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.StringKind,
 						block.DecimalKind,
@@ -124,7 +126,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AnyKind,
 					},
@@ -149,7 +152,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AnyKind,
 					},
@@ -174,7 +178,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AtomKind,
 					},
@@ -199,7 +204,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AtomKind,
 					},
@@ -223,7 +229,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn1",
+					Name:      "fn1",
+					lowerName: "fn1",
 					Arguments: []block.Kind{
 						block.StringKind,
 					},
@@ -246,6 +253,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
 					Name:       "fn",
+					lowerName:  "fn",
 					Arguments:  []block.Kind{},
 					IsVariadic: false,
 				},
@@ -265,7 +273,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -287,7 +296,8 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -320,8 +330,9 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 	require.NoError(t, interp.RegisterFunction(
 		TaFunction{
 			CommonSignature: CommonSignature{
-				Name:    "panic",
-				Returns: block.AnyKind,
+				Name:      "panic",
+				lowerName: "panic",
+				Returns:   block.AnyKind,
 			},
 			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
 				return nil, errors.New("panic")
@@ -369,7 +380,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -391,7 +403,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -417,7 +430,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.StringKind,
 						block.DecimalKind,
@@ -446,7 +460,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.StringKind,
 						block.DecimalKind,
@@ -474,7 +489,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AnyKind,
 					},
@@ -499,7 +515,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AnyKind,
 					},
@@ -524,7 +541,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AtomKind,
 					},
@@ -549,7 +567,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.AtomKind,
 					},
@@ -573,7 +592,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn1",
+					Name:      "fn1",
+					lowerName: "fn1",
 					Arguments: []block.Kind{
 						block.StringKind,
 					},
@@ -595,7 +615,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -617,7 +638,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 					},
@@ -639,7 +661,8 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			},
 			Result: makeResult(interp.matchesSignature(
 				&CommonSignature{
-					Name: "fn",
+					Name:      "fn",
+					lowerName: "fn",
 					Arguments: []block.Kind{
 						block.DecimalKind,
 						block.DecimalKind,
@@ -792,9 +815,9 @@ func TestFuncWalker(t *testing.T) {
 		interp: interp,
 	}
 
-	require.Equal(t, "scope2fn1", walker.Next().Name)
-	require.Equal(t, "scope2fn2", walker.Next().Name)
-	require.Equal(t, "scope1fn", walker.Next().Name)
-	require.Equal(t, "rootfn", walker.Next().Name)
+	require.Equal(t, "Scope2FN1", walker.Next().Name)
+	require.Equal(t, "Scope2FN2", walker.Next().Name)
+	require.Equal(t, "Scope1FN", walker.Next().Name)
+	require.Equal(t, "ROOTFN", walker.Next().Name)
 	require.Nil(t, walker.Next())
 }

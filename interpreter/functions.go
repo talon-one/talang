@@ -13,8 +13,8 @@ var coreFunctions []TaFunction
 func RegisterCoreFunction(signatures ...TaFunction) error {
 	for i := 0; i < len(signatures); i++ {
 		signature := signatures[i]
-		signature.Name = strings.ToLower(signature.Name)
-		if getFunction(coreFunctions, signature) != nil {
+		signature.sanitize()
+		if getFunction(coreFunctions, &signature) != nil {
 			return fmt.Errorf("Function `%s' is already registered", signature.Name)
 		}
 		coreFunctions = append(coreFunctions, signature)
@@ -25,8 +25,8 @@ func RegisterCoreFunction(signatures ...TaFunction) error {
 func (interp *Interpreter) RegisterFunction(signatures ...TaFunction) error {
 	for i := 0; i < len(signatures); i++ {
 		signature := signatures[i]
-		signature.Name = strings.ToLower(signature.Name)
-		if interp.GetFunction(signature) != nil {
+		signature.sanitize()
+		if interp.GetFunction(&signature) != nil {
 			return errors.Errorf("Function `%s' is already registered", signature.Name)
 		}
 		interp.Functions = append(interp.Functions, signature)
@@ -41,8 +41,8 @@ func (interp *Interpreter) MustRegisterFunction(signatures ...TaFunction) {
 }
 
 func (interp *Interpreter) UpdateFunction(signature TaFunction) error {
-	signature.Name = strings.ToLower(signature.Name)
-	if s := interp.GetFunction(signature); s != nil {
+	signature.sanitize()
+	if s := interp.GetFunction(&signature); s != nil {
 		*s = signature
 		return nil
 	}
@@ -50,7 +50,7 @@ func (interp *Interpreter) UpdateFunction(signature TaFunction) error {
 }
 
 func (interp *Interpreter) RemoveFunction(signature TaFunction) error {
-	signature.Name = strings.ToLower(signature.Name)
+	signature.sanitize()
 	for i := 0; i < len(interp.Functions); i++ {
 		if interp.Functions[i].Equal(&signature) {
 			fns := interp.Functions[:i]
@@ -61,21 +61,25 @@ func (interp *Interpreter) RemoveFunction(signature TaFunction) error {
 	return errors.Errorf("Function `%s' is not registered", signature.Name)
 }
 
-func getFunction(functions []TaFunction, signature TaFunction) *TaFunction {
-	signature.Name = strings.ToLower(signature.Name)
+func getFunction(functions []TaFunction, signature *TaFunction) *TaFunction {
+	signature.sanitize()
 	for i := 0; i < len(functions); i++ {
-		if functions[i].Equal(&signature) {
+		if functions[i].Equal(signature) {
 			return &functions[i]
 		}
 	}
 	return nil
 }
 
-func (interp *Interpreter) GetFunction(signature TaFunction) *TaFunction {
+func (interp *Interpreter) GetFunction(signature *TaFunction) *TaFunction {
 	return getFunction(interp.Functions, signature)
 }
 
 func (interp *Interpreter) registerCoreFunctions() error {
+	bindingSignature.sanitize()
+	setBindingSignature.sanitize()
+	templateSignature.sanitize()
+
 	// binding
 	interp.Functions = append(interp.Functions, bindingSignature)
 	interp.Functions = append(interp.Functions, setBindingSignature)
@@ -86,8 +90,8 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.Functions = append(interp.Functions, coreFunctions...)
 
 	// sanitize name
-	for i, f := range interp.Functions {
-		interp.Functions[i].CommonSignature.Name = strings.ToLower(f.CommonSignature.Name)
+	for i := range interp.Functions {
+		interp.Functions[i].sanitize()
 	}
 	return nil
 }

@@ -112,7 +112,7 @@ const (
 )
 
 func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*block.Block) (bool, notMatchingDetail, []*block.Block, error) {
-	if sig.Name != lowerName {
+	if sig.lowerName != lowerName {
 		return false, invalidName, nil, nil
 	}
 

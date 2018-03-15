@@ -13,6 +13,7 @@ type CommonSignature struct {
 	IsVariadic  bool
 	Arguments   []block.Kind
 	Name        string
+	lowerName   string
 	Returns     block.Kind
 	Description string
 	Example     string
@@ -57,7 +58,7 @@ func (a *CommonSignature) Equal(b *CommonSignature) bool {
 			return false
 		}
 	}
-	return a.Name == b.Name
+	return a.lowerName == b.lowerName
 }
 
 func (sig *CommonSignature) MatchesArguments(args []block.Kind) bool {
@@ -82,6 +83,10 @@ func (sig *CommonSignature) MatchesArguments(args []block.Kind) bool {
 		}
 	}
 	return true
+}
+
+func (sig *CommonSignature) sanitize() {
+	sig.lowerName = strings.ToLower(sig.Name)
 }
 
 func (s *TaFunction) String() string {

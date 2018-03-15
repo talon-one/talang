@@ -11,6 +11,7 @@ func AllOperations() []interpreter.TaFunction {
 		Item,
 		Push,
 		Map,
+		MapLegacy,
 		Sort,
 		Min,
 		Max,
@@ -20,6 +21,5 @@ func AllOperations() []interpreter.TaFunction {
 		Join,
 		IsEmpty,
 		Split,
-		MapLegacy,
 	}
 }
