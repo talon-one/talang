@@ -152,7 +152,7 @@ Checks whether time A is after B
 (after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "false"
 ```
 
-### append(List, Kind(127), Kind(127)...)List
+### append(List, Collection|Atom, Collection|Atom...)List
 Adds an item to the list and returns the list
 ```lisp
 (append (list "Hello World" "Hello Universe") "Hello Human")     ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
@@ -247,13 +247,13 @@ Extract days from now from time
 (days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 ```
 
-### do(Kind(127), Token)Any
+### do(Collection|Atom, Token)Any
 Apply a block to a value
 ```lisp
 do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 ```
 
-### do(Kind(127), String, Token)Any
+### do(Collection|Atom, String, Token)Any
 Apply a block to a value
 ```lisp
 do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
@@ -466,7 +466,7 @@ Evaluates whether a timestamp is between minTime and maxTime
 (parseTime "20:04:05Z" "HH:mm:ss")                               ; returns "2018-01-02 20:04:05 +0000 UTC"
 ```
 
-### push(List, Kind(127), Kind(127)...)List
+### push(List, Collection|Atom, Collection|Atom...)List
 Adds an item to the list and returns the list
 ```lisp
 (push (list "Hello World" "Hello Universe") "Hello Human")       ; returns a list containing "Hello World", "Hello Universe" and "Hello Human"
@@ -480,7 +480,7 @@ Reverses the order of items in a given list
 (reverse (list 1))                                               ; returns "1"
 ```
 
-### set(String, Kind(127), Kind(127)...)Null
+### set(String, Collection|Atom, Collection|Atom...)Null
 Set a variable in the binding
 ```lisp
 (set Key1 "Hello World")                                         ; sets Key1 to "Hello World"
@@ -531,7 +531,7 @@ Returns list without the first item
 (tail (list 1 true Hello))                                       ; returns a list containing true and Hello
 ```
 
-### toString(Kind(15))String
+### toString(Decimal|String|Bool|Time)String
 Converts the parameter to a string
 ```lisp
 (toString 1)                                                     ; returns "1"
