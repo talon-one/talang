@@ -428,7 +428,7 @@ var Split = interpreter.TaFunction{
 			block.StringKind,
 		},
 		Returns:     block.ListKind,
-		Description: "Create a list of strings by splitting the given string at each occurence of `sep`",
+		Description: "Create a list of strings by splitting the given string at each occurrence of `sep`",
 		Example: `
 (split "1,2,3,a" ",")                                            ; returns "1 2 3 a"
 (split "1-2-3-a" "-")                                            ; returns "1 2 3 a"

@@ -313,7 +313,7 @@ var AddDuration = interpreter.TaFunction{
 		IsVariadic: false,
 		Arguments: []block.Kind{
 			block.TimeKind,    // since
-			block.DecimalKind, // ammount
+			block.DecimalKind, // amount
 			block.StringKind,  // units
 		},
 		Returns:     block.TimeKind,
@@ -340,7 +340,7 @@ var SubDuration = interpreter.TaFunction{
 		IsVariadic: false,
 		Arguments: []block.Kind{
 			block.TimeKind,    // since
-			block.DecimalKind, // ammount
+			block.DecimalKind, // amount
 			block.StringKind,  // units
 		},
 		Returns:     block.TimeKind,

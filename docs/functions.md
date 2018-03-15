@@ -469,7 +469,7 @@ Sort a list ascending, set the second argument to true for descending order
 ```
 
 ### split(String, String)List
-Create a list of strings by splitting the given string at each occurence of `sep`
+Create a list of strings by splitting the given string at each occurrence of `sep`
 ```lisp
 (split "1,2,3,a" ",")                                            ; returns "1 2 3 a"
 (split "1-2-3-a" "-")                                            ; returns "1 2 3 a"
