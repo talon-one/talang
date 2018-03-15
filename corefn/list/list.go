@@ -457,7 +457,8 @@ var Exists = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Test if any item in a list matches a predicate",
 		Example: `
-
+exists (list hello world) Item (= (. Item) "hello")              ; returns true
+exists (list hello world) Item (= (. Item) "hey!!")              ; returns false
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -498,7 +499,8 @@ var ExistsLegacy = interpreter.TaFunction{
 		Returns:     block.BoolKind,
 		Description: "Test if any item in a list matches a predicate",
 		Example: `
-
+exists (list hello world) ((Item) (= (. Item) "hello"))          ; returns true
+exists (list hello world) ((Item) (= (. Item) "hey!!"))          ; returns false
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -521,7 +523,7 @@ var Sum = interpreter.TaFunction{
 		Returns:     block.DecimalKind,
 		Description: "Test if any item in a list matches a predicate",
 		Example: `
-
+sum (. List) Item (. Item Price)                                 ; returns 4 With the binding "$Items" containing prices: [2, 2]
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

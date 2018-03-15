@@ -85,7 +85,7 @@ func TestCatch(t *testing.T) {
 
 func TestDo(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
-		"do (list 1 2 3) Lst (. Lst)",
+		"do (list 1 2 3) Item (. Item)",
 		nil,
 		block.NewList(
 			block.NewDecimalFromInt(1),
@@ -101,7 +101,7 @@ func TestDo(t *testing.T) {
 
 func TestDoLegacy(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
-		"do (list 1 2 3) ((Lst) (. Lst))",
+		"do (list 1 2 3) ((Item) (. Item))",
 		nil,
 		block.NewList(
 			block.NewDecimalFromInt(1),

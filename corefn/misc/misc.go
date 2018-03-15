@@ -100,7 +100,7 @@ var Do = interpreter.TaFunction{
 		Returns:     block.AnyKind,
 		Description: "Apply a block to a value",
 		Example: `
-
+do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
@@ -128,7 +128,7 @@ var DoLegacy = interpreter.TaFunction{
 		Returns:     block.AnyKind,
 		Description: "Apply a block to a value",
 		Example: `
-
+do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {

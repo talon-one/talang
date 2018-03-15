@@ -250,13 +250,13 @@ Extract days from now from time
 ### do(Kind(127), String, Block)Any
 Apply a block to a value
 ```lisp
-
+do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
 ```
 
 ### do(Kind(127), Block)Any
 Apply a block to a value
 ```lisp
-
+do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 ```
 
 ### drop(List)List
@@ -278,13 +278,15 @@ Returns wether the first argument is the suffix of the following arguments
 ### exists(List, Block)Bool
 Test if any item in a list matches a predicate
 ```lisp
-
+exists (list hello world) ((Item) (= (. Item) "hello"))          ; returns true
+exists (list hello world) ((Item) (= (. Item) "hey!!"))          ; returns false
 ```
 
 ### exists(List, String, Block)Bool
 Test if any item in a list matches a predicate
 ```lisp
-
+exists (list hello world) Item (= (. Item) "hello")              ; returns true
+exists (list hello world) Item (= (. Item) "hey!!")              ; returns false
 ```
 
 ### firstName(String)String
@@ -507,7 +509,7 @@ Extract days from now from time
 ### sum(List, String, Block)Decimal
 Test if any item in a list matches a predicate
 ```lisp
-
+sum (. List) Item (. Item Price)                                 ; returns 4 With the binding "$Items" containing prices: [2, 2]
 ```
 
 ### tail(List)List
