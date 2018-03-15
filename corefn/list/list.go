@@ -8,8 +8,8 @@ import (
 	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
 
-	"github.com/talon-one/talang/token"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/token"
 )
 
 func init() {

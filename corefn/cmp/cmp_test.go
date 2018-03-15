@@ -5,8 +5,8 @@ import (
 
 	"github.com/talon-one/talang/lexer"
 
-	"github.com/talon-one/talang/token"
 	helpers "github.com/talon-one/talang/testhelpers"
+	"github.com/talon-one/talang/token"
 )
 
 func TestEqual(t *testing.T) {
@@ -355,6 +355,49 @@ func TestBetweenTime(t *testing.T) {
 			`(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)`,
 			nil,
 			token.NewBool(false),
+		},
+	)
+}
+
+func TestOr(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`or false false false false false`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`or false false false true false`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`or (. List True) false`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewMap(map[string]*token.TaToken{
+					"True":  token.NewBool(true),
+					"False": token.NewBool(false),
+				}),
+			}),
+			token.NewBool(true),
+		}, helpers.Test{
+			`or false`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`or true`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`or (> 1 1)`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`or (> 2 2) false true`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`or (+ 2 2)`,
+			nil,
+			helpers.Error{},
 		},
 	)
 }

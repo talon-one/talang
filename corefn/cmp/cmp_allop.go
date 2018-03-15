@@ -16,5 +16,6 @@ func AllOperations() []interpreter.TaFunction {
 		LessThanOrEqualTime,
 		BetweenDecimal,
 		BetweenTime,
+		Or,
 	}
 }

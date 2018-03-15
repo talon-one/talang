@@ -3,8 +3,9 @@
 package cmp
 
 import (
-	"github.com/talon-one/talang/token"
+	"github.com/pkg/errors"
 	"github.com/talon-one/talang/interpreter"
+	"github.com/talon-one/talang/token"
 )
 
 func init() {
@@ -370,5 +371,35 @@ var BetweenTime = interpreter.TaFunction{
 			}
 		}
 		return token.NewBool(true), nil
+	},
+}
+
+var Or = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "or",
+		IsVariadic: true,
+		Arguments: []token.Kind{
+			token.Atom,
+		},
+		Returns:     token.Bool,
+		Description: "Evaluates ",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		for i := 0; i < len(args); i++ {
+			err := interp.Evaluate(args[i])
+			if err != nil {
+				errors.New("Error evaluating block")
+			}
+			if args[i].Kind != token.Bool {
+				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
+			}
+			if args[i].Bool == true {
+				return (token.NewBool(true)), nil
+			}
+		}
+		return (token.NewBool(false)), nil
 	},
 }
