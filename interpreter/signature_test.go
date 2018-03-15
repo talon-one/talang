@@ -11,135 +11,135 @@ func TestMatchesArguments(t *testing.T) {
 	t.Run("Equal Arguments", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.DecimalKind,
-				block.BoolKind,
+				block.String,
+				block.Decimal,
+				block.Bool,
 			},
 			IsVariadic: false,
 		}
 
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
-			block.DecimalKind,
-			block.BoolKind,
+			block.String,
+			block.Decimal,
+			block.Bool,
 		}))
 	})
 
 	t.Run("Unequal Arguments", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.StringKind,
-				block.BoolKind,
+				block.String,
+				block.String,
+				block.Bool,
 			},
 			IsVariadic: false,
 		}
 
 		require.Equal(t, false, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
-			block.DecimalKind,
-			block.BoolKind,
+			block.String,
+			block.Decimal,
+			block.Bool,
 		}))
 	})
 
 	t.Run("Unequal len of Arguments", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.BoolKind,
+				block.String,
+				block.Bool,
 			},
 			IsVariadic: false,
 		}
 
 		require.Equal(t, false, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
-			block.DecimalKind,
-			block.BoolKind,
+			block.String,
+			block.Decimal,
+			block.Bool,
 		}))
 	})
 
 	t.Run("Variadic Arguments", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.BoolKind,
+				block.String,
+				block.Bool,
 			},
 			IsVariadic: true,
 		}
 
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
-			block.BoolKind,
-			block.BoolKind,
-			block.BoolKind,
+			block.String,
+			block.Bool,
+			block.Bool,
+			block.Bool,
 		}))
 	})
 
 	t.Run("Variadic Invalid Arguments", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.BoolKind,
+				block.String,
+				block.Bool,
 			},
 			IsVariadic: true,
 		}
 
 		require.Equal(t, false, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
-			block.BoolKind,
-			block.BoolKind,
-			block.StringKind,
+			block.String,
+			block.Bool,
+			block.Bool,
+			block.String,
 		}))
 	})
 
 	t.Run("Variadic Invalid Arguments (2)", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.BoolKind,
+				block.String,
+				block.Bool,
 			},
 			IsVariadic: true,
 		}
 
 		require.Equal(t, false, sig.MatchesArguments([]block.Kind{
-			block.DecimalKind,
-			block.BoolKind,
-			block.BoolKind,
+			block.Decimal,
+			block.Bool,
+			block.Bool,
 		}))
 	})
 	t.Run("AnyKind", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.AnyKind,
+				block.Any,
 			},
 		}
 
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.DecimalKind,
+			block.Decimal,
 		}))
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
+			block.String,
 		}))
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.BlockKind,
+			block.Token,
 		}))
 	})
 
 	t.Run("AtomKind", func(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []block.Kind{
-				block.AtomKind,
+				block.Atom,
 			},
 		}
 
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.DecimalKind,
+			block.Decimal,
 		}))
 		require.Equal(t, true, sig.MatchesArguments([]block.Kind{
-			block.StringKind,
+			block.String,
 		}))
 		require.Equal(t, false, sig.MatchesArguments([]block.Kind{
-			block.BlockKind,
+			block.Token,
 		}))
 	})
 }

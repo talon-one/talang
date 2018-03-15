@@ -81,11 +81,7 @@ func fn(out io.Writer, s string) bool {
 func printFunction(fn *interpreter.TaFunction, examples bool) string {
 	argumentList := make([]string, len(fn.Arguments))
 	for j := 0; j < len(fn.Arguments); j++ {
-		argumentList[j] = fn.Arguments[j].String()
-		if strings.HasSuffix(argumentList[j], "Kind") {
-			argumentList[j] = argumentList[j][:len(argumentList[j])-4]
-		}
-		argumentList[j] = color.WhiteString(argumentList[j])
+		argumentList[j] = color.WhiteString(fn.Arguments[j].String())
 	}
 
 	arguments := strings.Join(argumentList, ", ")
@@ -93,13 +89,7 @@ func printFunction(fn *interpreter.TaFunction, examples bool) string {
 		arguments += "..."
 	}
 
-	returns := fn.Returns.String()
-	if strings.HasSuffix(returns, "Kind") {
-		returns = returns[:len(returns)-4]
-	}
-	returns = color.WhiteString(returns)
-
-	str := fmt.Sprintf("%s(%s)%s\n    %s", color.YellowString(fn.Name), arguments, returns, strings.TrimSpace(fn.Description))
+	str := fmt.Sprintf("%s(%s)%s\n    %s", color.YellowString(fn.Name), arguments, color.WhiteString(fn.Returns.String()), strings.TrimSpace(fn.Description))
 	if examples {
 		str += "\n" + color.New(color.FgHiCyan, color.Underline).Sprint("Examples") + "\n" + strings.TrimSpace(fn.Example) + "\n\n"
 	}

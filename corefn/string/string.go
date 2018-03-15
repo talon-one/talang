@@ -20,18 +20,18 @@ var Add = interpreter.TaFunction{
 		Name:       "+",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
-			block.StringKind,
+			block.String,
+			block.String,
+			block.String,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Concat strings",
 		Example: `
 (+ "Hello" " " "World")                                          ; returns "Hello World"
 (+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		argc := len(args)
 		values := make([]string, argc)
 		for i := 0; i < argc; i++ {
@@ -58,11 +58,11 @@ var Contains = interpreter.TaFunction{
 		Name:       "contains",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
-			block.StringKind,
+			block.String,
+			block.String,
+			block.String,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Returns wether the first argument exists in the following arguments",
 		Example: `
 (contains "Hello" "Hello World")                                 ; returns true
@@ -71,7 +71,7 @@ var Contains = interpreter.TaFunction{
 (contains "World" "Hello World" "Hello Universe")                ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if !strings.Contains(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
@@ -86,11 +86,11 @@ var NotContains = interpreter.TaFunction{
 		Name:       "notContains",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
-			block.StringKind,
+			block.String,
+			block.String,
+			block.String,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Returns wether the first argument does not exist in the following arguments",
 		Example: `
 (notContains "Hello" "Hello World")                              ; returns false
@@ -99,7 +99,7 @@ var NotContains = interpreter.TaFunction{
 (notContains "World" "Hello World" "Hello Universe")             ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if strings.Contains(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
@@ -114,11 +114,11 @@ var StartsWith = interpreter.TaFunction{
 		Name:       "startsWith",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
-			block.StringKind,
+			block.String,
+			block.String,
+			block.String,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Returns wether the first argument is the prefix of the following arguments",
 		Example: `
 (startsWith "Hello" "Hello World")                               ; returns true
@@ -127,7 +127,7 @@ var StartsWith = interpreter.TaFunction{
 (startsWith "Hello" "Hello World" "Hell Universe")               ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if !strings.HasPrefix(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
@@ -141,11 +141,11 @@ var EndsWith = interpreter.TaFunction{
 		Name:       "endsWith",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
-			block.StringKind,
+			block.String,
+			block.String,
+			block.String,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Returns wether the first argument is the suffix of the following arguments",
 		Example: `
 (endsWith "World" "Hello World")                                 ; returns true
@@ -154,7 +154,7 @@ var EndsWith = interpreter.TaFunction{
 (endsWith "World" "Hello World" "By World")                      ; returns true
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if !strings.HasSuffix(args[0].String, args[i].String) {
 				return block.NewBool(false), nil
@@ -169,11 +169,11 @@ var Regexp = interpreter.TaFunction{
 		Name:       "~",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.StringKind,
-			block.StringKind,
+			block.String,
+			block.String,
+			block.String,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Returns wether the first argument (regex) matches all of the following arguments",
 		Example: `
 (~ "[a-z\s]*" "Hello World")                                     ; returns true
@@ -182,7 +182,7 @@ var Regexp = interpreter.TaFunction{
 (~ "[a-z\s]*" "Hello W0rld" "Hello Universe")                    ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		re, err := regexp.Compile(args[0].String)
 		if err != nil {
 			return block.NewBool(false), err
@@ -202,16 +202,16 @@ var LastName = interpreter.TaFunction{
 		Name:       "lastName",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.StringKind,
+			block.String,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the last word (space-separated) from a string",
 		Example: `
 (lastName "Alex Unger")                                          ; returns "Unger"
 (lastName "Mr Foo Bar")                                          ; returns "Bar"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		words := strings.Split(args[0].String, " ")
 		return block.NewString(words[len(words)-1]), nil
 	},
@@ -222,16 +222,16 @@ var FirstName = interpreter.TaFunction{
 		Name:       "firstName",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.StringKind,
+			block.String,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract all but the last word (space-separated) from a string",
 		Example: `
 (firstName "Alex Unger")                                         ; returns "Alex"
 (firstName "Mr Foo Bar")                                         ; returns "Mr"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		words := strings.Split(args[0].String, " ")
 		return block.NewString(words[0]), nil
 	},

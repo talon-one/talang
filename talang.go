@@ -13,11 +13,11 @@ type Interpreter struct {
 	interpreter.Interpreter
 }
 
-func Lex(str string) (*block.Block, error) {
+func Lex(str string) (*block.TaToken, error) {
 	return lexer.Lex(str)
 }
 
-func MustLex(str string) *block.Block {
+func MustLex(str string) *block.TaToken {
 	block, err := lexer.Lex(str)
 	if err != nil {
 		panic(err)
@@ -25,10 +25,10 @@ func MustLex(str string) *block.Block {
 	return block
 }
 
-func Parse(str string) (*block.Block, error) {
+func Parse(str string) (*block.TaToken, error) {
 	return Lex(str)
 }
-func MustParse(str string) *block.Block {
+func MustParse(str string) *block.TaToken {
 	return MustLex(str)
 }
 
@@ -42,18 +42,18 @@ func MustNewInterpreter() *Interpreter {
 	return &Interpreter{*interp}
 }
 
-func (interp *Interpreter) LexAndEvaluate(str string) (*block.Block, error) {
+func (interp *Interpreter) LexAndEvaluate(str string) (*block.TaToken, error) {
 	return interp.Interpreter.LexAndEvaluate(str)
 }
 
-func (interp *Interpreter) MustLexAndEvaluate(str string) *block.Block {
+func (interp *Interpreter) MustLexAndEvaluate(str string) *block.TaToken {
 	return interp.Interpreter.MustLexAndEvaluate(str)
 }
 
-func (interp *Interpreter) Evaluate(b *block.Block) error {
+func (interp *Interpreter) Evaluate(b *block.TaToken) error {
 	return interp.Interpreter.Evaluate(b)
 }
 
-func (interp *Interpreter) MustEvaluate(b *block.Block) {
+func (interp *Interpreter) MustEvaluate(b *block.TaToken) {
 	interp.Interpreter.MustEvaluate(b)
 }

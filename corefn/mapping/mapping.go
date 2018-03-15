@@ -19,16 +19,16 @@ var KV = interpreter.TaFunction{
 		Name:       "kv",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.BlockKind,
+			block.Token,
 		},
-		Returns:     block.MapKind,
+		Returns:     block.Map,
 		Description: "Create a map with any key value pairs passed as arguments.",
 		Example: `
 (kv (Key1 "Hello World") (Key2 true) (Key3 123))                 ; returns a Map with the keys key1, key2, key3
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
-		m := make(map[string]*block.Block)
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
+		m := make(map[string]*block.TaToken)
 		for i := 0; i < len(args); i++ {
 			if args[i].IsBlock() && len(args[i].String) > 0 {
 				if len(args[i].Children) > 1 {

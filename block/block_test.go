@@ -19,7 +19,7 @@ func mustDecimal(d *decimal.Big, ok bool) *decimal.Big {
 func TestNew(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected *Block
+		expected *TaToken
 	}{
 		// Valid Decimal Formats
 		{
@@ -212,23 +212,23 @@ func TestNewTyped(t *testing.T) {
 	tests := []struct {
 		expectedKind Kind
 		expectedText string
-		input        *Block
+		input        *TaToken
 	}{
-		{BoolKind, "false", NewBool(false)},
-		{BoolKind, "true", NewBool(true)},
+		{Bool, "false", NewBool(false)},
+		{Bool, "true", NewBool(true)},
 
-		{StringKind, "Hallo", NewString("Hallo")},
+		{String, "Hallo", NewString("Hallo")},
 
-		{DecimalKind, "1", NewDecimal(decimal.New(1, 0))},
-		{DecimalKind, "2", NewDecimalFromInt(2)},
-		{DecimalKind, "3", NewDecimalFromString("3")},
-		{NullKind, "", NewDecimalFromString("HELLO3HELLO")},
+		{Decimal, "1", NewDecimal(decimal.New(1, 0))},
+		{Decimal, "2", NewDecimalFromInt(2)},
+		{Decimal, "3", NewDecimalFromString("3")},
+		{Null, "", NewDecimalFromString("HELLO3HELLO")},
 
-		{TimeKind, "2006-01-02T15:04:05Z", NewTime(time)},
+		{Time, "2006-01-02T15:04:05Z", NewTime(time)},
 
-		{ListKind, "", NewList()},
+		{List, "", NewList()},
 
-		{NullKind, "", NewNull()},
+		{Null, "", NewNull()},
 	}
 	for _, test := range tests {
 		require.Equal(t, test.expectedKind, test.input.Kind)
@@ -269,7 +269,7 @@ func TestIsNull(t *testing.T) {
 }
 
 func TestIsEmpty(t *testing.T) {
-	var block Block
+	var block TaToken
 	require.Equal(t, true, block.IsEmpty())
 }
 
@@ -282,7 +282,7 @@ func TestIsBlock(t *testing.T) {
 
 func TestCopy(t *testing.T) {
 	// create a simple block
-	var b Block
+	var b TaToken
 	Copy(&b, NewString("Hello"))
 	require.Equal(t, true, b.IsString())
 	require.Equal(t, "Hello", b.String)
@@ -312,19 +312,19 @@ func TestCopy(t *testing.T) {
 	require.Equal(t, true, b.IsList())
 	require.EqualValues(t, NewList(NewString("Hello"), NewString("World")).Children, b.Children)
 
-	Copy(&b, NewMap(map[string]*Block{
+	Copy(&b, NewMap(map[string]*TaToken{
 		"Key1": NewString("Value1"),
 		"Key2": NewList(NewString("Value2"), NewString("Value3")),
 	}))
 	require.Equal(t, true, b.IsMap())
-	require.EqualValues(t, map[string]*Block{
+	require.EqualValues(t, map[string]*TaToken{
 		"Key1": NewString("Value1"),
 		"Key2": NewList(NewString("Value2"), NewString("Value3")),
 	}, b.Map())
 }
 
 func TestMapItem(t *testing.T) {
-	block := NewMap(map[string]*Block{
+	block := NewMap(map[string]*TaToken{
 		"Key1": NewBool(true),
 		"Key2": NewDecimalFromInt(1),
 		"Key3": NewString("Hello"),
@@ -335,7 +335,7 @@ func TestMapItem(t *testing.T) {
 }
 
 func TestSetMapItem(t *testing.T) {
-	block := NewMap(map[string]*Block{
+	block := NewMap(map[string]*TaToken{
 		"Key1": NewBool(true),
 		"Key2": NewDecimalFromInt(1),
 		"Key3": NewString("Hello"),
@@ -351,9 +351,9 @@ func TestStringify(t *testing.T) {
 	block := New("+", NewDecimalFromInt(1), NewDecimalFromInt(2))
 	require.Equal(t, "(+ 1 2)", block.Stringify())
 
-	block = &Block{
+	block = &TaToken{
 		String: "noop",
-		Kind:   BlockKind,
+		Kind:   Token,
 	}
 	require.Equal(t, "(noop)", block.Stringify())
 
@@ -381,23 +381,23 @@ func TestStringify(t *testing.T) {
 	block = NewDecimal(decimal.New(145, 1))
 	require.Equal(t, "14.5", block.Stringify())
 
-	block = &Block{
-		Kind: MapKind,
+	block = &TaToken{
+		Kind: Map,
 		Keys: []string{"Key1", "Key2"},
-		Children: []*Block{
-			&Block{
-				Kind: MapKind,
+		Children: []*TaToken{
+			&TaToken{
+				Kind: Map,
 				Keys: []string{"SubKey1"},
-				Children: []*Block{
-					&Block{
+				Children: []*TaToken{
+					&TaToken{
 						String:  "14.5",
-						Kind:    DecimalKind,
+						Kind:    Decimal,
 						Decimal: decimal.New(145, 1),
 					},
 				},
 			},
-			&Block{
-				Kind:   StringKind,
+			&TaToken{
+				Kind:   String,
 				String: "Hello",
 			},
 		},
@@ -409,8 +409,8 @@ func TestStringify(t *testing.T) {
 func TestEqual(t *testing.T) {
 	now := time.Now()
 	tests := []struct {
-		a        *Block
-		b        *Block
+		a        *TaToken
+		b        *TaToken
 		expected bool
 	}{
 		{
@@ -444,12 +444,12 @@ func TestEqual(t *testing.T) {
 			true,
 		},
 		{
-			NewMap(map[string]*Block{
+			NewMap(map[string]*TaToken{
 				"Key1": NewBool(true),
 				"Key2": NewDecimalFromInt(1),
 				"Key3": NewString("Hello"),
 			}),
-			NewMap(map[string]*Block{
+			NewMap(map[string]*TaToken{
 				"Key2": NewDecimalFromInt(1),
 				"Key1": NewBool(true),
 				"Key3": NewString("Hello"),
@@ -467,16 +467,16 @@ func TestEqual(t *testing.T) {
 			false,
 		},
 		{
-			&Block{},
-			&Block{},
+			&TaToken{},
+			&TaToken{},
 			false,
 		},
 		{
-			NewMap(map[string]*Block{
+			NewMap(map[string]*TaToken{
 				"Key1": NewBool(true),
 				"Key3": NewString("Hello"),
 			}),
-			NewMap(map[string]*Block{
+			NewMap(map[string]*TaToken{
 				"Key2": NewDecimalFromInt(1),
 				"Key1": NewBool(true),
 				"Key3": NewString("Hello"),
@@ -484,12 +484,12 @@ func TestEqual(t *testing.T) {
 			false,
 		},
 		{
-			NewMap(map[string]*Block{
+			NewMap(map[string]*TaToken{
 				"Key1": NewBool(true),
 				"Key2": NewDecimalFromInt(2),
 				"Key3": NewString("Hello"),
 			}),
-			NewMap(map[string]*Block{
+			NewMap(map[string]*TaToken{
 				"Key2": NewDecimalFromInt(1),
 				"Key1": NewBool(true),
 				"Key3": NewString("Hello"),
@@ -514,10 +514,10 @@ func TestEqual(t *testing.T) {
 
 func TestArguments(t *testing.T) {
 	block := New("+", New("1"), New("2"))
-	require.EqualValues(t, []Kind{DecimalKind, DecimalKind}, Arguments(block.Children))
+	require.EqualValues(t, []Kind{Decimal, Decimal}, Arguments(block.Children))
 
 	block = New("+", New("Hello"), New("1"))
-	require.EqualValues(t, []Kind{StringKind, DecimalKind}, Arguments(block.Children))
+	require.EqualValues(t, []Kind{String, Decimal}, Arguments(block.Children))
 }
 
 func TestToHumanReadable(t *testing.T) {
@@ -526,11 +526,11 @@ func TestToHumanReadable(t *testing.T) {
 }
 
 func TestMarshaling(t *testing.T) {
-	block1 := NewMap(map[string]*Block{
+	block1 := NewMap(map[string]*TaToken{
 		"Key2": NewDecimalFromInt(1),
 		"Key1": NewBool(true),
 		"Key3": NewString("Hello"),
-		"Key4": NewList(NewBool(false), NewMap(map[string]*Block{
+		"Key4": NewList(NewBool(false), NewMap(map[string]*TaToken{
 			"SubKey1": NewDecimalFromInt(3),
 			"SubKey2": NewTime(time.Now()),
 		})),
@@ -538,7 +538,7 @@ func TestMarshaling(t *testing.T) {
 	b, err := json.Marshal(block1)
 	require.NoError(t, err)
 
-	var block2 Block
+	var block2 TaToken
 
 	require.NoError(t, json.Unmarshal(b, &block2))
 

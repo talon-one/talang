@@ -106,10 +106,10 @@ var bindingSignature = TaFunction{
 		Name:       ".",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.AtomKind,
-			block.AtomKind,
+			block.Atom,
+			block.Atom,
 		},
-		Returns:     block.AnyKind,
+		Returns:     block.Any,
 		Description: "Access a variable in the binding",
 		Example: `
 (. Key1)                                                         ; returns the data assigned to Key1
@@ -119,7 +119,7 @@ var bindingSignature = TaFunction{
 	Func: bindingFunc,
 }
 
-func bindingFunc(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+func bindingFunc(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 	argc := len(args)
 	if interp.Binding != nil {
 		value := interp.Binding
@@ -158,11 +158,11 @@ var setBindingSignature = TaFunction{
 		Name:       "set",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.AtomKind | block.CollectionKind,
-			block.AtomKind | block.CollectionKind,
+			block.String,
+			block.Atom | block.Collection,
+			block.Atom | block.Collection,
 		},
-		Returns:     block.NullKind,
+		Returns:     block.Null,
 		Description: "Set a variable in the binding",
 		Example: `
 (set Key1 "Hello World")                                         ; sets Key1 to "Hello World"
@@ -172,20 +172,20 @@ var setBindingSignature = TaFunction{
 	Func: setBindingFunc,
 }
 
-func setBindingFunc(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+func setBindingFunc(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 	argc := len(args)
 	if argc < 2 {
 		return nil, errors.New("invalid or missing arguments")
 	}
 	if interp.Binding == nil {
-		interp.Binding = block.NewMap(map[string]*block.Block{})
+		interp.Binding = block.NewMap(map[string]*block.TaToken{})
 	}
 
 	value := interp.Binding
 	for i := 0; i < argc-2; i++ {
 		child := value.MapItem(args[i].String)
 		if child.IsNull() {
-			child = block.NewMap(map[string]*block.Block{})
+			child = block.NewMap(map[string]*block.TaToken{})
 			value.SetMapItem(args[i].String, child)
 		}
 		value = child

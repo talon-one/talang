@@ -71,17 +71,17 @@ var templateSignature = TaFunction{
 		Name:       "!",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind,
-			block.AnyKind,
+			block.String,
+			block.Any,
 		},
-		Returns:     block.AnyKind,
+		Returns:     block.Any,
 		Description: "Resolve a template",
 		Example: `
 (! Template1)                                                    ; executes the Template1
 (! Template2 "Hello World")                                      ; executes Template2 with "Hello World" as parameter
 `,
 	},
-	Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		walker := templateWalker{interp: interp}
 		blockText := strings.ToLower(args[0].String)
 		// iterate trough all functions
@@ -116,7 +116,7 @@ var templateSignature = TaFunction{
 	},
 }
 
-func replaceVariables(b *block.Block, args ...*block.Block) (int, error) {
+func replaceVariables(b *block.TaToken, args ...*block.TaToken) (int, error) {
 	total := 0
 
 	var replaced int
@@ -135,7 +135,7 @@ replace:
 	return total, nil
 }
 
-func replaceVariable(source *block.Block, name string, replace *block.Block) (replaced int) {
+func replaceVariable(source *block.TaToken, name string, replace *block.TaToken) (replaced int) {
 	if len(source.Children) <= 0 {
 		return replaced
 	}

@@ -14,34 +14,34 @@ import (
 type Kind int
 
 const (
-	DecimalKind    Kind = 1 << iota
-	StringKind     Kind = 1 << iota
-	BoolKind       Kind = 1 << iota
-	TimeKind       Kind = 1 << iota
-	NullKind       Kind = 1 << iota
-	ListKind       Kind = 1 << iota
-	MapKind        Kind = 1 << iota
-	BlockKind      Kind = 1 << iota
-	AtomKind       Kind = DecimalKind | StringKind | BoolKind | TimeKind | NullKind
-	CollectionKind Kind = ListKind | MapKind
-	AnyKind        Kind = AtomKind | BlockKind | CollectionKind
+	Decimal    Kind = 1 << iota
+	String     Kind = 1 << iota
+	Bool       Kind = 1 << iota
+	Time       Kind = 1 << iota
+	Null       Kind = 1 << iota
+	List       Kind = 1 << iota
+	Map        Kind = 1 << iota
+	Token      Kind = 1 << iota
+	Atom       Kind = Decimal | String | Bool | Time | Null
+	Collection Kind = List | Map
+	Any        Kind = Atom | Token | Collection
 )
 
-type Block struct {
+type TaToken struct {
 	String   string
 	Decimal  *decimal.Big
 	Bool     bool
 	Time     time.Time
 	Kind     Kind
-	Children []*Block
+	Children []*TaToken
 	Keys     []string
 }
 
-func New(text string, children ...*Block) *Block {
-	var b Block
+func New(text string, children ...*TaToken) *TaToken {
+	var b TaToken
 	b.String = text
 	if children == nil {
-		b.Children = []*Block{}
+		b.Children = []*TaToken{}
 	} else {
 		b.Children = children
 	}
@@ -49,103 +49,103 @@ func New(text string, children ...*Block) *Block {
 	return &b
 }
 
-func NewDecimal(decimal *decimal.Big) *Block {
-	var b Block
+func NewDecimal(decimal *decimal.Big) *TaToken {
+	var b TaToken
 	b.Decimal = decimal
-	b.Kind = DecimalKind
+	b.Kind = Decimal
 	b.String = b.Decimal.String()
-	b.Children = []*Block{}
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewDecimalFromInt(i int64) *Block {
-	var b Block
+func NewDecimalFromInt(i int64) *TaToken {
+	var b TaToken
 	b.Decimal = decimal.New(i, 0)
-	b.Kind = DecimalKind
+	b.Kind = Decimal
 	b.String = b.Decimal.String()
-	b.Children = []*Block{}
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewDecimalFromString(s string) *Block {
-	var b Block
+func NewDecimalFromString(s string) *TaToken {
+	var b TaToken
 	var ok bool
-	b.Children = []*Block{}
+	b.Children = []*TaToken{}
 	b.Decimal = decimal.New(0, 0)
 	b.Decimal, ok = b.Decimal.SetString(s)
 	if !ok {
-		b.Kind = NullKind
+		b.Kind = Null
 		return &b
 	}
-	b.Kind = DecimalKind
+	b.Kind = Decimal
 	b.String = b.Decimal.String()
 	return &b
 }
 
 // NewDecimalFromFloat creates a new decimal block from a float (REMEMBER float64 is not exact! use with care)
-func NewDecimalFromFloat(i float64) *Block {
-	var b Block
+func NewDecimalFromFloat(i float64) *TaToken {
+	var b TaToken
 	b.Decimal = decimal.New(0, 0)
 	b.Decimal = b.Decimal.SetFloat64(i)
-	b.Kind = DecimalKind
+	b.Kind = Decimal
 	b.String = b.Decimal.String()
-	b.Children = []*Block{}
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewBool(boolean bool) *Block {
-	var b Block
+func NewBool(boolean bool) *TaToken {
+	var b TaToken
 	b.Bool = boolean
-	b.Kind = BoolKind
+	b.Kind = Bool
 	if boolean {
 		b.String = "true"
 	} else {
 		b.String = "false"
 	}
-	b.Children = []*Block{}
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewTime(t time.Time) *Block {
-	var b Block
+func NewTime(t time.Time) *TaToken {
+	var b TaToken
 	b.Time = t
-	b.Kind = TimeKind
+	b.Kind = Time
 	b.String = b.Time.Format(time.RFC3339)
-	b.Children = []*Block{}
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewString(str string) *Block {
-	var b Block
+func NewString(str string) *TaToken {
+	var b TaToken
 	b.String = str
-	b.Kind = StringKind
-	b.Children = []*Block{}
+	b.Kind = String
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewNull() *Block {
-	var b Block
-	b.Kind = NullKind
-	b.Children = []*Block{}
+func NewNull() *TaToken {
+	var b TaToken
+	b.Kind = Null
+	b.Children = []*TaToken{}
 	return &b
 }
 
-func NewList(children ...*Block) *Block {
-	var b Block
+func NewList(children ...*TaToken) *TaToken {
+	var b TaToken
 	if children == nil {
-		b.Children = []*Block{}
+		b.Children = []*TaToken{}
 	} else {
 		b.Children = children
 	}
-	b.Kind = ListKind
+	b.Kind = List
 	return &b
 }
 
-func NewMap(m map[string]*Block) *Block {
-	var b Block
-	b.Children = make([]*Block, len(m))
+func NewMap(m map[string]*TaToken) *TaToken {
+	var b TaToken
+	b.Children = make([]*TaToken, len(m))
 	b.Keys = make([]string, len(m))
-	b.Kind = MapKind
+	b.Kind = Map
 	i := 0
 	for k, v := range m {
 		b.Keys[i] = k
@@ -155,44 +155,44 @@ func NewMap(m map[string]*Block) *Block {
 	return &b
 }
 
-func (b *Block) IsEmpty() bool {
+func (b *TaToken) IsEmpty() bool {
 	return len(b.Children) == 0 && len(b.String) == 0
 }
 
-func (b *Block) IsDecimal() bool {
-	return b.Kind == DecimalKind
+func (b *TaToken) IsDecimal() bool {
+	return b.Kind == Decimal
 }
 
-func (b *Block) IsBool() bool {
-	return b.Kind == BoolKind
+func (b *TaToken) IsBool() bool {
+	return b.Kind == Bool
 }
 
-func (b *Block) IsBlock() bool {
-	return b.Kind == BlockKind
+func (b *TaToken) IsBlock() bool {
+	return b.Kind == Token
 }
 
-func (b *Block) IsTime() bool {
-	return b.Kind == TimeKind
+func (b *TaToken) IsTime() bool {
+	return b.Kind == Time
 }
 
-func (b *Block) IsString() bool {
-	return b.Kind == StringKind
+func (b *TaToken) IsString() bool {
+	return b.Kind == String
 }
 
-func (b *Block) IsNull() bool {
-	return b.Kind == NullKind
+func (b *TaToken) IsNull() bool {
+	return b.Kind == Null
 }
 
-func (b *Block) IsList() bool {
-	return b.Kind == ListKind
+func (b *TaToken) IsList() bool {
+	return b.Kind == List
 }
 
-func (b *Block) IsMap() bool {
-	return b.Kind == MapKind
+func (b *TaToken) IsMap() bool {
+	return b.Kind == Map
 }
 
 // Get an item from the map
-func (b *Block) MapItem(key string) *Block {
+func (b *TaToken) MapItem(key string) *TaToken {
 	for i, k := range b.Keys {
 		if key == k {
 			return b.Children[i]
@@ -202,7 +202,7 @@ func (b *Block) MapItem(key string) *Block {
 }
 
 // Set an item in the map
-func (b *Block) SetMapItem(key string, value *Block) {
+func (b *TaToken) SetMapItem(key string, value *TaToken) {
 	for i, k := range b.Keys {
 		if key == k {
 			b.Children[i] = value
@@ -214,8 +214,8 @@ func (b *Block) SetMapItem(key string, value *Block) {
 }
 
 // Create the map
-func (b *Block) Map() map[string]*Block {
-	m := make(map[string]*Block)
+func (b *TaToken) Map() map[string]*TaToken {
+	m := make(map[string]*TaToken)
 
 	for i, key := range b.Keys {
 		m[key] = b.Children[i]
@@ -223,10 +223,10 @@ func (b *Block) Map() map[string]*Block {
 	return m
 }
 
-func (b *Block) initValue(text string) {
+func (b *TaToken) initValue(text string) {
 	// only blocks could have children
 	if len(b.Children) > 0 {
-		b.Kind = BlockKind
+		b.Kind = Token
 		return
 	}
 
@@ -234,11 +234,11 @@ func (b *Block) initValue(text string) {
 		// is it a bool?
 		if strings.EqualFold("true", text) {
 			b.Bool = true
-			b.Kind = BoolKind
+			b.Kind = Bool
 			return
 		} else if strings.EqualFold("false", text) {
 			b.Bool = false
-			b.Kind = BoolKind
+			b.Kind = Bool
 			return
 		}
 
@@ -248,7 +248,7 @@ func (b *Block) initValue(text string) {
 			// try to parse it as a decimal
 			b.Decimal, ok = decimal.New(0, 0).SetString(text)
 			if ok {
-				b.Kind = DecimalKind
+				b.Kind = Decimal
 				return
 			}
 		}
@@ -257,13 +257,13 @@ func (b *Block) initValue(text string) {
 		var err error
 		b.Time, err = time.Parse(time.RFC3339, text)
 		if err == nil {
-			b.Kind = TimeKind
+			b.Kind = Time
 			return
 		}
 
-		b.Kind = StringKind
+		b.Kind = String
 	} else {
-		b.Kind = BlockKind
+		b.Kind = Token
 	}
 }
 
@@ -296,7 +296,7 @@ func isDecimal(s string) bool {
 }
 
 // Copy creates an copy of the block
-func Copy(dst *Block, src *Block) {
+func Copy(dst *TaToken, src *TaToken) {
 	if src == nil {
 		return
 	}
@@ -305,25 +305,25 @@ func Copy(dst *Block, src *Block) {
 	}
 	dst.Kind = src.Kind
 	switch dst.Kind {
-	case DecimalKind:
+	case Decimal:
 		dst.Decimal = src.Decimal
-	case BoolKind:
+	case Bool:
 		dst.Bool = src.Bool
-	case TimeKind:
+	case Time:
 		dst.Time = src.Time
-	case MapKind:
+	case Map:
 		dst.Keys = make([]string, len(src.Keys))
 		copy(dst.Keys, src.Keys)
 	}
 	dst.String = src.String
-	dst.Children = make([]*Block, len(src.Children))
+	dst.Children = make([]*TaToken, len(src.Children))
 	for i, child := range src.Children {
-		dst.Children[i] = new(Block)
+		dst.Children[i] = new(TaToken)
 		Copy(dst.Children[i], child)
 	}
 }
 
-func (b *Block) Stringify() string {
+func (b *TaToken) Stringify() string {
 	var builder strings.Builder
 	var children []string
 	if l := len(b.Children); l > 0 {
@@ -364,23 +364,23 @@ func (b *Block) Stringify() string {
 	return builder.String()
 }
 
-func (b *Block) Equal(a *Block) bool {
+func (b *TaToken) Equal(a *TaToken) bool {
 	if a == nil || a.Kind != b.Kind {
 		return false
 	}
 
 	switch a.Kind {
-	case DecimalKind:
+	case Decimal:
 		return a.Decimal.Cmp(b.Decimal) == 0
-	case StringKind:
+	case String:
 		return a.String == b.String
-	case BoolKind:
+	case Bool:
 		return a.Bool == b.Bool
-	case TimeKind:
+	case Time:
 		return a.Time.Equal(b.Time)
-	case NullKind:
+	case Null:
 		return true
-	case MapKind:
+	case Map:
 		if len(a.Keys) != len(b.Keys) {
 			return false
 		}
@@ -391,9 +391,9 @@ func (b *Block) Equal(a *Block) bool {
 			}
 		}
 		return true
-	case ListKind:
+	case List:
 		fallthrough
-	case BlockKind:
+	case Token:
 		if len(a.Children) != len(b.Children) {
 			return false
 		}
@@ -407,7 +407,7 @@ func (b *Block) Equal(a *Block) bool {
 	return false
 }
 
-func Arguments(children []*Block) []Kind {
+func Arguments(children []*TaToken) []Kind {
 	types := make([]Kind, len(children))
 	for i, child := range children {
 		types[i] = child.Kind
@@ -415,7 +415,7 @@ func Arguments(children []*Block) []Kind {
 	return types
 }
 
-type BlockArguments []*Block
+type BlockArguments []*TaToken
 
 func (b BlockArguments) ToHumanReadable() string {
 	arr := make([]string, len(b))

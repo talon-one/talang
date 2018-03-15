@@ -5,20 +5,20 @@ package block
 import "strconv"
 
 const (
-	_Kind_name_0 = "DecimalKindStringKind"
-	_Kind_name_1 = "BoolKind"
-	_Kind_name_2 = "TimeKind"
-	_Kind_name_3 = "NullKind"
-	_Kind_name_4 = "AtomKindListKind"
-	_Kind_name_5 = "MapKind"
-	_Kind_name_6 = "CollectionKind"
-	_Kind_name_7 = "BlockKind"
-	_Kind_name_8 = "AnyKind"
+	_Kind_name_0 = "DecimalString"
+	_Kind_name_1 = "Bool"
+	_Kind_name_2 = "Time"
+	_Kind_name_3 = "Null"
+	_Kind_name_4 = "AtomList"
+	_Kind_name_5 = "Map"
+	_Kind_name_6 = "Collection"
+	_Kind_name_7 = "Token"
+	_Kind_name_8 = "Any"
 )
 
 var (
-	_Kind_index_0 = [...]uint8{0, 11, 21}
-	_Kind_index_4 = [...]uint8{0, 8, 16}
+	_Kind_index_0 = [...]uint8{0, 7, 13}
+	_Kind_index_4 = [...]uint8{0, 4, 8}
 )
 
 func (i Kind) String() string {

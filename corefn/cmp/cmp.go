@@ -18,11 +18,11 @@ var Equal = interpreter.TaFunction{
 		Name:       "=",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.AtomKind,
-			block.AtomKind,
-			block.AtomKind,
+			block.Atom,
+			block.Atom,
+			block.Atom,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the arguments are the same",
 		Example: `
 (= 1 1)                                                          ; compares decimals, returns true
@@ -34,7 +34,7 @@ var Equal = interpreter.TaFunction{
 (= "Hello" "Hello" "Bye")                                        ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if args[0].String != args[i].String {
 				return block.NewBool(false), nil
@@ -49,11 +49,11 @@ var NotEqual = interpreter.TaFunction{
 		Name:       "!=",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.AtomKind,
-			block.AtomKind,
-			block.AtomKind,
+			block.Atom,
+			block.Atom,
+			block.Atom,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the arguments are not the same",
 		Example: `
 (!= 1 1)                                                         ; compares decimals, returns false
@@ -65,7 +65,7 @@ var NotEqual = interpreter.TaFunction{
 (!= "Hello" "Hello" "Bye")                                       ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		for i := 1; i < len(args); i++ {
 			if args[0].String == args[i].String {
 				return block.NewBool(false), nil
@@ -80,11 +80,11 @@ var GreaterThanDecimal = interpreter.TaFunction{
 		Name:       ">",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is greather then the following",
 		Example: `
 (> 0 1)                                                          ; returns false
@@ -92,7 +92,7 @@ var GreaterThanDecimal = interpreter.TaFunction{
 (> 2 1)                                                          ; returns true
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
 			if a.Cmp(args[i].Decimal) <= 0 {
@@ -108,11 +108,11 @@ var GreaterThanTime = interpreter.TaFunction{
 		Name:       ">",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is greather then the following",
 		Example: `
 (> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
@@ -120,7 +120,7 @@ var GreaterThanTime = interpreter.TaFunction{
 (> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Time
 		for i := 1; i < len(args); i++ {
 			if !a.After(args[i].Time) {
@@ -136,11 +136,11 @@ var LessThanDecimal = interpreter.TaFunction{
 		Name:       "<",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is less then the following",
 		Example: `
 (< 0 1)                                                          ; returns true
@@ -148,7 +148,7 @@ var LessThanDecimal = interpreter.TaFunction{
 (< 2 1)                                                          ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
 			if a.Cmp(args[i].Decimal) >= 0 {
@@ -164,11 +164,11 @@ var LessThanTime = interpreter.TaFunction{
 		Name:       "<",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is less then the following",
 		Example: `
 (< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
@@ -176,7 +176,7 @@ var LessThanTime = interpreter.TaFunction{
 (< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Time
 		for i := 1; i < len(args); i++ {
 			if !a.Before(args[i].Time) {
@@ -192,11 +192,11 @@ var GreaterThanOrEqualDecimal = interpreter.TaFunction{
 		Name:       ">=",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is greather or equal then the following",
 		Example: `
 (>= 0 1)                                                         ; returns false
@@ -204,7 +204,7 @@ var GreaterThanOrEqualDecimal = interpreter.TaFunction{
 (>= 2 1)                                                         ; returns true
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
 			if a.Cmp(args[i].Decimal) < 0 {
@@ -220,11 +220,11 @@ var GreaterThanOrEqualTime = interpreter.TaFunction{
 		Name:       ">=",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is greather or equal then the following",
 		Example: `
 (>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
@@ -232,7 +232,7 @@ var GreaterThanOrEqualTime = interpreter.TaFunction{
 (>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Time
 		for i := 0; i < len(args); i++ {
 			if !a.Equal(args[i].Time) && !a.After(args[i].Time) {
@@ -248,11 +248,11 @@ var LessThanOrEqualDecimal = interpreter.TaFunction{
 		Name:       "<=",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is less or equal then the following",
 		Example: `
 (<= 0 1)                                                         ; returns true
@@ -260,7 +260,7 @@ var LessThanOrEqualDecimal = interpreter.TaFunction{
 (<= 2 1)                                                         ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
 			if a.Cmp(args[i].Decimal) > 0 {
@@ -276,11 +276,11 @@ var LessThanOrEqualTime = interpreter.TaFunction{
 		Name:       "<=",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the first argument is less or equal then the following",
 		Example: `
 (<= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
@@ -288,7 +288,7 @@ var LessThanOrEqualTime = interpreter.TaFunction{
 (<= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Time
 		for i := 0; i < len(args); i++ {
 			if !a.Equal(args[i].Time) && !a.Before(args[i].Time) {
@@ -304,12 +304,12 @@ var BetweenDecimal = interpreter.TaFunction{
 		Name:       "between",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the arguments are between the second last and the last argument",
 		Example: `
 (between 1 0 3)                                                  ; returns true, (1 is between 0 and 3)
@@ -319,7 +319,7 @@ var BetweenDecimal = interpreter.TaFunction{
 (between 1 4 0 3)                                                ; returns false, (1 is between 0 and 3, 4 is not)
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		argc := len(args)
 
 		min := args[argc-2]
@@ -341,12 +341,12 @@ var BetweenTime = interpreter.TaFunction{
 		Name:       "between",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Tests if the arguments are between the second last and the last argument",
 		Example: `
 (between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
@@ -356,7 +356,7 @@ var BetweenTime = interpreter.TaFunction{
 (between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		argc := len(args)
 
 		min := args[argc-2]

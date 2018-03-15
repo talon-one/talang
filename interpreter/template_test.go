@@ -16,12 +16,12 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template1",
-			Returns: block.DecimalKind,
+			Returns: block.Decimal,
 		},
 		Template: *lexer.MustLex("(* 2 (. Variable1))"),
 	}))
 
-	var result *block.Block
+	var result *block.TaToken
 
 	require.NoError(t, interp.GenericSet("Variable1", 1))
 	result = interp.MustLexAndEvaluate("(+ 1 (! Template1))")
@@ -40,14 +40,14 @@ func TestFormatedTemplate(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name: "MultiplyWith2",
 			Arguments: []block.Kind{
-				block.DecimalKind,
+				block.Decimal,
 			},
-			Returns: block.DecimalKind,
+			Returns: block.Decimal,
 		},
 		Template: *lexer.MustLex("(* 2 (# 0))"),
 	}))
 
-	var result *block.Block
+	var result *block.TaToken
 
 	result = interp.MustLexAndEvaluate("(+ 1 (! MultiplyWith2 2))")
 	require.Equal(t, true, result.IsDecimal())
@@ -64,9 +64,9 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name: "MultiplyWith2",
 			Arguments: []block.Kind{
-				block.DecimalKind,
+				block.Decimal,
 			},
-			Returns: block.DecimalKind,
+			Returns: block.Decimal,
 		},
 		Template: *lexer.MustLex("(* 2 (# 0))"),
 	}))

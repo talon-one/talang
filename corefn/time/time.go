@@ -23,17 +23,17 @@ var After = interpreter.TaFunction{
 		Name:       "after",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Checks whether time A is after B",
 		Example: `
 (after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "true"
 (after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "false"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		time := args[0].Time.After(args[1].Time)
 		return block.NewBool(time), nil
 	},
@@ -44,17 +44,17 @@ var Before = interpreter.TaFunction{
 		Name:       "before",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
-			block.TimeKind,
+			block.Time,
+			block.Time,
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Checks whether time A is before B",
 		Example: `
 (before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "false"
 (before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "true"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		time := args[0].Time.Before(args[1].Time)
 		return block.NewBool(time), nil
 	},
@@ -65,18 +65,18 @@ var BetweenTimes = interpreter.TaFunction{
 		Name:       "betweenTimes",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind, // timestamp
-			block.TimeKind, // minTime
-			block.TimeKind, // maxTime
+			block.Time, // timestamp
+			block.Time, // minTime
+			block.Time, // maxTime
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
 		Example: `
 (betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
 (betweenTimes 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "true"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		a := args[0].Time.After(args[1].Time)
 		b := args[0].Time.Before(args[2].Time)
 		return block.NewBool(a && b), nil
@@ -88,17 +88,17 @@ var ParseTime = interpreter.TaFunction{
 		Name:       "parseTime",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.StringKind, // time string
-			block.StringKind, // signature
+			block.String, // time string
+			block.String, // signature
 		},
-		Returns:     block.TimeKind,
+		Returns:     block.Time,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
 		Example: `
 (parseTime "2018-01-02T19:04:05Z")                               ; returns "2018-01-02 19:04:05 +0000 UTC"
 (parseTime "20:04:05Z" "HH:mm:ss")                               ; returns "2018-01-02 20:04:05 +0000 UTC"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		var date time.Time
 		var err error
 		if len(args) > 1 {
@@ -121,15 +121,15 @@ var Hour = interpreter.TaFunction{
 		Name:       "hour",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the hour (00-23) from a time",
 		Example: `
 (hour 2018-01-14T19:04:05Z)                                      ; returns "19"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		hour := strconv.Itoa(args[0].Time.Hour())
 		return block.NewString(hour), nil
 	},
@@ -140,15 +140,15 @@ var Minute = interpreter.TaFunction{
 		Name:       "minute",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the hour (00-23) from a time",
 		Example: `
 (minute 2018-01-14T19:04:05Z)                                    ; returns "04"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		minute := strconv.Itoa(args[0].Time.Minute())
 		return block.NewString(minute), nil
 	},
@@ -159,15 +159,15 @@ var Date = interpreter.TaFunction{
 		Name:       "date",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the date in YYYY-MM-DD format from a time.",
 		Example: `
 (betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		return block.NewString(jodaTime.Format("yyyy-MM-dd", args[0].Time)), nil
 	},
 }
@@ -177,15 +177,15 @@ var Month = interpreter.TaFunction{
 		Name:       "month",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the month (1-12) from a time",
 		Example: `
 (month 2018-01-02T19:04:05Z)                                     ; returns "1"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		month := strconv.Itoa(int(args[0].Time.Month()))
 		return block.NewString(month), nil
 	},
@@ -196,15 +196,15 @@ var MonthDay = interpreter.TaFunction{
 		Name:       "monthDay",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the day (1-31) from a time",
 		Example: `
 (monthDay 2018-01-14T19:04:05Z)                                  ; returns "14"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		monthDay := strconv.Itoa(int(args[0].Time.Day()))
 		return block.NewString(monthDay), nil
 	},
@@ -216,15 +216,15 @@ var WeekDay = interpreter.TaFunction{
 		Name:       "weekday",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the week day (0-6) from a time",
 		Example: `
 (weekDay 2018-01-14T19:04:05Z)                                   ; returns "3"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		return block.NewString(jodaTime.Format("e", args[0].Time)), nil
 	},
 }
@@ -234,15 +234,15 @@ var Year = interpreter.TaFunction{
 		Name:       "year",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Extract the year from a time",
 		Example: `
 (year 2018-01-02T19:04:05Z)                                      ; returns "2018"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		year := strconv.Itoa(int(args[0].Time.Year()))
 		return block.NewString(year), nil
 	},
@@ -253,15 +253,15 @@ var FormatTime = interpreter.TaFunction{
 		Name:       "formatTime",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.StringKind,
+		Returns:     block.String,
 		Description: "Create an RFC3339 timestamp, the inverse of parseTime",
 		Example: `
 (formatTime 2018-01-02T19:04:05Z)                                ; returns "2018"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		return block.NewString(args[0].Time.Format(time.RFC3339)), nil
 	},
 }
@@ -271,17 +271,17 @@ var MatchTime = interpreter.TaFunction{
 		Name:       "matchTime",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,   // timestamp1
-			block.TimeKind,   // timestamp1
-			block.StringKind, // layout
+			block.Time,   // timestamp1
+			block.Time,   // timestamp1
+			block.String, // layout
 		},
-		Returns:     block.BoolKind,
+		Returns:     block.Bool,
 		Description: "Checks if two times match for a given layout",
 		Example: `
 matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   ; returns "true"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		layout := args[2].String
 		return block.NewBool(jodaTime.Format(layout, args[0].Time) == jodaTime.Format(layout, args[1].Time)), nil
 	},
@@ -293,15 +293,15 @@ var Days = interpreter.TaFunction{
 		Name:       "days",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,
+			block.Time,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Extract days from now from time",
 		Example: `
 (days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		now := args[0].Time.Sub(time.Now())
 		return block.NewDecimalFromFloat((now.Hours() / 24)), nil
 	},
@@ -312,11 +312,11 @@ var AddDuration = interpreter.TaFunction{
 		Name:       "addDuration",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,    // since
-			block.DecimalKind, // amount
-			block.StringKind,  // units
+			block.Time,    // since
+			block.Decimal, // amount
+			block.String,  // units
 		},
-		Returns:     block.TimeKind,
+		Returns:     block.Time,
 		Description: "Extract days from now from time",
 		Example: `
 (addDuration 2018-03-18T00:04:05Z 3 minutes)                     ; returns "2018-03-18T00:07:05Z"
@@ -324,7 +324,7 @@ var AddDuration = interpreter.TaFunction{
 (addDuration 2018-03-18T00:04:05Z 18 days)                       ; returns "2018-04-05T00:04:05Z"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		duration, err := makeDuration(args[1], args[2].String)
 		fmt.Println(duration)
 		if err != nil {
@@ -339,11 +339,11 @@ var SubDuration = interpreter.TaFunction{
 		Name:       "subDuration",
 		IsVariadic: false,
 		Arguments: []block.Kind{
-			block.TimeKind,    // since
-			block.DecimalKind, // amount
-			block.StringKind,  // units
+			block.Time,    // since
+			block.Decimal, // amount
+			block.String,  // units
 		},
-		Returns:     block.TimeKind,
+		Returns:     block.Time,
 		Description: "Extract days from now from time",
 		Example: `
 (subDuration 2018-03-18T00:04:05Z 12 minutes)                    ; returns "2018-03-17T23:52:05Z"
@@ -351,7 +351,7 @@ var SubDuration = interpreter.TaFunction{
 (subDuration 2018-03-18T00:04:05Z 22 days)                       ; returns "2018-02-24T00:04:05Z"
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		duration, err := makeDuration(args[1], args[2].String)
 		if err != nil {
 			return nil, err
@@ -360,7 +360,7 @@ var SubDuration = interpreter.TaFunction{
 	},
 }
 
-func makeDuration(n *block.Block, unit string) (time.Duration, error) {
+func makeDuration(n *block.TaToken, unit string) (time.Duration, error) {
 	var multiplier int64
 	switch unit {
 	case "days":

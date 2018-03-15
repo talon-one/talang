@@ -92,17 +92,7 @@ func main() {
 		f := interp.Functions[i]
 		arguments := make([]string, len(f.Arguments))
 		for j, a := range f.Arguments {
-			arg := a.String()
-			if strings.HasSuffix(arg, "Kind") {
-				arguments[j] = arg[:len(arg)-4]
-			} else {
-				arguments[j] = arg
-			}
-		}
-
-		returns := f.Returns.String()
-		if strings.HasSuffix(returns, "Kind") {
-			returns = returns[:len(returns)-4]
+			arguments[j] = a.String()
 		}
 
 		packageName := getPackageName(f.Func)
@@ -122,7 +112,7 @@ func main() {
 
 		fns[i] = fn{
 			Arguments:  arguments,
-			Returns:    returns,
+			Returns:    f.Returns.String(),
 			TaFunction: f,
 		}
 	}

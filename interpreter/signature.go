@@ -7,7 +7,7 @@ import (
 	"github.com/talon-one/talang/block"
 )
 
-type TaFunc func(*Interpreter, ...*block.Block) (*block.Block, error)
+type TaFunc func(*Interpreter, ...*block.TaToken) (*block.TaToken, error)
 
 type CommonSignature struct {
 	IsVariadic  bool
@@ -26,7 +26,7 @@ type TaFunction struct {
 
 type TaTemplate struct {
 	CommonSignature
-	Template block.Block
+	Template block.TaToken
 }
 
 func (s *CommonSignature) String() string {

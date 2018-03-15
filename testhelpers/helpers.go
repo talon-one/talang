@@ -17,9 +17,9 @@ func init() {
 		interpreter.TaFunction{
 			CommonSignature: interpreter.CommonSignature{
 				Name:    "panic",
-				Returns: block.AnyKind,
+				Returns: block.Any,
 			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+			Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 				return nil, errors.New("panic")
 			},
 		},
@@ -36,7 +36,7 @@ func MustNewInterpreter() *talang.Interpreter {
 	return talang.MustNewInterpreter()
 }
 
-func MustBlock(result *block.Block, err error) *block.Block {
+func MustBlock(result *block.TaToken, err error) *block.TaToken {
 	if err != nil {
 		panic(err)
 	}
@@ -53,7 +53,7 @@ func (Error) Error() string { return "" }
 
 type Test struct {
 	Input    string
-	Binding  *block.Block
+	Binding  *block.TaToken
 	Expected interface{}
 }
 
@@ -69,7 +69,7 @@ func RunTestsWithInterpreter(t *testing.T, interp *talang.Interpreter, tests ...
 		switch b := test.Expected.(type) {
 		case error:
 			require.Error(t, err, "Test %d failed", i)
-		case *block.Block:
+		case *block.TaToken:
 			require.EqualValues(t, true, b.Equal(result), "Test #%d failed, Expected %s was %s", i, b.Stringify(), result.Stringify())
 		}
 	}

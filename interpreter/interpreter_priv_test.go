@@ -20,18 +20,18 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 	type Expected struct {
 		Matches           bool
 		NotMatching       notMatchingDetail
-		EvaluatedChildren []*block.Block
+		EvaluatedChildren []*block.TaToken
 		Error             bool
 	}
 
 	type Result struct {
 		Matches           bool
 		NotMatching       notMatchingDetail
-		EvaluatedChildren []*block.Block
+		EvaluatedChildren []*block.TaToken
 		Error             error
 	}
 
-	makeResult := func(Matches bool, NotMatching notMatchingDetail, EvaluatedChildren []*block.Block, Error error) Result {
+	makeResult := func(Matches bool, NotMatching notMatchingDetail, EvaluatedChildren []*block.TaToken, Error error) Result {
 		return Result{
 			Matches:           Matches,
 			NotMatching:       NotMatching,
@@ -51,7 +51,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 				false,
@@ -61,12 +61,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 			)),
@@ -77,7 +77,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 					block.NewDecimal(decimal.New(0, 0)),
 				},
@@ -88,13 +88,13 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.StringKind,
-						block.DecimalKind,
+						block.String,
+						block.Decimal,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 					block.NewDecimal(decimal.New(0, 0)),
 				},
@@ -106,7 +106,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 				false,
@@ -116,12 +116,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AnyKind,
+						block.Any,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 			)),
@@ -132,7 +132,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 				false,
@@ -142,12 +142,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AnyKind,
+						block.Any,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -158,7 +158,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 				false,
@@ -168,12 +168,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AtomKind,
+						block.Atom,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 			)),
@@ -184,7 +184,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 				false,
@@ -194,12 +194,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AtomKind,
+						block.Atom,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -219,12 +219,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn1",
 					lowerName: "fn1",
 					Arguments: []block.Kind{
-						block.StringKind,
+						block.String,
 					},
 					IsVariadic: false,
 				},
 				"fn2",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -245,7 +245,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -263,12 +263,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -286,12 +286,12 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: false,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					lexer.MustLex("(panic)"),
 				},
 			)),
@@ -317,18 +317,18 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 	type Expected struct {
 		Matches           bool
 		NotMatching       notMatchingDetail
-		EvaluatedChildren []*block.Block
+		EvaluatedChildren []*block.TaToken
 		Error             bool
 	}
 
 	type Result struct {
 		Matches           bool
 		NotMatching       notMatchingDetail
-		EvaluatedChildren []*block.Block
+		EvaluatedChildren []*block.TaToken
 		Error             error
 	}
 
-	makeResult := func(Matches bool, NotMatching notMatchingDetail, EvaluatedChildren []*block.Block, Error error) Result {
+	makeResult := func(Matches bool, NotMatching notMatchingDetail, EvaluatedChildren []*block.TaToken, Error error) Result {
 		return Result{
 			Matches:           Matches,
 			NotMatching:       NotMatching,
@@ -349,7 +349,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{},
+				[]*block.TaToken{},
 				false,
 			},
 			Result: makeResult(interp.matchesSignature(
@@ -357,12 +357,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{},
+				[]*block.TaToken{},
 			)),
 		},
 		// 0 parameters required, 1 parameter given
@@ -370,7 +370,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 				false,
@@ -380,12 +380,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 			)),
@@ -396,7 +396,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 					block.NewDecimal(decimal.New(0, 0)),
 				},
@@ -407,13 +407,13 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.StringKind,
-						block.DecimalKind,
+						block.String,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 					block.NewDecimal(decimal.New(0, 0)),
 				},
@@ -425,7 +425,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 					block.NewDecimal(decimal.New(0, 0)),
 					block.NewDecimal(decimal.New(1, 0)),
@@ -437,13 +437,13 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.StringKind,
-						block.DecimalKind,
+						block.String,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 					block.NewDecimal(decimal.New(0, 0)),
 					block.NewDecimal(decimal.New(1, 0)),
@@ -456,7 +456,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 				false,
@@ -466,12 +466,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AnyKind,
+						block.Any,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 			)),
@@ -482,7 +482,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 				false,
@@ -492,12 +492,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AnyKind,
+						block.Any,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -508,7 +508,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 				false,
@@ -518,12 +518,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AtomKind,
+						block.Atom,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimal(decimal.New(0, 0)),
 				},
 			)),
@@ -534,7 +534,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 			Expected: Expected{
 				true,
 				notMatchingDetail(0),
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 				false,
@@ -544,12 +544,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.AtomKind,
+						block.Atom,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -569,12 +569,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn1",
 					lowerName: "fn1",
 					Arguments: []block.Kind{
-						block.StringKind,
+						block.String,
 					},
 					IsVariadic: true,
 				},
 				"fn2",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -592,12 +592,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewString("Hello"),
 				},
 			)),
@@ -615,12 +615,12 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					lexer.MustLex("(panic)"),
 				},
 			)),
@@ -638,14 +638,14 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					Name:      "fn",
 					lowerName: "fn",
 					Arguments: []block.Kind{
-						block.DecimalKind,
-						block.DecimalKind,
-						block.DecimalKind,
+						block.Decimal,
+						block.Decimal,
+						block.Decimal,
 					},
 					IsVariadic: true,
 				},
 				"fn",
-				[]*block.Block{
+				[]*block.TaToken{
 					block.NewDecimalFromString("1"),
 				},
 			)),
@@ -746,7 +746,7 @@ func TestFuncWalker(t *testing.T) {
 		CommonSignature: CommonSignature{
 			Name: "ROOTFN",
 		},
-		Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return nil, nil
 		},
 	}))
@@ -758,7 +758,7 @@ func TestFuncWalker(t *testing.T) {
 		CommonSignature: CommonSignature{
 			Name: "Scope1FN",
 		},
-		Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return nil, nil
 		},
 	}))
@@ -771,7 +771,7 @@ func TestFuncWalker(t *testing.T) {
 			CommonSignature: CommonSignature{
 				Name: "Scope2FN1",
 			},
-			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+			Func: func(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 				return nil, nil
 			},
 		},
@@ -779,7 +779,7 @@ func TestFuncWalker(t *testing.T) {
 			CommonSignature: CommonSignature{
 				Name: "Scope2FN2",
 			},
-			Func: func(interp *Interpreter, args ...*block.Block) (*block.Block, error) {
+			Func: func(interp *Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 				return nil, nil
 			},
 		},

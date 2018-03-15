@@ -39,9 +39,9 @@ func TestScopeFunctions(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn1",
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return block.NewString("Hello"), nil
 		},
 	})
@@ -52,9 +52,9 @@ func TestScopeFunctions(t *testing.T) {
 	scope.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn2",
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return block.NewString("Bye"), nil
 		},
 	})
@@ -69,7 +69,7 @@ func TestScopeTemplates(t *testing.T) {
 	require.NoError(t, interp.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template1",
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
 		Template: *lexer.MustLex("Hello"),
 	}))
@@ -80,7 +80,7 @@ func TestScopeTemplates(t *testing.T) {
 	require.NoError(t, scope.RegisterTemplate(interpreter.TaTemplate{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "Template2",
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
 		Template: *lexer.MustLex("World"),
 	}))

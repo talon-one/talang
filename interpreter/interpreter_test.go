@@ -35,7 +35,7 @@ func TestInterpreter(t *testing.T) {
 func TestInterpreterInvalidTerm(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 	require.Error(t, interp.Evaluate(nil))
-	require.Error(t, interp.Evaluate(&block.Block{}))
+	require.Error(t, interp.Evaluate(&block.TaToken{}))
 }
 
 func TestOverloading(t *testing.T) {
@@ -49,12 +49,12 @@ func TestOverloading(t *testing.T) {
 			Name:       "FN",
 			IsVariadic: false,
 			Arguments: []block.Kind{
-				block.DecimalKind,
-				block.DecimalKind,
+				block.Decimal,
+				block.Decimal,
 			},
-			Returns: block.DecimalKind,
+			Returns: block.Decimal,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
@@ -66,12 +66,12 @@ func TestOverloading(t *testing.T) {
 			Name:       "FN",
 			IsVariadic: false,
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.StringKind,
+				block.String,
+				block.String,
 			},
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return block.New(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
@@ -87,12 +87,12 @@ func TestOverloadingNested(t *testing.T) {
 			Name:       "fn1",
 			IsVariadic: false,
 			Arguments: []block.Kind{
-				block.DecimalKind,
-				block.DecimalKind,
+				block.Decimal,
+				block.Decimal,
 			},
-			Returns: block.DecimalKind,
+			Returns: block.Decimal,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return block.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
@@ -102,12 +102,12 @@ func TestOverloadingNested(t *testing.T) {
 			Name:       "fn1",
 			IsVariadic: false,
 			Arguments: []block.Kind{
-				block.StringKind,
-				block.StringKind,
+				block.String,
+				block.String,
 			},
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			return block.NewString(args[0].Stringify() + args[1].Stringify()), nil
 		},
 	})
@@ -116,9 +116,9 @@ func TestOverloadingNested(t *testing.T) {
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn2",
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			nestedFuncCounter++
 			return block.NewString(fmt.Sprintf("%d", nestedFuncCounter)), nil
 		},
@@ -145,12 +145,12 @@ func TestDoubleFuncCall(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn1",
 			Arguments: []block.Kind{
-				block.AtomKind,
-				block.AtomKind,
+				block.Atom,
+				block.Atom,
 			},
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			fn1Runned = true
 			return block.NewString("A"), nil
 		},
@@ -159,11 +159,11 @@ func TestDoubleFuncCall(t *testing.T) {
 		CommonSignature: interpreter.CommonSignature{
 			Name: "fn2",
 			Arguments: []block.Kind{
-				block.AtomKind,
+				block.Atom,
 			},
-			Returns: block.StringKind,
+			Returns: block.String,
 		},
-		Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+		Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 			fn2Runned = true
 			return block.NewString("B"), nil
 		},
@@ -178,7 +178,7 @@ func TestGenericSet(t *testing.T) {
 
 	tests := []struct {
 		input    interface{}
-		expected *block.Block
+		expected *block.TaToken
 	}{
 		{"String", block.NewString("String")},
 		{false, block.NewBool(false)},
@@ -258,11 +258,11 @@ func TestModifiesInput(t *testing.T) {
 			CommonSignature: interpreter.CommonSignature{
 				Name: "fn",
 				Arguments: []block.Kind{
-					block.ListKind,
+					block.List,
 				},
-				Returns: block.AnyKind,
+				Returns: block.Any,
 			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+			Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 				args[0].Children[0] = block.NewDecimalFromInt(1000)
 				return nil, nil
 			},
@@ -271,18 +271,18 @@ func TestModifiesInput(t *testing.T) {
 			CommonSignature: interpreter.CommonSignature{
 				Name: "fn",
 				Arguments: []block.Kind{
-					block.DecimalKind,
+					block.Decimal,
 				},
-				Returns: block.AnyKind,
+				Returns: block.Any,
 			},
-			Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+			Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 				args[0] = block.NewDecimalFromInt(1000)
 				return nil, nil
 			},
 		},
 	))
 
-	interp.Binding = block.NewMap(map[string]*block.Block{
+	interp.Binding = block.NewMap(map[string]*block.TaToken{
 		"List1": block.NewList(block.NewDecimalFromInt(0), block.NewDecimalFromInt(1)),
 		"Int1":  block.NewDecimalFromInt(0),
 	})

@@ -15,7 +15,7 @@ import (
 )
 
 type Interpreter struct {
-	Binding   *block.Block
+	Binding   *block.TaToken
 	Context   context.Context
 	Parent    *Interpreter
 	Functions []TaFunction
@@ -42,7 +42,7 @@ func MustNewInterpreter() *Interpreter {
 	return interp
 }
 
-func (interp *Interpreter) LexAndEvaluate(str string) (*block.Block, error) {
+func (interp *Interpreter) LexAndEvaluate(str string) (*block.TaToken, error) {
 	t, err := lexer.Lex(str)
 	if err != nil {
 		return t, err
@@ -51,7 +51,7 @@ func (interp *Interpreter) LexAndEvaluate(str string) (*block.Block, error) {
 	return t, err
 }
 
-func (interp *Interpreter) MustLexAndEvaluate(str string) *block.Block {
+func (interp *Interpreter) MustLexAndEvaluate(str string) *block.TaToken {
 	t, err := interp.LexAndEvaluate(str)
 	if err != nil {
 		panic(err)
@@ -59,7 +59,7 @@ func (interp *Interpreter) MustLexAndEvaluate(str string) *block.Block {
 	return t
 }
 
-func (interp *Interpreter) Evaluate(b *block.Block) error {
+func (interp *Interpreter) Evaluate(b *block.TaToken) error {
 	if b == nil || b.IsEmpty() {
 		return errors.New("Empty term")
 	}
@@ -97,7 +97,7 @@ func (interp *Interpreter) Evaluate(b *block.Block) error {
 	return nil
 }
 
-func (interp *Interpreter) MustEvaluate(b *block.Block) {
+func (interp *Interpreter) MustEvaluate(b *block.TaToken) {
 	if err := interp.Evaluate(b); err != nil {
 		panic(err)
 	}
@@ -111,12 +111,12 @@ const (
 	errorInChildrenEvaluation notMatchingDetail = iota
 )
 
-func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*block.Block) (bool, notMatchingDetail, []*block.Block, error) {
+func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*block.TaToken) (bool, notMatchingDetail, []*block.TaToken, error) {
 	if sig.lowerName != lowerName {
 		return false, invalidName, nil, nil
 	}
 
-	var children []*block.Block
+	var children []*block.TaToken
 	argc := len(args)
 	sigargc := len(sig.Arguments)
 	if !sig.IsVariadic {
@@ -131,7 +131,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 
 	willEvaluate := false
 	for i, j := 0, 0; i < argc; i++ {
-		if sig.Arguments[j]&block.BlockKind == 0 && args[i].IsBlock() {
+		if sig.Arguments[j]&block.Token == 0 && args[i].IsBlock() {
 			willEvaluate = true
 			break
 		}
@@ -143,9 +143,9 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 
 	if willEvaluate {
 		// make a copy of the children
-		children = make([]*block.Block, argc)
+		children = make([]*block.TaToken, argc)
 		for i, child := range args {
-			children[i] = new(block.Block)
+			children[i] = new(block.TaToken)
 			*children[i] = *child
 		}
 	} else {
@@ -153,7 +153,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 	}
 
 	for i, j := 0, 0; i < len(children); i++ {
-		if sig.Arguments[j]&block.BlockKind == 0 && children[i].IsBlock() {
+		if sig.Arguments[j]&block.Token == 0 && children[i].IsBlock() {
 			if err := interp.Evaluate(children[i]); err != nil {
 				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 			}
@@ -170,7 +170,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 	return false, invalidSignature, nil, nil
 }
 
-func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
+func (interp *Interpreter) callFunc(b *block.TaToken) (bool, error) {
 	walker := funcWalker{interp: interp}
 	blockText := strings.ToLower(b.String)
 	// iterate trough all functions
@@ -229,21 +229,21 @@ func (interp *Interpreter) callFunc(b *block.Block) (bool, error) {
 	return false, nil
 }
 
-func (interp *Interpreter) Get(key string) *block.Block {
+func (interp *Interpreter) Get(key string) *block.TaToken {
 	if interp.Binding != nil {
 		return interp.Binding.MapItem(key)
 	}
 	return block.NewNull()
 }
 
-func (interp *Interpreter) Set(key string, value *block.Block) {
+func (interp *Interpreter) Set(key string, value *block.TaToken) {
 	if interp.Binding == nil {
-		interp.Binding = block.NewMap(map[string]*block.Block{})
+		interp.Binding = block.NewMap(map[string]*block.TaToken{})
 	}
 	interp.Binding.SetMapItem(key, value)
 }
 
-func genericSetConv(value interface{}) (*block.Block, error) {
+func genericSetConv(value interface{}) (*block.TaToken, error) {
 	reflectValue := reflect.ValueOf(value)
 	reflectType := reflectValue.Type()
 	for reflectType.Kind() == reflect.Ptr {
@@ -253,7 +253,7 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 
 	switch reflectType.Kind() {
 	case reflect.Struct:
-		m := make(map[string]*block.Block)
+		m := make(map[string]*block.TaToken)
 		for i := 0; i < reflectType.NumField(); i++ {
 			if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
 				structValue, err := genericSetConv(reflectValue.Field(i).Interface())
@@ -265,7 +265,7 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 		}
 		return block.NewMap(m), nil
 	case reflect.Map:
-		m := make(map[string]*block.Block)
+		m := make(map[string]*block.TaToken)
 		if reflectType.Key().Kind() != reflect.String {
 			return nil, errors.New("A different key than `string' is not supported")
 		}
@@ -279,7 +279,7 @@ func genericSetConv(value interface{}) (*block.Block, error) {
 		return block.NewMap(m), nil
 	case reflect.Slice:
 		size := reflectValue.Len()
-		s := make([]*block.Block, size, size)
+		s := make([]*block.TaToken, size, size)
 		for i := 0; i < size; i++ {
 			var err error
 			s[i], err = genericSetConv(reflectValue.Index(i).Interface())

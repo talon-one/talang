@@ -7,7 +7,7 @@ import (
 	"github.com/talon-one/talang/lexer/unquote"
 )
 
-func MustLex(str string) *block.Block {
+func MustLex(str string) *block.TaToken {
 	block, err := Lex(str)
 	if err != nil {
 		panic(err)
@@ -15,9 +15,9 @@ func MustLex(str string) *block.Block {
 	return block
 }
 
-func Lex(str string) (*block.Block, error) {
+func Lex(str string) (*block.TaToken, error) {
 	// the first word is always the operation
-	var children []*block.Block
+	var children []*block.TaToken
 	var operation string
 
 parse:
@@ -84,7 +84,7 @@ parse:
 				return nil, err
 			}
 			if !nestedScope.IsEmpty() {
-				nestedScope.Kind = block.BlockKind
+				nestedScope.Kind = block.Token
 				children = append(children, nestedScope)
 			}
 

@@ -18,18 +18,18 @@ var Add = interpreter.TaFunction{
 		Name:       "+",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Adds the arguments",
 		Example: `
 (+ 1 1)                                                          ; returns 2
 (+ 1 2 3)                                                        ; returns 6
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -47,18 +47,18 @@ var Sub = interpreter.TaFunction{
 		Name:       "-",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Subtracts the arguments",
 		Example: `
 (- 1 1)                                                          ; returns 0
 (- 1 2 3)                                                        ; returns -4
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -76,18 +76,18 @@ var Mul = interpreter.TaFunction{
 		Name:       "*",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Multiplies the arguments",
 		Example: `
 (* 1 2)                                                          ; returns 2
 (* 1 2 3)                                                        ; returns 6
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -105,18 +105,18 @@ var Div = interpreter.TaFunction{
 		Name:       "/",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Divides the arguments",
 		Example: `
 (/ 1 2)                                                          ; returns 0.5
 (/ 1 2 3)                                                        ; returns 0.166666
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -134,18 +134,18 @@ var Mod = interpreter.TaFunction{
 		Name:       "mod",
 		IsVariadic: true,
 		Arguments: []block.Kind{
-			block.DecimalKind,
-			block.DecimalKind,
-			block.DecimalKind,
+			block.Decimal,
+			block.Decimal,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Modulo the arguments",
 		Example: `
 (mod 1 2)                                                        ; returns 1
 (mod 3 8 2)                                                      ; returns 1
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		var d *decimal.Big
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
@@ -162,9 +162,9 @@ var Floor = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "floor",
 		Arguments: []block.Kind{
-			block.DecimalKind,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Floor the decimal argument",
 		Example: `
 (floor 2)                                                        ; returns 2
@@ -175,7 +175,7 @@ var Floor = interpreter.TaFunction{
 (floor -2)                                                       ; returns -2
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
 		if args[0].Decimal.Signbit() {
 			ctx.RoundingMode = decimal.AwayFromZero
@@ -190,9 +190,9 @@ var Ceil = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "ceil",
 		Arguments: []block.Kind{
-			block.DecimalKind,
+			block.Decimal,
 		},
-		Returns:     block.DecimalKind,
+		Returns:     block.Decimal,
 		Description: "Ceil the decimal argument",
 		Example: `
 (ceil 2)                                                         ; returns 2
@@ -203,7 +203,7 @@ var Ceil = interpreter.TaFunction{
 (ceil -2)                                                        ; returns -2
 `,
 	},
-	Func: func(interp *interpreter.Interpreter, args ...*block.Block) (*block.Block, error) {
+	Func: func(interp *interpreter.Interpreter, args ...*block.TaToken) (*block.TaToken, error) {
 		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
 		if args[0].Decimal.Signbit() {
 			ctx.RoundingMode = decimal.ToZero

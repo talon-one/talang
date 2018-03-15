@@ -247,13 +247,13 @@ Extract days from now from time
 (days 2018-03-18T00:04:05Z)                                      ; returns "3.423892107645601701193527333089150488376617431640625" results vary as the function is relative to the current date.
 ```
 
-### do(Kind(127), Block)Any
+### do(Kind(127), Token)Any
 Apply a block to a value
 ```lisp
 do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 ```
 
-### do(Kind(127), String, Block)Any
+### do(Kind(127), String, Token)Any
 Apply a block to a value
 ```lisp
 do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
@@ -275,26 +275,26 @@ Returns wether the first argument is the suffix of the following arguments
 (endsWith "World" "Hello World" "By World")                      ; returns true
 ```
 
-### every(List, String, Block)Bool
+### every(List, String, Token)Bool
 Test if every item in a list matches a predicate
 ```lisp
 every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
 ```
 
-### every(List, Block)Bool
+### every(List, Token)Bool
 Test if every item in a list matches a predicate
 ```lisp
 every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
 ```
 
-### exists(List, String, Block)Bool
+### exists(List, String, Token)Bool
 Test if any item in a list matches a predicate
 ```lisp
 exists (list hello world) Item (= (. Item) "hello")              ; returns true
 exists (list hello world) Item (= (. Item) "hey!!")              ; returns false
 ```
 
-### exists(List, Block)Bool
+### exists(List, Token)Bool
 Test if any item in a list matches a predicate
 ```lisp
 exists (list hello world) ((Item) (= (. Item) "hello"))          ; returns true
@@ -360,7 +360,7 @@ Create a string by joining together a list of strings with `glue`
 (join (list hello world) ",")                                    ; returns "hello,world"
 ```
 
-### kv(Block...)Map
+### kv(Token...)Map
 Create a map with any key value pairs passed as arguments.
 ```lisp
 (kv (Key1 "Hello World") (Key2 true) (Key3 123))                 ; returns a Map with the keys key1, key2, key3
@@ -380,13 +380,13 @@ Create a list out of the children
 (list 1 true Hello)                                              ; returns a list with an int, bool and string
 ```
 
-### map(List, String, Block)List
+### map(List, String, Token)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
 (map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
 ```
 
-### map(List, Block)List
+### map(List, Token)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
 (map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
@@ -518,7 +518,7 @@ Extract days from now from time
 (subDuration 2018-03-18T00:04:05Z 22 days)                       ; returns "2018-02-24T00:04:05Z"
 ```
 
-### sum(List, String, Block)Decimal
+### sum(List, String, Token)Decimal
 Test if any item in a list matches a predicate
 ```lisp
 sum (. List) Item (. Item Price)                                 ; returns 4 With the binding "$Items" containing prices: [2, 2]

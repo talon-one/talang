@@ -11,7 +11,7 @@ import (
 func TestLexer(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected *block.Block
+		expected *block.TaToken
 	}{
 		{
 			"+ 1 2",
@@ -121,10 +121,10 @@ func TestLexer(t *testing.T) {
 			"(fn (A) B)",
 			block.New("",
 				block.New("fn",
-					&block.Block{
+					&block.TaToken{
 						String:   "A",
-						Kind:     block.BlockKind,
-						Children: []*block.Block{},
+						Kind:     block.Token,
+						Children: []*block.TaToken{},
 					},
 					block.NewString("B"),
 				),
@@ -175,7 +175,7 @@ func TestForcedString(t *testing.T) {
 
 	tests := []struct {
 		input    string
-		expected *block.Block
+		expected *block.TaToken
 	}{
 		{
 			`+ "1" "2"`,
@@ -238,7 +238,7 @@ func TestMustLex(t *testing.T) {
 func BenchmarkParse(b *testing.B) {
 	var tests = []struct {
 		input    string
-		expected *block.Block
+		expected *block.TaToken
 	}{
 		{
 			"(= 1 1)",
