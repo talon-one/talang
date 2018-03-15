@@ -21,7 +21,7 @@ type commandDef struct {
 
 var commands map[string]*commandDef
 
-var whitespace, _ = regexp.Compile("\\s+")
+var whitespace, _ = regexp.Compile(`\\s+`)
 
 func firstWord(input string) (string, string) {
 	parts := whitespace.Split(strings.Trim(input, " "), 2)
@@ -135,18 +135,12 @@ func createCommands() {
 
 	commandDebug := commandDef{
 		function: func(args string) {
-			first, _ := firstWord(args)
-			switch first {
-			case "debug":
-				if interp.Logger == nil {
-					interp.Logger = log.New(term.Stdout(), "", 0)
-					printOut("Debug mode enabled")
-				} else {
-					interp.Logger = nil
-					printOut("Debug mode disabled")
-				}
-			default:
-				printOut("unknown command: set %s", first)
+			if interp.Logger == nil {
+				interp.Logger = log.New(term.Stdout(), "", 0)
+				printOut("Debug mode enabled")
+			} else {
+				interp.Logger = nil
+				printOut("Debug mode disabled")
 			}
 		},
 		description: "enable or disable debug messages",
