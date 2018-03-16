@@ -8,7 +8,7 @@ pipeline:
   test:
     image: golang:1.10
     commands:
-      - go test -cover $(go list ./... | grep -v /vendor/)
+      - go test -race -count 1 -cover $(go list ./... | grep -v /vendor/)
     when:
       event: push
   # Notification for regular pushes

@@ -562,3 +562,22 @@ func BenchmarkTimeParse(b *testing.B) {
 		time.Parse(time.RFC3339, "2007-01-02T00:00:00Z")
 	}
 }
+
+func BenchmarkMarshaling(ba *testing.B) {
+	block1 := NewMap(map[string]*TaToken{
+		"Key2": NewDecimalFromInt(1),
+		"Key1": NewBool(true),
+		"Key3": NewString("Hello"),
+		"Key4": NewList(NewBool(false), NewMap(map[string]*TaToken{
+			"SubKey1": NewDecimalFromInt(3),
+			"SubKey2": NewTime(time.Now()),
+		})),
+	})
+	b, err := json.Marshal(block1)
+	require.NoError(ba, err)
+	for i := 0; i < ba.N; i++ {
+		var block2 TaToken
+		require.NoError(ba, json.Unmarshal(b, &block2))
+		require.Equal(ba, true, block1.Equal(&block2))
+	}
+}
