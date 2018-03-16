@@ -399,6 +399,16 @@ func TestOr(t *testing.T) {
 			nil,
 			helpers.Error{},
 		},
+		// Collections evaluate to true
+		helpers.Test{
+			`or (list 1 2 3)`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
+			`or (map (list "World" "Universe") ((x) (+ "Hello " (. x))))`,
+			nil,
+			token.NewBool(true),
+		},
 	)
 }
 
@@ -441,6 +451,14 @@ func TestAnd(t *testing.T) {
 			`and (+ 2 2)`,
 			nil,
 			helpers.Error{},
+		}, helpers.Test{
+			`and (list 1 2 3) false`,
+			nil,
+			token.NewBool(false),
+		}, helpers.Test{
+			`and`,
+			nil,
+			token.NewBool(true),
 		},
 	)
 }

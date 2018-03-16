@@ -379,7 +379,7 @@ var Or = interpreter.TaFunction{
 		Name:       "or",
 		IsVariadic: true,
 		Arguments: []token.Kind{
-			token.Atom,
+			token.Atom | token.Collection,
 		},
 		Returns:     token.Bool,
 		Description: "Evaluates whether at least one predicate is true",
@@ -390,14 +390,22 @@ var Or = interpreter.TaFunction{
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		for i := 0; i < len(args); i++ {
+			// pre-eval checks.
+			isCollection := args[i].Kind == token.List || args[i].Kind == token.Map
+			if isCollection {
+				// early return and no evaluation.
+				return (token.NewBool(true)), nil
+			}
 			err := interp.Evaluate(args[i])
 			if err != nil {
 				errors.New("Error evaluating block")
 			}
+
+			// post-eval checks.
 			if args[i].Kind != token.Bool {
 				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
 			}
-			if args[i].Bool == true {
+			if args[i].Bool == true || args[i].Kind == token.Collection {
 				return (token.NewBool(true)), nil
 			}
 		}
@@ -410,7 +418,7 @@ var And = interpreter.TaFunction{
 		Name:       "and",
 		IsVariadic: true,
 		Arguments: []token.Kind{
-			token.Atom,
+			token.Atom | token.Collection,
 		},
 		Returns:     token.Bool,
 		Description: "Evaluates whether a series of predicates are all true",
@@ -421,10 +429,19 @@ var And = interpreter.TaFunction{
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		for i := 0; i < len(args); i++ {
+			// pre-eval checks.
+			isCollection := args[i].Kind == token.List || args[i].Kind == token.Map
+			if isCollection {
+				// fallthrough
+				continue
+			}
+
 			err := interp.Evaluate(args[i])
 			if err != nil {
 				errors.New("Error evaluating block")
 			}
+
+			// post-eval checks
 			if args[i].Kind != token.Bool {
 				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
 			}
