@@ -20,5 +20,6 @@ func AllOperations() []interpreter.TaFunction {
 		Days,
 		AddDuration,
 		SubDuration,
+		DaysBetween,
 	}
 }

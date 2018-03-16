@@ -202,3 +202,11 @@ func TestSubDuration(t *testing.T) {
 		helpers.Error{},
 	})
 }
+
+func TestDaysBetween(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		`daysBetween 2006-01-02T19:04:05Z 2006-01-02T22:19:05Z`,
+		nil,
+		token.NewDecimalFromFloat(0.13541666666666666),
+	})
+}

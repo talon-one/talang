@@ -360,6 +360,25 @@ var SubDuration = interpreter.TaFunction{
 	},
 }
 
+var DaysBetween = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "daysBetween",
+		IsVariadic: false,
+		Arguments: []token.Kind{
+			token.Time,
+			token.Time,
+		},
+		Returns:     token.Decimal,
+		Description: "Calculates the difference in days between 2 dates",
+		Example: `
+daysBetween 2006-01-02T19:04:05Z 2006-01-02T22:19:05Z            ; returns "0.13541666666666666"
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		return token.NewDecimalFromFloat(args[1].Time.Sub(args[0].Time).Hours() / 24), nil
+	},
+}
+
 func makeDuration(n *token.TaToken, unit string) (time.Duration, error) {
 	var multiplier int64
 	switch unit {
