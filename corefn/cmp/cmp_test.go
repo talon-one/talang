@@ -456,6 +456,10 @@ func TestAnd(t *testing.T) {
 			nil,
 			token.NewBool(false),
 		}, helpers.Test{
+			`and (list 1 2 3)`,
+			nil,
+			token.NewBool(true),
+		}, helpers.Test{
 			`and`,
 			nil,
 			token.NewBool(true),
