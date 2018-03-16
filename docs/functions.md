@@ -152,7 +152,7 @@ Checks whether time A is after B
 (after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "false"
 ```
 
-### and(Atom...)Bool
+### and(Collection|Atom...)Bool
 Evaluates whether a series of predicates are all true
 ```lisp
 (and false (> 2 1))                                              ; returns true
@@ -466,7 +466,7 @@ Returns wether the first argument does not exist in the following arguments
 (notContains "World" "Hello World" "Hello Universe")             ; returns false
 ```
 
-### or(Atom...)Bool
+### or(Collection|Atom...)Bool
 Evaluates whether at least one predicate is true
 ```lisp
 (or false false false true false)                                ; returns true
