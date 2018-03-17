@@ -26,5 +26,6 @@ func AllOperations() []interpreter.TaFunction {
 		Sum,
 		Every,
 		EveryLegacy,
+		SortByNumber,
 	}
 }

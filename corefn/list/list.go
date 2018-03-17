@@ -613,3 +613,61 @@ every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 wit
 		return nil, errors.New("Missing or invalid binding")
 	},
 }
+
+var SortByNumber = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "sortByNumber",
+		IsVariadic: false,
+		Arguments: []token.Kind{
+			token.List,
+			token.Token,
+		},
+		Returns:     token.List,
+		Description: "",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		list := args[0].Children
+		toEval := args[1].Children[1]
+		bindingName := args[1].Children[0].String
+
+		type SortByItem struct {
+			Num  *decimal.Big
+			Item *token.TaToken
+		}
+
+		structlist := make([]*SortByItem, len(list))
+		scope := interp.NewScope()
+
+		for i := 0; i < len(list); i++ {
+			scope.Set(bindingName, list[i])
+			var result token.TaToken
+			token.Copy(&result, toEval)
+			if err := scope.Evaluate(&result); err != nil {
+				return nil, err
+			}
+			structlist[i] = &SortByItem{result.Decimal, list[i]}
+		}
+
+		// sort structList by Num
+		sort.SliceStable(structlist, func(i, j int) bool {
+			comparison := structlist[i].Num.Cmp(structlist[j].Num)
+			// admit a third parameter: descending (boolean)
+			if comparison <= -1 {
+				return true
+			}
+			return false
+		})
+
+		// build the list to return
+		final := token.NewList()
+		final.Children = make([]*token.TaToken, len(list))
+		for i := 0; i < len(structlist); i++ {
+			final.Children[i] = structlist[i].Item
+		}
+
+		return final, nil
+	},
+}
