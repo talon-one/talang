@@ -619,11 +619,12 @@ var SortByNumber = interpreter.TaFunction{
 		Name:       "sortByNumber",
 		IsVariadic: false,
 		Arguments: []token.Kind{
-			token.List,
-			token.Token,
+			token.List,  // target
+			token.Token, // block
+			token.Bool,  // descending
 		},
-		Returns:     token.List,
-		Description: "",
+		Returns: token.List,
+
 		Example: `
 
 `,
@@ -653,14 +654,19 @@ var SortByNumber = interpreter.TaFunction{
 			structlist[i] = &SortByItem{result.Decimal, list[i]}
 		}
 
-		// sort structList by Num
 		sort.SliceStable(structlist, func(i, j int) bool {
+			var res bool
 			comparison := structlist[i].Num.Cmp(structlist[j].Num)
-			// admit a third parameter: descending (boolean)
 			if comparison <= -1 {
-				return true
+				res = true
+			} else {
+				res = false
 			}
-			return false
+
+			if args[2].Bool {
+				return !res
+			}
+			return res
 		})
 
 		for i := 0; i < len(structlist); i++ {

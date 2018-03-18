@@ -644,7 +644,7 @@ func TestEveryLegacy(t *testing.T) {
 func TestSortByNumber(t *testing.T) {
 	helpers.RunTests(t,
 		helpers.Test{
-			`sortByNumber (. List) ((Item) (. Item Price))`,
+			`sortByNumber (. List) ((Item) (. Item Price)) false`,
 			token.NewMap(map[string]*token.TaToken{
 				"List": token.NewList(
 					token.NewMap(map[string]*token.TaToken{
@@ -668,7 +668,7 @@ func TestSortByNumber(t *testing.T) {
 				}),
 			),
 		}, helpers.Test{
-			`sortByNumber (. List) ((Item) (. Item Price))`,
+			`sortByNumber (. List) ((Item) (. Item Price)) true`,
 			token.NewMap(map[string]*token.TaToken{
 				"List": token.NewList(
 					token.NewMap(map[string]*token.TaToken{
@@ -683,12 +683,12 @@ func TestSortByNumber(t *testing.T) {
 			}),
 			token.NewList(
 				token.NewMap(map[string]*token.TaToken{
-					"Name":  token.NewString("Gertrude"),
-					"Price": token.NewDecimalFromInt(11),
-				}),
-				token.NewMap(map[string]*token.TaToken{
 					"Name":  token.NewString("Alex"),
 					"Price": token.NewDecimalFromInt(26),
+				}),
+				token.NewMap(map[string]*token.TaToken{
+					"Name":  token.NewString("Gertrude"),
+					"Price": token.NewDecimalFromInt(11),
 				}),
 			),
 		},
