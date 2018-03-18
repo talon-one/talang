@@ -630,7 +630,7 @@ var SortByNumber = interpreter.TaFunction{
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		list := args[0].Children
-		toEval := args[1].Children[1]
+		block := args[1].Children[1]
 		bindingName := args[1].Children[0].String
 
 		type SortByItem struct {
@@ -639,12 +639,14 @@ var SortByNumber = interpreter.TaFunction{
 		}
 
 		structlist := make([]*SortByItem, len(list))
+		sorted := token.NewList()
+		sorted.Children = make([]*token.TaToken, len(list))
 		scope := interp.NewScope()
 
 		for i := 0; i < len(list); i++ {
-			scope.Set(bindingName, list[i])
 			var result token.TaToken
-			token.Copy(&result, toEval)
+			scope.Set(bindingName, list[i])
+			token.Copy(&result, block)
 			if err := scope.Evaluate(&result); err != nil {
 				return nil, err
 			}
@@ -661,13 +663,10 @@ var SortByNumber = interpreter.TaFunction{
 			return false
 		})
 
-		// build the list to return
-		final := token.NewList()
-		final.Children = make([]*token.TaToken, len(list))
 		for i := 0; i < len(structlist); i++ {
-			final.Children[i] = structlist[i].Item
+			sorted.Children[i] = structlist[i].Item
 		}
 
-		return final, nil
+		return sorted, nil
 	},
 }
