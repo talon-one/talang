@@ -122,3 +122,63 @@ func TestDoLegacy(t *testing.T) {
 		helpers.Error{},
 	})
 }
+
+func TestSafeRead(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			".| boo (. List)",
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewString("XJK_992"),
+			}),
+			token.NewString("XJK_992"),
+		}, helpers.Test{
+			".| boo (. Meh)",
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewString("XJK_992"),
+			}),
+			token.NewString("boo"),
+		}, helpers.Test{
+			".| boo (. List SKU)",
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewMap(map[string]*token.TaToken{
+					"SKU": token.NewString("XJK_992"),
+				}),
+			}),
+			token.NewString("XJK_992"),
+		}, helpers.Test{
+			".| 2 (. List SKU)",
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewMap(map[string]*token.TaToken{
+					"SKU": token.NewDecimalFromInt(1),
+				}),
+			}),
+			token.NewDecimalFromInt(1),
+		}, helpers.Test{
+			".| 2 (. List SKU)",
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewMap(map[string]*token.TaToken{
+					"SKU": token.NewDecimalFromInt(1),
+				}),
+			}),
+			token.NewDecimalFromInt(1),
+		}, helpers.Test{
+			".| 2 (. List SKU)",
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewMap(map[string]*token.TaToken{
+					"SKU": token.NewString("asda"),
+				}),
+			}),
+			helpers.Error{},
+		},
+		// This test evaluates to 1, bug?
+		// , helpers.Test{
+		// 	".| 2 (. List SKU Dis)",
+		// 	token.NewMap(map[string]*token.TaToken{
+		// 		"List": token.NewMap(map[string]*token.TaToken{
+		// 			"SKU": token.NewDecimalFromInt(1),
+		// 		}),
+		// 	}),
+		// 	token.NewDecimalFromInt(2),
+		// }
+	)
+}

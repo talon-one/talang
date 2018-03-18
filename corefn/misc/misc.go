@@ -3,7 +3,7 @@
 package misc
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/token"
@@ -136,5 +136,33 @@ do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
 			return Do.Func(interp, args[0], args[1].Children[0], args[1].Children[1])
 		}
 		return nil, errors.New("Missing or invalid binding")
+	},
+}
+
+var SafeRead = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       ".|",
+		IsVariadic: false,
+		Arguments: []token.Kind{
+			token.Any,
+			token.Token, // binding
+		},
+		Returns:     token.Any,
+		Description: "Safe read a binding",
+		Example: `
+.| boo (. List)                                                  ; returns "XJK_992" (assuming $List = "XJK_992")
+.| boo (. Meh)                                                   ; returns "boo" (assuming $Meh is not set)
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		blockToRun := args[1]
+		fallback := args[0]
+		if err := interp.Evaluate(blockToRun); err != nil {
+			return fallback, nil
+		}
+		if blockToRun.Kind != fallback.Kind {
+			return nil, errors.Errorf("Cannot reconciliate type %s with %s", fallback.Kind.String(), blockToRun.Kind.String())
+		}
+		return blockToRun, nil
 	},
 }

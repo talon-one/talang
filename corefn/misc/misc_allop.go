@@ -10,5 +10,6 @@ func AllOperations() []interpreter.TaFunction {
 		Catch,
 		Do,
 		DoLegacy,
+		SafeRead,
 	}
 }
