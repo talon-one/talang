@@ -712,3 +712,75 @@ func TestSortByNumber(t *testing.T) {
 		},
 	)
 }
+
+func TestSortByString(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`sortByString (. List) ((Item) (. Item Name)) false`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Gertrude"),
+						"Price": token.NewDecimalFromInt(26),
+					}),
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Alex"),
+						"Price": token.NewDecimalFromInt(11),
+					}),
+				),
+			}),
+			token.NewList(
+				token.NewMap(map[string]*token.TaToken{
+					"Name":  token.NewString("Alex"),
+					"Price": token.NewDecimalFromInt(11),
+				}),
+				token.NewMap(map[string]*token.TaToken{
+					"Name":  token.NewString("Gertrude"),
+					"Price": token.NewDecimalFromInt(26),
+				}),
+			),
+		}, helpers.Test{
+			`sortByString (. List) ((Item) (. Item Name)) true`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Alex"),
+						"Price": token.NewDecimalFromInt(26),
+					}),
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Gertrude"),
+						"Price": token.NewDecimalFromInt(11),
+					}),
+				),
+			}),
+			token.NewList(
+				token.NewMap(map[string]*token.TaToken{
+					"Name":  token.NewString("Gertrude"),
+					"Price": token.NewDecimalFromInt(11),
+				}),
+				token.NewMap(map[string]*token.TaToken{
+					"Name":  token.NewString("Alex"),
+					"Price": token.NewDecimalFromInt(26),
+				}),
+			),
+		}, helpers.Test{
+			`sortByString (list "b" "a" "z" "t") ((Item) (. Item)) false`,
+			nil,
+			token.NewList(
+				token.NewString("a"),
+				token.NewString("b"),
+				token.NewString("t"),
+				token.NewString("z"),
+			),
+		}, helpers.Test{
+			`sortByString (list "b" "a" "z" "t") ((Item) (. Item)) true`,
+			nil,
+			token.NewList(
+				token.NewString("z"),
+				token.NewString("t"),
+				token.NewString("b"),
+				token.NewString("a"),
+			),
+		},
+	)
+}

@@ -670,3 +670,60 @@ sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2
 		return sorted, nil
 	},
 }
+
+var SortByString = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "sortByString",
+		IsVariadic: false,
+		Arguments: []token.Kind{
+			token.List,  // target
+			token.Token, // block
+			token.Bool,  // descending
+		},
+		Returns:     token.List,
+		Description: "Sort a list alphabetically",
+		Example: `
+sortByString (list "b" "a" "z" "t") ((Item) (. Item)) true       ; returns [a, b, t, z]
+sortByString (list "b" "a" "z" "t") ((Item) (. Item)) false      ; returns [z, t, b, a]
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		list := args[0].Children
+		block := args[1].Children[1]
+		bindingName := args[1].Children[0].String
+
+		type SortByItem struct {
+			Word string
+			Item *token.TaToken
+		}
+
+		structlist := make([]*SortByItem, len(list))
+		sorted := token.NewList()
+		sorted.Children = make([]*token.TaToken, len(list))
+		scope := interp.NewScope()
+
+		for i := 0; i < len(list); i++ {
+			var result token.TaToken
+			scope.Set(bindingName, list[i])
+			token.Copy(&result, block)
+			if err := scope.Evaluate(&result); err != nil {
+				return nil, err
+			}
+			structlist[i] = &SortByItem{result.String, list[i]}
+		}
+
+		sort.SliceStable(structlist, func(i, j int) bool {
+			comparedAscending := structlist[i].Word < structlist[j].Word
+			if args[2].Bool {
+				return !comparedAscending
+			}
+			return comparedAscending
+		})
+
+		for i := 0; i < len(structlist); i++ {
+			sorted.Children[i] = structlist[i].Item
+		}
+
+		return sorted, nil
+	},
+}

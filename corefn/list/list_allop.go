@@ -27,5 +27,6 @@ func AllOperations() []interpreter.TaFunction {
 		Every,
 		EveryLegacy,
 		SortByNumber,
+		SortByString,
 	}
 }
