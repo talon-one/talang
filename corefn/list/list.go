@@ -656,18 +656,11 @@ sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2
 		}
 
 		sort.SliceStable(structlist, func(i, j int) bool {
-			var res bool
-			comparison := structlist[i].Num.Cmp(structlist[j].Num)
-			if comparison <= -1 {
-				res = true
-			} else {
-				res = false
-			}
-
+			expected := -1
 			if args[2].Bool {
-				return !res
+				expected = 1
 			}
-			return res
+			return structlist[i].Num.Cmp(structlist[j].Num) == expected
 		})
 
 		for i := 0; i < len(structlist); i++ {
