@@ -26,18 +26,18 @@ Multiplies the arguments
 (* 1 2 3)                                                        ; returns 6
 ```
 
-### +(String, String, String...)String
-Concat strings
-```lisp
-(+ "Hello" " " "World")                                          ; returns "Hello World"
-(+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
-```
-
 ### +(Decimal, Decimal, Decimal...)Decimal
 Adds the arguments
 ```lisp
 (+ 1 1)                                                          ; returns 2
 (+ 1 2 3)                                                        ; returns 6
+```
+
+### +(String, String, String...)String
+Concat strings
+```lisp
+(+ "Hello" " " "World")                                          ; returns "Hello World"
+(+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
 ```
 
 ### -(Decimal, Decimal, Decimal...)Decimal
@@ -61,14 +61,6 @@ Divides the arguments
 (/ 1 2 3)                                                        ; returns 0.166666
 ```
 
-### <(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less then the following
-```lisp
-(< 0 1)                                                          ; returns true
-(< 1 1)                                                          ; returns false
-(< 2 1)                                                          ; returns false
-```
-
 ### <(Time, Time, Time...)Bool
 Tests if the first argument is less then the following
 ```lisp
@@ -77,12 +69,12 @@ Tests if the first argument is less then the following
 (< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 ```
 
-### <=(Time, Time, Time...)Bool
-Tests if the first argument is less or equal then the following
+### <(Decimal, Decimal, Decimal...)Bool
+Tests if the first argument is less then the following
 ```lisp
-(<= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
-(<= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
-(<= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
+(< 0 1)                                                          ; returns true
+(< 1 1)                                                          ; returns false
+(< 2 1)                                                          ; returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -91,6 +83,14 @@ Tests if the first argument is less or equal then the following
 (<= 0 1)                                                         ; returns true
 (<= 1 1)                                                         ; returns true
 (<= 2 1)                                                         ; returns false
+```
+
+### <=(Time, Time, Time...)Bool
+Tests if the first argument is less or equal then the following
+```lisp
+(<= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+(<= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+(<= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
 ```
 
 ### =(Atom, Atom, Atom...)Bool
@@ -105,14 +105,6 @@ Tests if the arguments are the same
 (= "Hello" "Hello" "Bye")                                        ; returns false
 ```
 
-### >(Time, Time, Time...)Bool
-Tests if the first argument is greather then the following
-```lisp
-(> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
-(> 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
-(> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
-```
-
 ### >(Decimal, Decimal, Decimal...)Bool
 Tests if the first argument is greather then the following
 ```lisp
@@ -121,12 +113,12 @@ Tests if the first argument is greather then the following
 (> 2 1)                                                          ; returns true
 ```
 
-### >=(Time, Time, Time...)Bool
-Tests if the first argument is greather or equal then the following
+### >(Time, Time, Time...)Bool
+Tests if the first argument is greather then the following
 ```lisp
-(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
-(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
-(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+(> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
+(> 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
+(> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
 ```
 
 ### >=(Decimal, Decimal, Decimal...)Bool
@@ -135,6 +127,14 @@ Tests if the first argument is greather or equal then the following
 (>= 0 1)                                                         ; returns false
 (>= 1 1)                                                         ; returns true
 (>= 2 1)                                                         ; returns true
+```
+
+### >=(Time, Time, Time...)Bool
+Tests if the first argument is greather or equal then the following
+```lisp
+(>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
+(>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+(>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
 ```
 
 ### addDuration(Time, Decimal, String)Time
@@ -512,6 +512,13 @@ Sort a list ascending, set the second argument to true for descending order
 ```lisp
 (sort  (list "World" "Universe"))                                ; returns a list containing "Universe" and "World"
 (sort  (list "World" "Universe") true)                           ; returns a list containing "World" and "Universe"
+```
+
+### sortByNumber(List, Token, Bool)List
+Sort a list numerically by value
+```lisp
+sortByNumber (list 2 4 3 1) ((Item) (. Item)) true               ; returns [4, 3, 2, 1]
+sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2, 3, 4]
 ```
 
 ### split(String, String)List
