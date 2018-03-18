@@ -277,7 +277,7 @@ func isDecimal(s string) bool {
 	return true
 }
 
-// Copy creates an copy of the block
+// Copy creates a copy of the block
 func Copy(dst *TaToken, src *TaToken) {
 	if src == nil {
 		return
