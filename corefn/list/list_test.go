@@ -691,6 +691,24 @@ func TestSortByNumber(t *testing.T) {
 					"Price": token.NewDecimalFromInt(11),
 				}),
 			),
+		}, helpers.Test{
+			`sortByNumber (list 2 4 3 1) ((Item) (. Item)) true`,
+			nil,
+			token.NewList(
+				token.NewDecimalFromInt(4),
+				token.NewDecimalFromInt(3),
+				token.NewDecimalFromInt(2),
+				token.NewDecimalFromInt(1),
+			),
+		}, helpers.Test{
+			`sortByNumber (list 2 4 3 1) ((Item) (. Item)) false`,
+			nil,
+			token.NewList(
+				token.NewDecimalFromInt(1),
+				token.NewDecimalFromInt(2),
+				token.NewDecimalFromInt(3),
+				token.NewDecimalFromInt(4),
+			),
 		},
 	)
 }

@@ -623,10 +623,11 @@ var SortByNumber = interpreter.TaFunction{
 			token.Token, // block
 			token.Bool,  // descending
 		},
-		Returns: token.List,
-
+		Returns:     token.List,
+		Description: "Sort a list numerically by value",
 		Example: `
-
+sortByNumber (list 2 4 3 1) ((Item) (. Item)) true               ; returns [4, 3, 2, 1]
+sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2, 3, 4]
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
