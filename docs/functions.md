@@ -324,7 +324,8 @@ exists (list hello world) ((Item) (= (. Item) "hey!!"))          ; returns false
 ### filter(List, Token)List
 Create a new list containing items from the input list for which the block evaluates to true
 ```lisp
-
+filter (list 1 4 7 12 24 48) ((x) (> (. x) 10))                                                                                    ; returns "[12 24 48]"
+filter (list "Sasquatch" "Front squats" "Caramel" "Cart items") ((x) (contains (. x) "squat"))                                     ; returns "["Sasquatch" "Front squats"]"
 ```
 
 ### firstName(String)String
