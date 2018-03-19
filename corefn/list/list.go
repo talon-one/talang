@@ -478,7 +478,7 @@ exists (list hello world) Item (= (. Item) "hey!!")              ; returns false
 				return nil, err
 			}
 			if !result.IsBool() {
-				return nil, errors.Errorf("Invalid type in block, expected type: BoolKind got %s", result.Kind.String())
+				return nil, errors.Errorf("Invalid type in block evaluation, expected type: Boolean got %s", result.Kind.String())
 			}
 			if result.Bool == true {
 				return token.NewBool(true), nil
@@ -544,7 +544,7 @@ sum (. List) Item (. Item Price)                                 ; returns 4 Wit
 				return nil, err
 			}
 			if !result.IsDecimal() {
-				return nil, errors.Errorf("Invalid type in block, expected type: DecimalKind got %s", result.Kind.String())
+				return nil, errors.Errorf("Invalid type in block evaluation, expected type: DecimalKind got %s", result.Kind.String())
 			}
 			accumulator = accumulator.Add(accumulator, result.Decimal)
 		}
@@ -758,7 +758,7 @@ filter (list "Sasquatch" "Front squats" "Caramel" "Cart items") ((x) (contains (
 				return nil, err
 			}
 			if !result.IsBool() {
-				return nil, errors.Errorf("Expected boolean predicate, received %s", result.Kind.String())
+				return nil, errors.Errorf("Invalid type in block evaluation, expected type: Boolean got %s", result.Kind.String())
 			}
 			if result.Bool {
 				passed.Children = append(passed.Children, list[i])
