@@ -28,5 +28,6 @@ func AllOperations() []interpreter.TaFunction {
 		EveryLegacy,
 		SortByNumber,
 		SortByString,
+		Filter,
 	}
 }

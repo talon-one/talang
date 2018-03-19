@@ -26,18 +26,18 @@ Multiplies the arguments
 (* 1 2 3)                                                        ; returns 6
 ```
 
-### +(Decimal, Decimal, Decimal...)Decimal
-Adds the arguments
-```lisp
-(+ 1 1)                                                          ; returns 2
-(+ 1 2 3)                                                        ; returns 6
-```
-
 ### +(String, String, String...)String
 Concat strings
 ```lisp
 (+ "Hello" " " "World")                                          ; returns "Hello World"
 (+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
+```
+
+### +(Decimal, Decimal, Decimal...)Decimal
+Adds the arguments
+```lisp
+(+ 1 1)                                                          ; returns 2
+(+ 1 2 3)                                                        ; returns 6
 ```
 
 ### -(Decimal, Decimal, Decimal...)Decimal
@@ -54,19 +54,18 @@ Access a variable in the binding
 (. Key2 SubKey1)                                                 ; returns the data assigned to SubKey1 in the Map Key2
 ```
 
+### .|(Any, Token)Any
+Safe read a binding
+```lisp
+.| boo (. List)                                                  ; returns "XJK_992" (assuming $List = "XJK_992")
+.| boo (. Meh)                                                   ; returns "boo" (assuming $Meh is not set)
+```
+
 ### /(Decimal, Decimal, Decimal...)Decimal
 Divides the arguments
 ```lisp
 (/ 1 2)                                                          ; returns 0.5
 (/ 1 2 3)                                                        ; returns 0.166666
-```
-
-### <(Time, Time, Time...)Bool
-Tests if the first argument is less then the following
-```lisp
-(< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
-(< 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
-(< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 ```
 
 ### <(Decimal, Decimal, Decimal...)Bool
@@ -75,6 +74,14 @@ Tests if the first argument is less then the following
 (< 0 1)                                                          ; returns true
 (< 1 1)                                                          ; returns false
 (< 2 1)                                                          ; returns false
+```
+
+### <(Time, Time, Time...)Bool
+Tests if the first argument is less then the following
+```lisp
+(< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
+(< 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
+(< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 ```
 
 ### <=(Decimal, Decimal, Decimal...)Bool
@@ -173,16 +180,6 @@ Checks whether time A is before B
 (before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "true"
 ```
 
-### between(Time, Time, Time, Time...)Bool
-Tests if the arguments are between the second last and the last argument
-```lisp
-(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
-(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
-(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
-(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
-(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
-```
-
 ### between(Decimal, Decimal, Decimal, Decimal...)Bool
 Tests if the arguments are between the second last and the last argument
 ```lisp
@@ -191,6 +188,16 @@ Tests if the arguments are between the second last and the last argument
 (between 0 0 2)                                                  ; returns false
 (between 2 0 2)                                                  ; returns false
 (between 1 4 0 3)                                                ; returns false, (1 is between 0 and 3, 4 is not)
+```
+
+### between(Time, Time, Time, Time...)Bool
+Tests if the arguments are between the second last and the last argument
+```lisp
+(between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
+(between 2007-01-02T00:00:00Z 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns true, (2007-01-02T00:00:00Z and 2008-01-02T00:00:00Z are between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z)
+(between 2006-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
+(between 2008-01-02T00:00:00Z 2006-01-02T00:00:00Z 2008-01-02T00:00:00Z)                        ; returns false
+(between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
 ### betweenTimes(Time, Time, Time)Bool
@@ -312,6 +319,12 @@ Test if any item in a list matches a predicate
 ```lisp
 exists (list hello world) ((Item) (= (. Item) "hello"))          ; returns true
 exists (list hello world) ((Item) (= (. Item) "hey!!"))          ; returns false
+```
+
+### filter(List, Token)List
+Create a new list containing items from the input list for which the block evaluates to true
+```lisp
+
 ```
 
 ### firstName(String)String
@@ -519,6 +532,13 @@ Sort a list numerically by value
 ```lisp
 sortByNumber (list 2 4 3 1) ((Item) (. Item)) true               ; returns [4, 3, 2, 1]
 sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2, 3, 4]
+```
+
+### sortByString(List, Token, Bool)List
+Sort a list alphabetically
+```lisp
+sortByString (list "b" "a" "z" "t") ((Item) (. Item)) true       ; returns [a, b, t, z]
+sortByString (list "b" "a" "z" "t") ((Item) (. Item)) false      ; returns [z, t, b, a]
 ```
 
 ### split(String, String)List

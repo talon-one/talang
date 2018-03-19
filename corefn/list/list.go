@@ -727,3 +727,43 @@ sortByString (list "b" "a" "z" "t") ((Item) (. Item)) false      ; returns [z, t
 		return sorted, nil
 	},
 }
+
+var Filter = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name:       "filter",
+		IsVariadic: false,
+		Arguments: []token.Kind{
+			token.List,  // list
+			token.Token, // block
+		},
+		Returns:     token.List,
+		Description: "Create a new list containing items from the input list for which the block evaluates to true",
+		Example: `
+
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		list := args[0].Children
+		block := args[1].Children[1]
+		bindingName := args[1].Children[0].String
+		passed := token.NewList()
+		scope := interp.NewScope()
+
+		for i := 0; i < len(list); i++ {
+			var result token.TaToken
+			scope.Set(bindingName, list[i])
+			token.Copy(&result, block)
+			if err := scope.Evaluate(&result); err != nil {
+				return nil, err
+			}
+			if !result.IsBool() {
+				return nil, errors.Errorf("Expected boolean predicate, received %s", result.Kind.String())
+			}
+			if result.Bool {
+				passed.Children = append(passed.Children, list[i])
+			}
+		}
+
+		return passed, nil
+	},
+}

@@ -784,3 +784,69 @@ func TestSortByString(t *testing.T) {
 		},
 	)
 }
+
+func TestFilter(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			`count (filter (. List) ((x) (> (. x Price) 20)))`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Gertrude"),
+						"Price": token.NewDecimalFromInt(26),
+					}),
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Alex"),
+						"Price": token.NewDecimalFromInt(11),
+					}),
+				),
+			}),
+			token.NewDecimalFromInt(1),
+		}, helpers.Test{
+			`count (filter (. List) ((x) (+ (. x Price) 20)))`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Gertrude"),
+						"Price": token.NewDecimalFromInt(26),
+					}),
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Alex"),
+						"Price": token.NewDecimalFromInt(11),
+					}),
+				),
+			}),
+			helpers.Error{},
+		}, helpers.Test{
+			`count (filter (. List) ((x) (panic)))`,
+			token.NewMap(map[string]*token.TaToken{
+				"List": token.NewList(
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Gertrude"),
+						"Price": token.NewDecimalFromInt(26),
+					}),
+					token.NewMap(map[string]*token.TaToken{
+						"Name":  token.NewString("Alex"),
+						"Price": token.NewDecimalFromInt(11),
+					}),
+				),
+			}),
+			helpers.Error{},
+		}, helpers.Test{
+			`filter (list 1 4 7 12 24 48) ((x) (> (. x) 10))`,
+			nil,
+			token.NewList(
+				token.NewDecimalFromInt(12),
+				token.NewDecimalFromInt(24),
+				token.NewDecimalFromInt(48),
+			),
+		}, helpers.Test{
+			`filter (list "Sasquatch" "Front squats" "Caramel" "Cart items") ((x) (contains (. x) "squat"))`,
+			nil,
+			token.NewList(
+				token.NewString("Sasquatch"),
+				token.NewString("Front squats"),
+			),
+		},
+	)
+}
