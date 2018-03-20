@@ -62,7 +62,7 @@ var Contains = interpreter.TaFunction{
 			token.String,
 			token.String,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Returns wether the first argument exists in the following arguments",
 		Example: `
 (contains "Hello" "Hello World")                                 ; returns true
@@ -90,7 +90,7 @@ var NotContains = interpreter.TaFunction{
 			token.String,
 			token.String,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Returns wether the first argument does not exist in the following arguments",
 		Example: `
 (notContains "Hello" "Hello World")                              ; returns false
@@ -118,7 +118,7 @@ var StartsWith = interpreter.TaFunction{
 			token.String,
 			token.String,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Returns wether the first argument is the prefix of the following arguments",
 		Example: `
 (startsWith "Hello" "Hello World")                               ; returns true
@@ -145,7 +145,7 @@ var EndsWith = interpreter.TaFunction{
 			token.String,
 			token.String,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Returns wether the first argument is the suffix of the following arguments",
 		Example: `
 (endsWith "World" "Hello World")                                 ; returns true
@@ -173,7 +173,7 @@ var Regexp = interpreter.TaFunction{
 			token.String,
 			token.String,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Returns wether the first argument (regex) matches all of the following arguments",
 		Example: `
 (~ "[a-z\s]*" "Hello World")                                     ; returns true

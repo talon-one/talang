@@ -23,7 +23,7 @@ var Equal = interpreter.TaFunction{
 			token.Atom,
 			token.Atom,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the arguments are the same",
 		Example: `
 (= 1 1)                                                          ; compares decimals, returns true
@@ -54,7 +54,7 @@ var NotEqual = interpreter.TaFunction{
 			token.Atom,
 			token.Atom,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the arguments are not the same",
 		Example: `
 (!= 1 1)                                                         ; compares decimals, returns false
@@ -85,7 +85,7 @@ var GreaterThanDecimal = interpreter.TaFunction{
 			token.Decimal,
 			token.Decimal,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is greather then the following",
 		Example: `
 (> 0 1)                                                          ; returns false
@@ -113,7 +113,7 @@ var GreaterThanTime = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is greather then the following",
 		Example: `
 (> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
@@ -141,7 +141,7 @@ var LessThanDecimal = interpreter.TaFunction{
 			token.Decimal,
 			token.Decimal,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is less then the following",
 		Example: `
 (< 0 1)                                                          ; returns true
@@ -169,7 +169,7 @@ var LessThanTime = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is less then the following",
 		Example: `
 (< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
@@ -197,7 +197,7 @@ var GreaterThanOrEqualDecimal = interpreter.TaFunction{
 			token.Decimal,
 			token.Decimal,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is greather or equal then the following",
 		Example: `
 (>= 0 1)                                                         ; returns false
@@ -225,7 +225,7 @@ var GreaterThanOrEqualTime = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is greather or equal then the following",
 		Example: `
 (>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
@@ -253,7 +253,7 @@ var LessThanOrEqualDecimal = interpreter.TaFunction{
 			token.Decimal,
 			token.Decimal,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is less or equal then the following",
 		Example: `
 (<= 0 1)                                                         ; returns true
@@ -281,7 +281,7 @@ var LessThanOrEqualTime = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the first argument is less or equal then the following",
 		Example: `
 (<= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
@@ -310,7 +310,7 @@ var BetweenDecimal = interpreter.TaFunction{
 			token.Decimal,
 			token.Decimal,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the arguments are between the second last and the last argument",
 		Example: `
 (between 1 0 3)                                                  ; returns true, (1 is between 0 and 3)
@@ -347,7 +347,7 @@ var BetweenTime = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Tests if the arguments are between the second last and the last argument",
 		Example: `
 (between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
@@ -381,7 +381,7 @@ var Or = interpreter.TaFunction{
 		Arguments: []token.Kind{
 			token.Atom | token.Collection,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Evaluates whether at least one predicate is true",
 		Example: `
 (or false false false true false)                                ; returns true
@@ -402,7 +402,7 @@ var Or = interpreter.TaFunction{
 			}
 
 			// post-eval checks.
-			if args[i].Kind != token.Bool {
+			if args[i].Kind != token.Boolean {
 				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
 			}
 			if args[i].Bool == true || args[i].Kind == token.Collection {
@@ -420,7 +420,7 @@ var And = interpreter.TaFunction{
 		Arguments: []token.Kind{
 			token.Atom | token.Collection,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Evaluates whether a series of predicates are all true",
 		Example: `
 (and false (> 2 1))                                              ; returns true
@@ -442,7 +442,7 @@ var And = interpreter.TaFunction{
 			}
 
 			// post-eval checks
-			if args[i].Kind != token.Bool {
+			if args[i].Kind != token.Boolean {
 				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
 			}
 			if args[i].Bool == false {

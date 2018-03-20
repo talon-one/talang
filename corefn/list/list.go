@@ -219,7 +219,7 @@ var Sort = interpreter.TaFunction{
 		IsVariadic: true,
 		Arguments: []token.Kind{
 			token.List,
-			token.Bool,
+			token.Boolean,
 		},
 		Returns:     token.List,
 		Description: "Sort a list ascending, set the second argument to true for descending order",
@@ -404,7 +404,7 @@ var IsEmpty = interpreter.TaFunction{
 		Arguments: []token.Kind{
 			token.List,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Check if a list is empty",
 		Example: `
 isEmpty (list hello world)                                       ; returns "false"
@@ -454,7 +454,7 @@ var Exists = interpreter.TaFunction{
 			token.String,
 			token.Token,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Test if any item in a list matches a predicate",
 		Example: `
 exists (list hello world) Item (= (. Item) "hello")              ; returns true
@@ -496,7 +496,7 @@ var ExistsLegacy = interpreter.TaFunction{
 			token.List,
 			token.Token,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Test if any item in a list matches a predicate",
 		Example: `
 exists (list hello world) ((Item) (= (. Item) "hello"))          ; returns true
@@ -561,7 +561,7 @@ var Every = interpreter.TaFunction{
 			token.String,
 			token.Token,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Test if every item in a list matches a predicate",
 		Example: `
 every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
@@ -600,7 +600,7 @@ var EveryLegacy = interpreter.TaFunction{
 			token.List,
 			token.Token,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Test if every item in a list matches a predicate",
 		Example: `
 every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
@@ -619,9 +619,9 @@ var SortByNumber = interpreter.TaFunction{
 		Name:       "sortByNumber",
 		IsVariadic: false,
 		Arguments: []token.Kind{
-			token.List,  // target
-			token.Token, // block
-			token.Bool,  // descending
+			token.List,    // target
+			token.Token,   // block
+			token.Boolean, // descending
 		},
 		Returns:     token.List,
 		Description: "Sort a list numerically by value",
@@ -676,9 +676,9 @@ var SortByString = interpreter.TaFunction{
 		Name:       "sortByString",
 		IsVariadic: false,
 		Arguments: []token.Kind{
-			token.List,  // target
-			token.Token, // block
-			token.Bool,  // descending
+			token.List,    // target
+			token.Token,   // block
+			token.Boolean, // descending
 		},
 		Returns:     token.List,
 		Description: "Sort a list alphabetically",

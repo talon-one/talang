@@ -78,7 +78,7 @@ func NewDecimalFromFloat(i float64) *TaToken {
 func NewBool(boolean bool) *TaToken {
 	var b TaToken
 	b.Bool = boolean
-	b.Kind = Bool
+	b.Kind = Boolean
 	if boolean {
 		b.String = "true"
 	} else {
@@ -146,7 +146,7 @@ func (b *TaToken) IsDecimal() bool {
 }
 
 func (b *TaToken) IsBool() bool {
-	return b.Kind == Bool
+	return b.Kind == Boolean
 }
 
 func (b *TaToken) IsBlock() bool {
@@ -216,11 +216,11 @@ func (b *TaToken) initValue(text string) {
 		// is it a bool?
 		if strings.EqualFold("true", text) {
 			b.Bool = true
-			b.Kind = Bool
+			b.Kind = Boolean
 			return
 		} else if strings.EqualFold("false", text) {
 			b.Bool = false
-			b.Kind = Bool
+			b.Kind = Boolean
 			return
 		}
 
@@ -289,7 +289,7 @@ func Copy(dst *TaToken, src *TaToken) {
 	switch dst.Kind {
 	case Decimal:
 		dst.Decimal = src.Decimal
-	case Bool:
+	case Boolean:
 		dst.Bool = src.Bool
 	case Time:
 		dst.Time = src.Time
@@ -356,7 +356,7 @@ func (b *TaToken) Equal(a *TaToken) bool {
 		return a.Decimal.Cmp(b.Decimal) == 0
 	case String:
 		return a.String == b.String
-	case Bool:
+	case Boolean:
 		return a.Bool == b.Bool
 	case Time:
 		return a.Time.Equal(b.Time)

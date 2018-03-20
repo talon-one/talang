@@ -13,7 +13,7 @@ func TestMatchesArguments(t *testing.T) {
 			Arguments: []token.Kind{
 				token.String,
 				token.Decimal,
-				token.Bool,
+				token.Boolean,
 			},
 			IsVariadic: false,
 		}
@@ -21,7 +21,7 @@ func TestMatchesArguments(t *testing.T) {
 		require.Equal(t, true, sig.MatchesArguments([]token.Kind{
 			token.String,
 			token.Decimal,
-			token.Bool,
+			token.Boolean,
 		}))
 	})
 
@@ -30,7 +30,7 @@ func TestMatchesArguments(t *testing.T) {
 			Arguments: []token.Kind{
 				token.String,
 				token.String,
-				token.Bool,
+				token.Boolean,
 			},
 			IsVariadic: false,
 		}
@@ -38,7 +38,7 @@ func TestMatchesArguments(t *testing.T) {
 		require.Equal(t, false, sig.MatchesArguments([]token.Kind{
 			token.String,
 			token.Decimal,
-			token.Bool,
+			token.Boolean,
 		}))
 	})
 
@@ -46,7 +46,7 @@ func TestMatchesArguments(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []token.Kind{
 				token.String,
-				token.Bool,
+				token.Boolean,
 			},
 			IsVariadic: false,
 		}
@@ -54,7 +54,7 @@ func TestMatchesArguments(t *testing.T) {
 		require.Equal(t, false, sig.MatchesArguments([]token.Kind{
 			token.String,
 			token.Decimal,
-			token.Bool,
+			token.Boolean,
 		}))
 	})
 
@@ -62,16 +62,16 @@ func TestMatchesArguments(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []token.Kind{
 				token.String,
-				token.Bool,
+				token.Boolean,
 			},
 			IsVariadic: true,
 		}
 
 		require.Equal(t, true, sig.MatchesArguments([]token.Kind{
 			token.String,
-			token.Bool,
-			token.Bool,
-			token.Bool,
+			token.Boolean,
+			token.Boolean,
+			token.Boolean,
 		}))
 	})
 
@@ -79,15 +79,15 @@ func TestMatchesArguments(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []token.Kind{
 				token.String,
-				token.Bool,
+				token.Boolean,
 			},
 			IsVariadic: true,
 		}
 
 		require.Equal(t, false, sig.MatchesArguments([]token.Kind{
 			token.String,
-			token.Bool,
-			token.Bool,
+			token.Boolean,
+			token.Boolean,
 			token.String,
 		}))
 	})
@@ -96,15 +96,15 @@ func TestMatchesArguments(t *testing.T) {
 		sig := CommonSignature{
 			Arguments: []token.Kind{
 				token.String,
-				token.Bool,
+				token.Boolean,
 			},
 			IsVariadic: true,
 		}
 
 		require.Equal(t, false, sig.MatchesArguments([]token.Kind{
 			token.Decimal,
-			token.Bool,
-			token.Bool,
+			token.Boolean,
+			token.Boolean,
 		}))
 	})
 	t.Run("AnyKind", func(t *testing.T) {
@@ -142,4 +142,19 @@ func TestMatchesArguments(t *testing.T) {
 			token.Token,
 		}))
 	})
+}
+
+func DisableTestSignatureParse(t *testing.T) {
+	sig := NewCommonSignature("plus (Decimal,String...)Boolean")
+
+	require.EqualValues(t, &CommonSignature{
+		Name:      "Plus",
+		lowerName: "plus",
+		Arguments: []token.Kind{
+			token.Decimal,
+			token.String,
+		},
+		IsVariadic: true,
+		Returns:    token.Boolean,
+	}, sig)
 }

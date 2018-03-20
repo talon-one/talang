@@ -32,7 +32,7 @@ var ToString = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "toString",
 		Arguments: []token.Kind{
-			token.Decimal | token.String | token.Bool | token.Time,
+			token.Decimal | token.String | token.Boolean | token.Time,
 		},
 		Returns:     token.String,
 		Description: "Converts the parameter to a string",
@@ -50,9 +50,9 @@ var Not = interpreter.TaFunction{
 	CommonSignature: interpreter.CommonSignature{
 		Name: "not",
 		Arguments: []token.Kind{
-			token.Bool,
+			token.Boolean,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Inverts the argument",
 		Example: `
 (not false)                                                      ; returns "true"

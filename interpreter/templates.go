@@ -154,15 +154,27 @@ func replaceVariable(source *token.TaToken, name string, replace *token.TaToken)
 	return replaced
 }
 
-// func (interp *Interpreter) SetTemplate(name string, str string) error {
-// 	block, err := lexer.Lex(str)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return interp.RegisterTemplate(TaTemplate{
-// 		CommonSignature: CommonSignature{
-// 			Name: name,
-// 		},
-// 		Template: *block,
-// 	})
-// }
+var setTemplateSignature = TaFunction{
+	CommonSignature: CommonSignature{
+		Name: "setTemplate",
+		Arguments: []token.Kind{
+			token.Token,
+			token.Token,
+		},
+		Returns:     token.Any,
+		Description: "Set a template",
+		Example: `
+(setTemplate (plus(Decimal, Decimal)Decimal) (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
+`,
+	},
+	Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		// interp.RegisterTemplate(TaTemplate{
+		// 	CommonSignature: CommonSignature {
+		// 		Name: args[0].String,
+
+		// 	}
+		// 	Template: args[1],
+		// })
+		return nil, nil
+	},
+}

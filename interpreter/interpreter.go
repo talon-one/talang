@@ -340,7 +340,7 @@ func (interp *Interpreter) NewScope() *Interpreter {
 	i.Parent = interp
 	i.Logger = interp.Logger
 	// we need to register binding and template on this scope, because it uses its own scopes
-	i.Functions = []TaFunction{templateSignature, bindingSignature, setBindingSignature}
+	i.Functions = []TaFunction{templateSignature, setTemplateSignature, bindingSignature, setBindingSignature}
 	return &i
 }
 

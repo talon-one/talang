@@ -214,8 +214,8 @@ func TestNewTyped(t *testing.T) {
 		expectedText string
 		input        *TaToken
 	}{
-		{Bool, "false", NewBool(false)},
-		{Bool, "true", NewBool(true)},
+		{Boolean, "false", NewBool(false)},
+		{Boolean, "true", NewBool(true)},
 
 		{String, "Hallo", NewString("Hallo")},
 

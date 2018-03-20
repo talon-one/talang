@@ -85,6 +85,7 @@ func (interp *Interpreter) registerCoreFunctions() error {
 	interp.Functions = append(interp.Functions, setBindingSignature)
 
 	// template
+	interp.Functions = append(interp.Functions, setTemplateSignature)
 	interp.Functions = append(interp.Functions, templateSignature)
 
 	interp.Functions = append(interp.Functions, coreFunctions...)

@@ -46,6 +46,10 @@ func (s *CommonSignature) String() string {
 	return fmt.Sprintf("%s(%s%s)", s.Name, args, variadic)
 }
 
+func NewCommonSignature(s string) *CommonSignature {
+	return nil
+}
+
 func (a *CommonSignature) Equal(b *CommonSignature) bool {
 	if a.IsVariadic != b.IsVariadic {
 		return false

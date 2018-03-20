@@ -26,7 +26,7 @@ var After = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Checks whether time A is after B",
 		Example: `
 (after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "true"
@@ -47,7 +47,7 @@ var Before = interpreter.TaFunction{
 			token.Time,
 			token.Time,
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Checks whether time A is before B",
 		Example: `
 (before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "false"
@@ -69,7 +69,7 @@ var BetweenTimes = interpreter.TaFunction{
 			token.Time, // minTime
 			token.Time, // maxTime
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Evaluates whether a timestamp is between minTime and maxTime",
 		Example: `
 (betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
@@ -275,7 +275,7 @@ var MatchTime = interpreter.TaFunction{
 			token.Time,   // timestamp1
 			token.String, // layout
 		},
-		Returns:     token.Bool,
+		Returns:     token.Boolean,
 		Description: "Checks if two times match for a given layout",
 		Example: `
 matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   ; returns "true"

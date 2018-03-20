@@ -7,7 +7,7 @@ Resolve a template
 (! Template2 "Hello World")                                      ; executes Template2 with "Hello World" as parameter
 ```
 
-### !=(Atom, Atom, Atom...)Bool
+### !=(Atom, Atom, Atom...)Boolean
 Tests if the arguments are not the same
 ```lisp
 (!= 1 1)                                                         ; compares decimals, returns false
@@ -68,15 +68,7 @@ Divides the arguments
 (/ 1 2 3)                                                        ; returns 0.166666
 ```
 
-### <(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is less then the following
-```lisp
-(< 0 1)                                                          ; returns true
-(< 1 1)                                                          ; returns false
-(< 2 1)                                                          ; returns false
-```
-
-### <(Time, Time, Time...)Bool
+### <(Time, Time, Time...)Boolean
 Tests if the first argument is less then the following
 ```lisp
 (< 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
@@ -84,7 +76,15 @@ Tests if the first argument is less then the following
 (< 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
 ```
 
-### <=(Decimal, Decimal, Decimal...)Bool
+### <(Decimal, Decimal, Decimal...)Boolean
+Tests if the first argument is less then the following
+```lisp
+(< 0 1)                                                          ; returns true
+(< 1 1)                                                          ; returns false
+(< 2 1)                                                          ; returns false
+```
+
+### <=(Decimal, Decimal, Decimal...)Boolean
 Tests if the first argument is less or equal then the following
 ```lisp
 (<= 0 1)                                                         ; returns true
@@ -92,7 +92,7 @@ Tests if the first argument is less or equal then the following
 (<= 2 1)                                                         ; returns false
 ```
 
-### <=(Time, Time, Time...)Bool
+### <=(Time, Time, Time...)Boolean
 Tests if the first argument is less or equal then the following
 ```lisp
 (<= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
@@ -100,7 +100,7 @@ Tests if the first argument is less or equal then the following
 (<= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
 ```
 
-### =(Atom, Atom, Atom...)Bool
+### =(Atom, Atom, Atom...)Boolean
 Tests if the arguments are the same
 ```lisp
 (= 1 1)                                                          ; compares decimals, returns true
@@ -112,7 +112,7 @@ Tests if the arguments are the same
 (= "Hello" "Hello" "Bye")                                        ; returns false
 ```
 
-### >(Decimal, Decimal, Decimal...)Bool
+### >(Decimal, Decimal, Decimal...)Boolean
 Tests if the first argument is greather then the following
 ```lisp
 (> 0 1)                                                          ; returns false
@@ -120,7 +120,7 @@ Tests if the first argument is greather then the following
 (> 2 1)                                                          ; returns true
 ```
 
-### >(Time, Time, Time...)Bool
+### >(Time, Time, Time...)Boolean
 Tests if the first argument is greather then the following
 ```lisp
 (> 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns false
@@ -128,20 +128,20 @@ Tests if the first argument is greather then the following
 (> 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                    ; returns true
 ```
 
-### >=(Decimal, Decimal, Decimal...)Bool
-Tests if the first argument is greather or equal then the following
-```lisp
-(>= 0 1)                                                         ; returns false
-(>= 1 1)                                                         ; returns true
-(>= 2 1)                                                         ; returns true
-```
-
-### >=(Time, Time, Time...)Bool
+### >=(Time, Time, Time...)Boolean
 Tests if the first argument is greather or equal then the following
 ```lisp
 (>= 2006-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns false
 (>= 2007-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
 (>= 2008-01-02T15:04:05Z 2007-01-02T15:04:05Z)                   ; returns true
+```
+
+### >=(Decimal, Decimal, Decimal...)Boolean
+Tests if the first argument is greather or equal then the following
+```lisp
+(>= 0 1)                                                         ; returns false
+(>= 1 1)                                                         ; returns true
+(>= 2 1)                                                         ; returns true
 ```
 
 ### addDuration(Time, Decimal, String)Time
@@ -152,14 +152,14 @@ Extract days from now from time
 (addDuration 2018-03-18T00:04:05Z 18 days)                       ; returns "2018-04-05T00:04:05Z"
 ```
 
-### after(Time, Time)Bool
+### after(Time, Time)Boolean
 Checks whether time A is after B
 ```lisp
 (after 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "true"
 (after 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)               ; returns "false"
 ```
 
-### and(Collection|Atom...)Bool
+### and(Collection|Atom...)Boolean
 Evaluates whether a series of predicates are all true
 ```lisp
 (and false (> 2 1))                                              ; returns true
@@ -173,14 +173,14 @@ Adds an item to the list and returns the list
 (append (list 1 2) 3 4)                                          ; returns a list containing 1, 2, 3 and 4
 ```
 
-### before(Time, Time)Bool
+### before(Time, Time)Boolean
 Checks whether time A is before B
 ```lisp
 (before 2006-01-02T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "false"
 (before 2006-01-01T19:04:05Z 2006-01-02T15:04:05Z)              ; returns "true"
 ```
 
-### between(Decimal, Decimal, Decimal, Decimal...)Bool
+### between(Decimal, Decimal, Decimal, Decimal...)Boolean
 Tests if the arguments are between the second last and the last argument
 ```lisp
 (between 1 0 3)                                                  ; returns true, (1 is between 0 and 3)
@@ -190,7 +190,7 @@ Tests if the arguments are between the second last and the last argument
 (between 1 4 0 3)                                                ; returns false, (1 is between 0 and 3, 4 is not)
 ```
 
-### between(Time, Time, Time, Time...)Bool
+### between(Time, Time, Time, Time...)Boolean
 Tests if the arguments are between the second last and the last argument
 ```lisp
 (between 2007-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)                        ; returns true, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 3)
@@ -200,7 +200,7 @@ Tests if the arguments are between the second last and the last argument
 (between 2007-01-02T00:00:00Z 2010-01-02T00:00:00Z 2006-01-02T00:00:00Z 2009-01-02T00:00:00Z)   ; returns false, (2007-01-02T00:00:00Z is between 2006-01-02T00:00:00Z and 2009-01-02T00:00:00Z, 2010-01-02T00:00:00Z is not)
 ```
 
-### betweenTimes(Time, Time, Time)Bool
+### betweenTimes(Time, Time, Time)Boolean
 Evaluates whether a timestamp is between minTime and maxTime
 ```lisp
 (betweenTimes 2006-01-02T19:04:05Z 2006-01-01T15:04:05Z 2006-01-03T19:04:05Z)                                ; returns "false"
@@ -233,7 +233,7 @@ Concat strings
 (+ "Hello" " " (toString (+ 1 2)))                               ; returns "Hello 3"
 ```
 
-### contains(String, String, String...)Bool
+### contains(String, String, String...)Boolean
 Returns wether the first argument exists in the following arguments
 ```lisp
 (contains "Hello" "Hello World")                                 ; returns true
@@ -267,16 +267,16 @@ Calculates the difference in days between 2 dates
 daysBetween 2006-01-02T19:04:05Z 2006-01-02T22:19:05Z            ; returns "0.13541666666666666"
 ```
 
-### do(Collection|Atom, String, Token)Any
-Apply a block to a value
-```lisp
-do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
-```
-
 ### do(Collection|Atom, Token)Any
 Apply a block to a value
 ```lisp
 do (list 1 2 3) ((Item) (. Item)))                               ; returns 1 2 3
+```
+
+### do(Collection|Atom, String, Token)Any
+Apply a block to a value
+```lisp
+do (list 1 2 3) Item (. Item))                                   ; returns 1 2 3
 ```
 
 ### drop(List)List
@@ -286,7 +286,7 @@ Create a list containing all but the last item in the input list
 (drop (list 1 true Hello))                                       ; returns a list containing 1 and true
 ```
 
-### endsWith(String, String, String...)Bool
+### endsWith(String, String, String...)Boolean
 Returns wether the first argument is the suffix of the following arguments
 ```lisp
 (endsWith "World" "Hello World")                                 ; returns true
@@ -295,30 +295,30 @@ Returns wether the first argument is the suffix of the following arguments
 (endsWith "World" "Hello World" "By World")                      ; returns true
 ```
 
-### every(List, String, Token)Bool
+### every(List, String, Token)Boolean
 Test if every item in a list matches a predicate
 ```lisp
 every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
 ```
 
-### every(List, Token)Bool
+### every(List, Token)Boolean
 Test if every item in a list matches a predicate
 ```lisp
 every (. Items) ((x) (= 1 (. x Price)))                          ; returns 1 with the right binding in the scope
 ```
 
-### exists(List, String, Token)Bool
-Test if any item in a list matches a predicate
-```lisp
-exists (list hello world) Item (= (. Item) "hello")              ; returns true
-exists (list hello world) Item (= (. Item) "hey!!")              ; returns false
-```
-
-### exists(List, Token)Bool
+### exists(List, Token)Boolean
 Test if any item in a list matches a predicate
 ```lisp
 exists (list hello world) ((Item) (= (. Item) "hello"))          ; returns true
 exists (list hello world) ((Item) (= (. Item) "hey!!"))          ; returns false
+```
+
+### exists(List, String, Token)Boolean
+Test if any item in a list matches a predicate
+```lisp
+exists (list hello world) Item (= (. Item) "hello")              ; returns true
+exists (list hello world) Item (= (. Item) "hey!!")              ; returns false
 ```
 
 ### filter(List, Token)List
@@ -365,7 +365,7 @@ Extract the hour (00-23) from a time
 (hour 2018-01-14T19:04:05Z)                                      ; returns "19"
 ```
 
-### isEmpty(List)Bool
+### isEmpty(List)Boolean
 Check if a list is empty
 ```lisp
 isEmpty (list hello world)                                       ; returns "false"
@@ -407,19 +407,19 @@ Create a list out of the children
 (list 1 true Hello)                                              ; returns a list with an int, bool and string
 ```
 
-### map(List, String, Token)List
-Create a new list by evaluating the given block for each item in the input list
-```lisp
-(map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
-```
-
 ### map(List, Token)List
 Create a new list by evaluating the given block for each item in the input list
 ```lisp
 (map (list "World" "Universe") ((x) (+ "Hello " (. x))))         ; returns a list containing "Hello World" and "Hello Universe"
 ```
 
-### matchTime(Time, Time, String)Bool
+### map(List, String, Token)List
+Create a new list by evaluating the given block for each item in the input list
+```lisp
+(map (list "World" "Universe") x (+ "Hello " (. x)))             ; returns a list containing "Hello World" and "Hello Universe"
+```
+
+### matchTime(Time, Time, String)Boolean
 Checks if two times match for a given layout
 ```lisp
 matchTime 2018-03-11T00:04:05Z 2018-03-11T00:04:05Z YYYY-MM-DD   ; returns "true"
@@ -470,14 +470,14 @@ No operation
 (noop)
 ```
 
-### not(Bool)Bool
+### not(Boolean)Boolean
 Inverts the argument
 ```lisp
 (not false)                                                      ; returns "true"
 (not (not false))                                                ; returns "false"
 ```
 
-### notContains(String, String, String...)Bool
+### notContains(String, String, String...)Boolean
 Returns wether the first argument does not exist in the following arguments
 ```lisp
 (notContains "Hello" "Hello World")                              ; returns false
@@ -486,7 +486,7 @@ Returns wether the first argument does not exist in the following arguments
 (notContains "World" "Hello World" "Hello Universe")             ; returns false
 ```
 
-### or(Collection|Atom...)Bool
+### or(Collection|Atom...)Boolean
 Evaluates whether at least one predicate is true
 ```lisp
 (or false false false true false)                                ; returns true
@@ -521,21 +521,27 @@ Set a variable in the binding
 (set Key2 SubKey1 true)                                          ; sets SubKey1 in map Key2 to true
 ```
 
-### sort(List, Bool...)List
+### setTemplate(Token, Token)Any
+Set a template
+```lisp
+(setTemplate (plus(Decimal, Decimal)Decimal) (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
+```
+
+### sort(List, Boolean...)List
 Sort a list ascending, set the second argument to true for descending order
 ```lisp
 (sort  (list "World" "Universe"))                                ; returns a list containing "Universe" and "World"
 (sort  (list "World" "Universe") true)                           ; returns a list containing "World" and "Universe"
 ```
 
-### sortByNumber(List, Token, Bool)List
+### sortByNumber(List, Token, Boolean)List
 Sort a list numerically by value
 ```lisp
 sortByNumber (list 2 4 3 1) ((Item) (. Item)) true               ; returns [4, 3, 2, 1]
 sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2, 3, 4]
 ```
 
-### sortByString(List, Token, Bool)List
+### sortByString(List, Token, Boolean)List
 Sort a list alphabetically
 ```lisp
 sortByString (list "b" "a" "z" "t") ((Item) (. Item)) true       ; returns [a, b, t, z]
@@ -549,7 +555,7 @@ Create a list of strings by splitting the given string at each occurrence of `se
 (split "1-2-3-a" "-")                                            ; returns "1 2 3 a"
 ```
 
-### startsWith(String, String, String...)Bool
+### startsWith(String, String, String...)Boolean
 Returns wether the first argument is the prefix of the following arguments
 ```lisp
 (startsWith "Hello" "Hello World")                               ; returns true
@@ -579,7 +585,7 @@ Returns list without the first item
 (tail (list 1 true Hello))                                       ; returns a list containing true and Hello
 ```
 
-### toString(Decimal|String|Bool|Time)String
+### toString(Decimal|String|Boolean|Time)String
 Converts the parameter to a string
 ```lisp
 (toString 1)                                                     ; returns "1"
@@ -598,7 +604,7 @@ Extract the year from a time
 (year 2018-01-02T19:04:05Z)                                      ; returns "2018"
 ```
 
-### ~(String, String, String...)Bool
+### ~(String, String, String...)Boolean
 Returns wether the first argument (regex) matches all of the following arguments
 ```lisp
 (~ "[a-z\s]*" "Hello World")                                     ; returns true

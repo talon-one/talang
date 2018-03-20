@@ -10,13 +10,13 @@ type Kind int
 const (
 	Decimal    Kind = 1 << iota
 	String     Kind = 1 << iota
-	Bool       Kind = 1 << iota
+	Boolean    Kind = 1 << iota
 	Time       Kind = 1 << iota
 	Null       Kind = 1 << iota
 	List       Kind = 1 << iota
 	Map        Kind = 1 << iota
 	Token      Kind = 1 << iota
-	Atom       Kind = Decimal | String | Bool | Time | Null
+	Atom       Kind = Decimal | String | Boolean | Time | Null
 	Collection Kind = List | Map
 	Any        Kind = Atom | Token | Collection
 )
@@ -25,7 +25,7 @@ const (
 var kindStrings = map[Kind]string{
 	Decimal:    strings.ToLower(Decimal.String()),
 	String:     strings.ToLower(String.String()),
-	Bool:       strings.ToLower(Bool.String()),
+	Boolean:    strings.ToLower(Boolean.String()),
 	Time:       strings.ToLower(Time.String()),
 	Null:       strings.ToLower(Null.String()),
 	List:       strings.ToLower(List.String()),
@@ -55,9 +55,9 @@ func (k Kind) String() string {
 		} else if v&String == String {
 			kinds = append(kinds, "String")
 			v &= ^String
-		} else if v&Bool == Bool {
-			kinds = append(kinds, "Bool")
-			v &= ^Bool
+		} else if v&Boolean == Boolean {
+			kinds = append(kinds, "Boolean")
+			v &= ^Boolean
 		} else if v&Time == Time {
 			kinds = append(kinds, "Time")
 			v &= ^Time
@@ -91,8 +91,8 @@ func KindFromString(s string) Kind {
 			v |= Decimal
 		case kindStrings[String]:
 			v |= String
-		case kindStrings[Bool]:
-			v |= Bool
+		case kindStrings[Boolean]:
+			v |= Boolean
 		case kindStrings[Time]:
 			v |= Time
 		case kindStrings[Null]:
