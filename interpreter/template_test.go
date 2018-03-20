@@ -99,3 +99,28 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 
 // 	require.Error(t, getError(interp.LexAndEvaluate("! MultiplyWith2 (FN)")))
 // }
+
+func TestSetTemplate(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.MustLexAndEvaluate(`(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))`)
+
+	helpers.RunTestsWithInterpreter(t, interp,
+		helpers.Test{
+			"(! plus 1 2)",
+			nil,
+			token.NewDecimalFromInt(3),
+		},
+	)
+
+	interp.MustLexAndEvaluate(`(setTemplate "plusBinding(Decimal)Decimal" (+ (. Integer) (# 0)))`)
+
+	helpers.RunTestsWithInterpreter(t, interp,
+		helpers.Test{
+			"(! plusBinding 2)",
+			token.NewMap(map[string]*token.TaToken{
+				"Integer": token.NewDecimalFromInt(1),
+			}),
+			token.NewDecimalFromInt(3),
+		},
+	)
+}

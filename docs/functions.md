@@ -521,10 +521,10 @@ Set a variable in the binding
 (set Key2 SubKey1 true)                                          ; sets SubKey1 in map Key2 to true
 ```
 
-### setTemplate(Token, Token)Any
+### setTemplate(String, Token)Any
 Set a template
 ```lisp
-(setTemplate (plus(Decimal, Decimal)Decimal) (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
+(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
 ```
 
 ### sort(List, Boolean...)List

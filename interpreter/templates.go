@@ -158,23 +158,27 @@ var setTemplateSignature = TaFunction{
 	CommonSignature: CommonSignature{
 		Name: "setTemplate",
 		Arguments: []token.Kind{
-			token.Token,
+			token.String,
 			token.Token,
 		},
 		Returns:     token.Any,
 		Description: "Set a template",
 		Example: `
-(setTemplate (plus(Decimal, Decimal)Decimal) (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
+(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
 `,
 	},
 	Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		// interp.RegisterTemplate(TaTemplate{
-		// 	CommonSignature: CommonSignature {
-		// 		Name: args[0].String,
+		sig := NewCommonSignature(args[0].Stringify())
+		if sig == nil {
+			return nil, errors.New("Invalid signature")
+		}
+		if err := interp.RegisterTemplate(TaTemplate{
+			CommonSignature: *sig,
+			Template:        *args[1],
+		}); err != nil {
+			return nil, err
+		}
 
-		// 	}
-		// 	Template: args[1],
-		// })
 		return nil, nil
 	},
 }
