@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"io"
 	"runtime"
 	"strings"
@@ -10,6 +9,7 @@ import (
 	"github.com/talon-one/talang/interpreter"
 
 	"github.com/talon-one/talang"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var interp *talang.Interpreter
@@ -19,8 +19,13 @@ var fnHints []string
 var cmdHints []string
 var allHints []string
 
+var (
+	commandArg = kingpin.Arg("command", "command to run directly").String()
+)
+
 func main() {
-	flag.Parse()
+	kingpin.Version("1.0.0")
+	kingpin.Parse()
 
 	createCommands()
 
@@ -60,9 +65,8 @@ func main() {
 		}
 	}()
 
-	args := flag.Args()
-	if len(args) > 0 {
-		evaluateLine(strings.Join(args, " "))
+	if commandArg != nil && len(*commandArg) > 0 {
+		evaluateLine(*commandArg)
 		return
 	}
 
