@@ -21,6 +21,7 @@ type Interpreter struct {
 	Functions []TaFunction
 	Templates []TaTemplate
 	Logger    *log.Logger
+	IsDryRun  bool
 }
 
 func NewInterpreter() (*Interpreter, error) {
@@ -196,7 +197,7 @@ func (interp *Interpreter) callFunc(b *token.TaToken) (bool, error) {
 			return false, err
 		}
 		if interp.Logger != nil {
-			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.BlockArguments(children).ToHumanReadable())
+			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
 		}
 		result, err := fn.Func(interp, children...)
 		if err != nil {

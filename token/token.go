@@ -397,18 +397,18 @@ func Arguments(children []*TaToken) []Kind {
 	return types
 }
 
-type BlockArguments []*TaToken
+type TokenArguments []*TaToken
 
-func (b BlockArguments) ToHumanReadable() string {
+func (b TokenArguments) ToHumanReadable() string {
 	arr := make([]string, len(b))
 	for i, arg := range b {
 		arr[i] = arg.Stringify()
 	}
 	return strings.Join(arr, ", ")
 }
-func (b BlockArguments) Len() int           { return len(b) }
-func (b BlockArguments) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
-func (b BlockArguments) Less(i, j int) bool { return strings.Compare(b[i].String, b[j].String) < 0 }
+func (b TokenArguments) Len() int           { return len(b) }
+func (b TokenArguments) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b TokenArguments) Less(i, j int) bool { return strings.Compare(b[i].String, b[j].String) < 0 }
 
 func (k *Kind) UnmarshalJSON(b []byte) (err error) {
 	*k = KindFromString(strings.Trim(string(b), `"`))

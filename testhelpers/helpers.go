@@ -1,10 +1,11 @@
 package testhelpers
 
 import (
-	"errors"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/pkg/errors"
 
 	"github.com/stretchr/testify/require"
 	"github.com/talon-one/talang"
@@ -16,10 +17,17 @@ func init() {
 	interpreter.RegisterCoreFunction(
 		interpreter.TaFunction{
 			CommonSignature: interpreter.CommonSignature{
-				Name:    "panic",
+				Name:       "panic",
+				IsVariadic: true,
+				Arguments: []token.Kind{
+					token.Any,
+				},
 				Returns: token.Any,
 			},
 			Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+				if len(args) > 0 {
+					return nil, errors.Errorf("panic: %s", token.TokenArguments(args).ToHumanReadable())
+				}
 				return nil, errors.New("panic")
 			},
 		},

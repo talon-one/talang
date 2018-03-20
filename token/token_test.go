@@ -522,7 +522,7 @@ func TestArguments(t *testing.T) {
 
 func TestToHumanReadable(t *testing.T) {
 	tkn := New("+", New("1"), New("2"))
-	require.Equal(t, "1, 2", BlockArguments(tkn.Children).ToHumanReadable())
+	require.Equal(t, "1, 2", TokenArguments(tkn.Children).ToHumanReadable())
 }
 
 func TestMarshaling(t *testing.T) {
@@ -547,7 +547,7 @@ func TestMarshaling(t *testing.T) {
 
 func TestSort(t *testing.T) {
 	list := NewList(NewDecimalFromInt(4), NewDecimalFromInt(2), NewDecimalFromInt(3))
-	sort.Sort(BlockArguments(list.Children))
+	sort.Sort(TokenArguments(list.Children))
 	require.Equal(t, true, list.Equal(NewList(NewDecimalFromInt(2), NewDecimalFromInt(3), NewDecimalFromInt(4))))
 }
 

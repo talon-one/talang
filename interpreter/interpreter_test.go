@@ -314,3 +314,48 @@ func BenchmarkInterpreter(b *testing.B) {
 		}
 	}
 }
+
+func DisableTestDryRun(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.IsDryRun = true
+
+	interp.MustRegisterFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name: "fn",
+				Arguments: []token.Kind{
+					token.Atom,
+				},
+				Returns: token.Atom,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+				panic("Function should have not been run")
+				return nil, nil
+			},
+		},
+	)
+
+	interp.MustRegisterTemplate(
+		interpreter.TaTemplate{
+			CommonSignature: interpreter.CommonSignature{
+				Name: "tmpl",
+				Arguments: []token.Kind{
+					token.Atom,
+				},
+				Returns: token.Atom,
+			},
+			Template: *lexer.MustLex("(panic Template should have not been run)"),
+		},
+	)
+
+	parsedToken := lexer.MustLex("(fn (+ 1 2))")
+	var evalToken token.TaToken
+	token.Copy(&evalToken, parsedToken)
+	interp.MustEvaluate(&evalToken)
+	require.Equal(t, true, evalToken.Equal(parsedToken))
+
+	parsedToken = lexer.MustLex("(tmpl (+ 1 2))")
+	token.Copy(&evalToken, parsedToken)
+	interp.MustEvaluate(&evalToken)
+	require.Equal(t, true, evalToken.Equal(parsedToken))
+}

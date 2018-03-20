@@ -102,7 +102,7 @@ var templateSignature = TaFunction{
 				continue
 			}
 			if interp.Logger != nil {
-				interp.Logger.Printf("Running template `%s' with `%v'\n", template.String(), token.BlockArguments(children).ToHumanReadable())
+				interp.Logger.Printf("Running template `%s' with `%v'\n", template.String(), token.TokenArguments(children).ToHumanReadable())
 			}
 			b := template.Template
 			if len(args) > 1 {

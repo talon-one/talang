@@ -234,10 +234,10 @@ var Sort = interpreter.TaFunction{
 		copy(list.Children, args[0].Children)
 
 		if len(args) > 1 && args[1].Bool {
-			a := token.BlockArguments(list.Children)
+			a := token.TokenArguments(list.Children)
 			sort.Sort(sort.Reverse(&a))
 		} else {
-			sort.Sort(token.BlockArguments(list.Children))
+			sort.Sort(token.TokenArguments(list.Children))
 		}
 
 		return list, nil
