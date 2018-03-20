@@ -47,7 +47,37 @@ func (s *CommonSignature) String() string {
 }
 
 func NewCommonSignature(s string) *CommonSignature {
-	return nil
+	size := len(s)
+	if size <= 0 {
+		return nil
+	}
+	bracketOpen := strings.IndexRune(s, '(')
+	bracketClose := strings.IndexRune(s, ')')
+	if bracketOpen <= 0 || bracketClose <= bracketOpen {
+		return nil
+	}
+
+	var signature CommonSignature
+
+	signature.Name = strings.TrimSpace(s[:bracketOpen])
+	signature.lowerName = strings.ToLower(signature.Name)
+
+	arguments := strings.Split(s[bracketOpen+1:bracketClose], ",")
+	for i, l := 0, len(arguments)-1; i <= l; i++ {
+		if part := strings.TrimSpace(arguments[i]); len(part) > 0 {
+			if i == l && strings.HasSuffix(part, "...") {
+				signature.IsVariadic = true
+				part = part[:len(part)-3]
+			}
+			signature.Arguments = append(signature.Arguments, token.KindFromString(part))
+		}
+	}
+
+	if size > bracketClose {
+		signature.Returns = token.KindFromString(s[bracketClose+1:])
+	}
+
+	return &signature
 }
 
 func (a *CommonSignature) Equal(b *CommonSignature) bool {

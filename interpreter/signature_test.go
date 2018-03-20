@@ -144,8 +144,17 @@ func TestMatchesArguments(t *testing.T) {
 	})
 }
 
-func DisableTestSignatureParse(t *testing.T) {
-	sig := NewCommonSignature("plus (Decimal,String...)Boolean")
+func TestSignatureParse(t *testing.T) {
+	require.EqualValues(t, &CommonSignature{
+		Name:      "Plus",
+		lowerName: "plus",
+		Arguments: []token.Kind{
+			token.Decimal,
+			token.String,
+		},
+		IsVariadic: true,
+		Returns:    token.Boolean,
+	}, NewCommonSignature("Plus (Decimal,String...)Boolean"))
 
 	require.EqualValues(t, &CommonSignature{
 		Name:      "Plus",
@@ -156,5 +165,30 @@ func DisableTestSignatureParse(t *testing.T) {
 		},
 		IsVariadic: true,
 		Returns:    token.Boolean,
-	}, sig)
+	}, NewCommonSignature("Plus(Decimal,String...)Boolean"))
+
+	require.EqualValues(t, &CommonSignature{
+		Name:      "Plus",
+		lowerName: "plus",
+		Arguments: []token.Kind{
+			token.Decimal,
+			token.String,
+		},
+		IsVariadic: true,
+	}, NewCommonSignature("Plus(Decimal,String...)"))
+
+	require.Nil(t, NewCommonSignature("(Decimal,String...)"))
+	require.Nil(t, NewCommonSignature(""))
+
+	sig := CommonSignature{
+		Name:      "Plus",
+		lowerName: "plus",
+		Arguments: []token.Kind{
+			token.Decimal,
+			token.String,
+		},
+		IsVariadic: true,
+	}
+
+	require.EqualValues(t, &sig, NewCommonSignature(sig.String()))
 }
