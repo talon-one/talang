@@ -369,3 +369,12 @@ func TestMultipleFuncCall(t *testing.T) {
 		},
 	)
 }
+
+func TestDeepAbort(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.MaxRecursiveLevel = new(int)
+	*interp.MaxRecursiveLevel = 10
+
+	_, err := interp.LexAndEvaluate("+ 1 (+ 2 (+ 3 (+ 4 (+ 5 (+ 6 (+ 7 (+ 8 (+ 9 (+ 10 (+ 11 (+ 12 (+ 13 (+ 14 15)))))))))))))")
+	require.Error(t, err)
+}

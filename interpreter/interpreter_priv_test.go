@@ -69,6 +69,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -98,6 +99,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 					token.NewString("Hello"),
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -124,6 +126,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -150,6 +153,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 
@@ -176,6 +180,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -202,6 +207,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 
@@ -227,6 +233,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 		// invalid count of arguments
@@ -248,6 +255,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 		// invalid type
@@ -271,6 +279,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 		// error in child
@@ -294,6 +303,7 @@ func TestMatchesSignatureNonVariadic(t *testing.T) {
 				[]*token.TaToken{
 					lexer.MustLex("(panic)"),
 				},
+				0,
 			)),
 		},
 	}
@@ -363,6 +373,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				},
 				"fn",
 				[]*token.TaToken{},
+				0,
 			)),
 		},
 		// 0 parameters required, 1 parameter given
@@ -388,6 +399,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -417,6 +429,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					token.NewString("Hello"),
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -448,6 +461,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 					token.NewDecimal(decimal.New(0, 0)),
 					token.NewDecimal(decimal.New(1, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -474,6 +488,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -500,6 +515,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 
@@ -526,6 +542,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimal(decimal.New(0, 0)),
 				},
+				0,
 			)),
 		},
 
@@ -552,6 +569,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 
@@ -577,6 +595,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 		// invalid type
@@ -600,6 +619,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewString("Hello"),
 				},
+				0,
 			)),
 		},
 		// error in child
@@ -623,6 +643,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					lexer.MustLex("(panic)"),
 				},
+				0,
 			)),
 		},
 		// to few arguments
@@ -648,6 +669,7 @@ func TestMatchesSignatureVariadic(t *testing.T) {
 				[]*token.TaToken{
 					token.NewDecimalFromString("1"),
 				},
+				0,
 			)),
 		},
 	}

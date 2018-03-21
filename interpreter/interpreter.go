@@ -15,17 +15,18 @@ import (
 )
 
 type Interpreter struct {
-	Binding   *token.TaToken
-	Context   context.Context
-	Parent    *Interpreter
-	Functions []TaFunction
-	Templates []TaTemplate
-	Logger    *log.Logger
-	IsDryRun  bool
+	Binding           *token.TaToken
+	Context           context.Context
+	Parent            *Interpreter
+	Functions         []TaFunction
+	Templates         []TaTemplate
+	Logger            *log.Logger
+	IsDryRun          bool
+	MaxRecursiveLevel *int
 }
 
 func NewInterpreter() (*Interpreter, error) {
-	interp := Interpreter{}
+	var interp Interpreter
 	if err := interp.registerCoreFunctions(); err != nil {
 		return nil, err
 	}
@@ -61,6 +62,12 @@ func (interp *Interpreter) MustLexAndEvaluate(str string) *token.TaToken {
 }
 
 func (interp *Interpreter) Evaluate(b *token.TaToken) error {
+	return interp.evaluate(b, 0)
+}
+func (interp *Interpreter) evaluate(b *token.TaToken, level int) error {
+	if interp.MaxRecursiveLevel != nil && level > *interp.MaxRecursiveLevel {
+		return errors.Errorf("Max Recursive level (%d) reached", *interp.MaxRecursiveLevel)
+	}
 	if b == nil || b.IsEmpty() {
 		return errors.New("Empty term")
 	}
@@ -72,7 +79,7 @@ func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 			oldPrefix = interp.Logger.Prefix()
 			interp.Logger.SetPrefix(oldPrefix + ">")
 		}
-		stopProcessing, err := interp.callFunc(b)
+		stopProcessing, err := interp.callFunc(b, level+1)
 		if err != nil {
 			return err
 		}
@@ -85,7 +92,7 @@ func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 	} else if b.IsBlock() {
 		size := len(b.Children)
 		for i := 0; i < size; i++ {
-			if err := interp.Evaluate(b.Children[i]); err != nil {
+			if err := interp.evaluate(b.Children[i], level+1); err != nil {
 				return err
 			}
 		}
@@ -94,7 +101,7 @@ func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 	}
 
 	if interp.Parent != nil {
-		return interp.Parent.Evaluate(b)
+		return interp.Parent.evaluate(b, level+1)
 	}
 	return nil
 }
@@ -113,7 +120,7 @@ const (
 	errorInChildrenEvaluation notMatchingDetail = iota
 )
 
-func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*token.TaToken) (bool, notMatchingDetail, []*token.TaToken, error) {
+func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*token.TaToken, level int) (bool, notMatchingDetail, []*token.TaToken, error) {
 	if sig.lowerName != lowerName {
 		return false, invalidName, nil, nil
 	}
@@ -156,7 +163,7 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 
 	for i, j := 0, 0; i < len(children); i++ {
 		if sig.Arguments[j]&token.Token == 0 && children[i].IsBlock() {
-			if err := interp.Evaluate(children[i]); err != nil {
+			if err := interp.evaluate(children[i], level+1); err != nil {
 				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
 			}
 		}
@@ -172,12 +179,12 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 	return false, invalidSignature, nil, nil
 }
 
-func (interp *Interpreter) callFunc(b *token.TaToken) (bool, error) {
+func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
 	walker := funcWalker{interp: interp}
 	blockText := strings.ToLower(b.String)
 	// iterate trough all functions
 	for fn := walker.Next(); fn != nil; fn = walker.Next() {
-		run, detail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children)
+		run, detail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children, level+1)
 
 		if !run {
 			if interp.Logger != nil {
@@ -221,7 +228,7 @@ func (interp *Interpreter) callFunc(b *token.TaToken) (bool, error) {
 		}
 		token.Copy(b, result)
 		if b.IsBlock() {
-			return true, interp.Evaluate(b)
+			return true, interp.evaluate(b, level+1)
 		}
 		return true, nil
 	}
@@ -340,6 +347,7 @@ func (interp *Interpreter) NewScope() *Interpreter {
 	i := Interpreter{}
 	i.Parent = interp
 	i.Logger = interp.Logger
+	i.MaxRecursiveLevel = interp.MaxRecursiveLevel
 	// we need to register binding and template on this scope, because it uses its own scopes
 	i.Functions = []TaFunction{templateSignature, setTemplateSignature, bindingSignature, setBindingSignature}
 	return &i

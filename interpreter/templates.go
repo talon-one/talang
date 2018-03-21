@@ -86,7 +86,7 @@ var templateSignature = TaFunction{
 		blockText := strings.ToLower(args[0].String)
 		// iterate trough all functions
 		for template := walker.Next(); template != nil; template = walker.Next() {
-			run, detail, children, err := interp.matchesSignature(&template.CommonSignature, blockText, args[1:])
+			run, detail, children, err := interp.matchesSignature(&template.CommonSignature, blockText, args[1:], 0)
 			if err != nil {
 				return nil, errors.Errorf("error in template `%s': %v", template.Name, err)
 			}
