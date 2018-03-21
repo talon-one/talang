@@ -359,3 +359,13 @@ func DisableTestDryRun(t *testing.T) {
 	interp.MustEvaluate(&evalToken)
 	require.Equal(t, true, evalToken.Equal(parsedToken))
 }
+
+func TestMultipleFuncCall(t *testing.T) {
+	helpers.RunTests(t,
+		helpers.Test{
+			"((set Integer 2) (+ (. Integer) 1))",
+			nil,
+			token.NewDecimalFromInt(3),
+		},
+	)
+}

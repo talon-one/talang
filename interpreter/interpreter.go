@@ -65,14 +65,6 @@ func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 		return errors.New("Empty term")
 	}
 
-	childCount := len(b.Children)
-
-	// term has just one child, and no operation
-	if childCount == 1 && len(b.String) == 0 {
-		*b = *b.Children[0]
-		return interp.Evaluate(b)
-	}
-
 	if len(b.String) > 0 {
 		var oldPrefix string
 		if interp.Logger != nil {
@@ -90,6 +82,15 @@ func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 		if stopProcessing {
 			return nil
 		}
+	} else if b.IsBlock() {
+		size := len(b.Children)
+		for i := 0; i < size; i++ {
+			if err := interp.Evaluate(b.Children[i]); err != nil {
+				return err
+			}
+		}
+		token.Copy(b, b.Children[size-1])
+		return nil
 	}
 
 	if interp.Parent != nil {

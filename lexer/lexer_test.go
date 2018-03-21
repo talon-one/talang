@@ -110,24 +110,20 @@ func TestLexer(t *testing.T) {
 		},
 		{
 			"(fn A B)",
-			token.New("",
-				token.New("fn",
-					token.NewString("A"),
-					token.NewString("B"),
-				),
+			token.New("fn",
+				token.NewString("A"),
+				token.NewString("B"),
 			),
 		},
 		{
 			"(fn (A) B)",
-			token.New("",
-				token.New("fn",
-					&token.TaToken{
-						String:   "A",
-						Kind:     token.Token,
-						Children: []*token.TaToken{},
-					},
-					token.NewString("B"),
-				),
+			token.New("fn",
+				&token.TaToken{
+					String:   "A",
+					Kind:     token.Token,
+					Children: []*token.TaToken{},
+				},
+				token.NewString("B"),
 			),
 		},
 		{
@@ -153,14 +149,27 @@ func TestLexer(t *testing.T) {
 				),
 			),
 		},
+		{
+			`((+ A B) (+ C D))`,
+			token.New("",
+				token.New("+",
+					token.NewString("A"),
+					token.NewString("B"),
+				),
+				token.New("+",
+					token.NewString("C"),
+					token.NewString("D"),
+				),
+			),
+		},
 	}
 
-	for i := 0; i < len(tests); i++ {
-		s, err := Lex(tests[i].input)
+	for i, test := range tests {
+		s, err := Lex(test.input)
 		if err != nil {
 			panic(err)
 		}
-		require.Equal(t, true, tests[i].expected.Equal(s), "Input `%s' failed, was `%s'", tests[i].input, s.Stringify())
+		require.Equal(t, true, test.expected.Equal(s), "Test %d (`%s') failed, was `%s'", i, test.input, s.Stringify())
 	}
 }
 
@@ -220,12 +229,12 @@ func TestForcedString(t *testing.T) {
 			),
 		},
 	}
-	for i := 0; i < len(tests); i++ {
-		s, err := Lex(tests[i].input)
+	for i, test := range tests {
+		s, err := Lex(test.input)
 		if err != nil {
 			panic(err)
 		}
-		require.Equal(t, true, tests[i].expected.Equal(s), "Input `%s' failed, was `%s'", tests[i].input, s.Stringify())
+		require.Equal(t, true, test.expected.Equal(s), "Test %d (`%s') failed, was `%s'", i, test.input, s.Stringify())
 	}
 }
 

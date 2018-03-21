@@ -104,6 +104,10 @@ parse:
 	}
 
 end:
+	// remove empty scopes
+	tkn := token.New(operation, children...)
+	for ; len(tkn.Children) == 1 && len(tkn.String) == 0; tkn = tkn.Children[0] {
+	}
 
-	return token.New(operation, children...), nil
+	return tkn, nil
 }
