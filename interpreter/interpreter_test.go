@@ -315,7 +315,7 @@ func BenchmarkInterpreter(b *testing.B) {
 	}
 }
 
-func DisableTestDryRun(t *testing.T) {
+func TestDryRun(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 	interp.IsDryRun = true
 
@@ -349,15 +349,10 @@ func DisableTestDryRun(t *testing.T) {
 	)
 
 	parsedToken := lexer.MustLex("(fn (+ 1 2))")
-	var evalToken token.TaToken
-	token.Copy(&evalToken, parsedToken)
-	interp.MustEvaluate(&evalToken)
-	require.Equal(t, true, evalToken.Equal(parsedToken))
+	interp.MustEvaluate(parsedToken)
 
 	parsedToken = lexer.MustLex("(tmpl (+ 1 2))")
-	token.Copy(&evalToken, parsedToken)
-	interp.MustEvaluate(&evalToken)
-	require.Equal(t, true, evalToken.Equal(parsedToken))
+	interp.MustEvaluate(parsedToken)
 }
 
 func TestMultipleFuncCall(t *testing.T) {
@@ -376,5 +371,29 @@ func TestDeepAbort(t *testing.T) {
 	*interp.MaxRecursiveLevel = 10
 
 	_, err := interp.LexAndEvaluate("+ 1 (+ 2 (+ 3 (+ 4 (+ 5 (+ 6 (+ 7 (+ 8 (+ 9 (+ 10 (+ 11 (+ 12 (+ 13 (+ 14 15)))))))))))))")
+	require.Error(t, err)
+}
+
+func TestSafeMode(t *testing.T) {
+	interp := helpers.MustNewInterpreterWithLogger()
+	interp.EvaluationMode = interpreter.Safe
+
+	interp.MustRegisterFunction(
+		interpreter.TaFunction{
+			CommonSignature: interpreter.CommonSignature{
+				Name: "fn",
+				Arguments: []token.Kind{
+					token.String,
+				},
+				Returns: token.Any,
+			},
+			Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+				panic("Function should have not been run")
+				return nil, nil
+			},
+		},
+	)
+
+	_, err := interp.LexAndEvaluate("(fn (+ 1 (- 1 2)))")
 	require.Error(t, err)
 }

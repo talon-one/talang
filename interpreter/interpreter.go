@@ -14,6 +14,13 @@ import (
 	lexer "github.com/talon-one/talang/lexer"
 )
 
+type EvaluationMode int
+
+const (
+	Unsafe EvaluationMode = iota
+	Safe   EvaluationMode = iota
+)
+
 type Interpreter struct {
 	Binding           *token.TaToken
 	Context           context.Context
@@ -22,6 +29,7 @@ type Interpreter struct {
 	Templates         []TaTemplate
 	Logger            *log.Logger
 	IsDryRun          bool
+	EvaluationMode    EvaluationMode
 	MaxRecursiveLevel *int
 }
 
@@ -204,10 +212,21 @@ func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		if interp.Logger != nil {
-			interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
+
+		var result *token.TaToken
+		if !interp.IsDryRun {
+			if interp.Logger != nil {
+				interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
+			}
+			result, err = fn.Func(interp, children...)
+		} else {
+			if interp.Logger != nil {
+				interp.Logger.Printf("DryRunning function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
+			}
+			result = &token.TaToken{
+				Kind: fn.Returns,
+			}
 		}
-		result, err := fn.Func(interp, children...)
 		if err != nil {
 			if interp.Logger != nil {
 				interp.Logger.Printf("Error in function %s: %v", fn.Name, err)
@@ -234,6 +253,9 @@ func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
 	}
 	if interp.Logger != nil {
 		interp.Logger.Printf("Found no func `%s' in interpreter instance\n", blockText)
+	}
+	if interp.EvaluationMode == Safe {
+		return false, errors.Errorf("Aborting execution, found no func `%s' in interpreter instance", blockText)
 	}
 	return false, nil
 }
