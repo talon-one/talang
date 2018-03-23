@@ -524,7 +524,7 @@ Set a variable in the binding
 ### setTemplate(String, Token)Any
 Set a template
 ```lisp
-(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
+(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))    ; creates a template with the signature plus(Decimal, Decimal)Decimal
 ```
 
 ### sort(List, Boolean...)List

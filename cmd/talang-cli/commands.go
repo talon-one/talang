@@ -147,6 +147,22 @@ func createCommands() {
 		description: "enable or disable debug messages",
 	}
 
+	commandSafeMode := commandDef{
+		function: func(args []string) {
+			interp.EvaluationMode = interpreter.Safe
+			printOut("Safe mode enabled")
+		},
+		description: "enable safe mode for the interpreter",
+	}
+
+	commandUnsafeMode := commandDef{
+		function: func(args []string) {
+			interp.EvaluationMode = interpreter.Unsafe
+			printOut("Unsafe mode enabled")
+		},
+		description: "disable safe mode for the interpreter",
+	}
+
 	commandFn := commandDef{
 		function: func(args []string) {
 			if len(args) > 0 {
@@ -172,4 +188,7 @@ func createCommands() {
 
 	commands[":d"] = &commandDebug
 	commands[":debug"] = &commandDebug
+
+	commands[":safe"] = &commandSafeMode
+	commands[":unsafe"] = &commandUnsafeMode
 }

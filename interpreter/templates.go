@@ -164,7 +164,7 @@ var setTemplateSignature = TaFunction{
 		Returns:     token.Any,
 		Description: "Set a template",
 		Example: `
-(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))    ; creates an template with the signature plus(Decimal, Decimal)Decimal
+(setTemplate "plus(Decimal, Decimal)Decimal" (+ (# 0) (# 1)))    ; creates a template with the signature plus(Decimal, Decimal)Decimal
 `,
 	},
 	Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {

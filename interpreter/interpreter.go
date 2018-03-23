@@ -190,9 +190,19 @@ func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName stri
 func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
 	walker := funcWalker{interp: interp}
 	blockText := strings.ToLower(b.String)
+	var collectedErrors []error
 	// iterate trough all functions
 	for fn := walker.Next(); fn != nil; fn = walker.Next() {
 		run, detail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children, level+1)
+
+		if interp.EvaluationMode == Safe {
+			switch detail {
+			case invalidSignature:
+				collectedErrors = append(collectedErrors, errors.Errorf(`  Expression %s doesn't match '%s'`, b.Stringify(), fn.String()))
+			case errorInChildrenEvaluation:
+				collectedErrors = append(collectedErrors, errors.Errorf("  NOT Running function `%s' (errors in child evaluation)", fn.String()))
+			}
+		}
 
 		if !run {
 			if interp.Logger != nil {
@@ -255,7 +265,14 @@ func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
 		interp.Logger.Printf("Found no func `%s' in interpreter instance\n", blockText)
 	}
 	if interp.EvaluationMode == Safe {
-		return false, errors.Errorf("Aborting execution, found no func `%s' in interpreter instance", blockText)
+		var builder strings.Builder
+		builder.WriteString(fmt.Sprintf("Found no eval function for %s", b.Stringify()))
+		builder.WriteRune('\n')
+		for i := 0; i < len(collectedErrors); i++ {
+			builder.WriteString(collectedErrors[i].Error())
+			builder.WriteRune('\n')
+		}
+		return false, errors.Errorf(builder.String())
 	}
 	return false, nil
 }
