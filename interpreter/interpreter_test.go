@@ -2,6 +2,7 @@ package interpreter_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/talon-one/talang/lexer"
@@ -41,8 +42,8 @@ func TestInterpreterInvalidTerm(t *testing.T) {
 func TestOverloading(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 	require.NoError(t, interp.RemoveAllFunctions())
-	require.Equal(t, "(FN 1 2)", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
-	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
+	require.Equal(t, lexer.MustLex("(FN 1 2)"), interp.MustLexAndEvaluate("(FN 1 2)"))
+	require.Equal(t, lexer.MustLex("(FN A B)"), interp.MustLexAndEvaluate("(FN A B)"))
 
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
@@ -58,8 +59,8 @@ func TestOverloading(t *testing.T) {
 			return token.NewDecimal(args[0].Decimal.Add(args[0].Decimal, args[1].Decimal)), nil
 		},
 	})
-	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
-	require.Equal(t, "(FN A B)", interp.MustLexAndEvaluate("(FN A B)").Stringify())
+	require.Equal(t, token.NewDecimalFromInt(3).Decimal, interp.MustLexAndEvaluate("(FN 1 2)").Decimal)
+	require.Equal(t, lexer.MustLex("(FN A B)"), interp.MustLexAndEvaluate("(FN A B)"))
 
 	interp.RegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
@@ -72,11 +73,14 @@ func TestOverloading(t *testing.T) {
 			Returns: token.String,
 		},
 		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-			return token.New(args[0].Stringify() + args[1].Stringify()), nil
+			var sb strings.Builder
+			sb.WriteString(args[0].String)
+			sb.WriteString(args[1].String)
+			return token.NewString(sb.String()), nil
 		},
 	})
-	require.Equal(t, "3", interp.MustLexAndEvaluate("(FN 1 2)").Stringify())
-	require.Equal(t, "AB", interp.MustLexAndEvaluate("(FN A B)").Stringify())
+	require.Equal(t, token.NewDecimalFromInt(3), interp.MustLexAndEvaluate("(FN 1 2)"))
+	require.Equal(t, token.NewString("AB"), interp.MustLexAndEvaluate("(FN A B)"))
 }
 
 func TestOverloadingNested(t *testing.T) {
@@ -108,7 +112,10 @@ func TestOverloadingNested(t *testing.T) {
 			Returns: token.String,
 		},
 		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-			return token.NewString(args[0].Stringify() + args[1].Stringify()), nil
+			var sb strings.Builder
+			sb.WriteString(args[0].String)
+			sb.WriteString(args[1].String)
+			return token.NewString(sb.String()), nil
 		},
 	})
 
@@ -124,7 +131,7 @@ func TestOverloadingNested(t *testing.T) {
 		},
 	})
 
-	require.Equal(t, "2C", interp.MustLexAndEvaluate("(fn1 (fn2) C)").Stringify())
+	require.Equal(t, token.NewString("2C"), interp.MustLexAndEvaluate("(fn1 (fn2) C)"))
 	require.Equal(t, 2, nestedFuncCounter)
 }
 
@@ -404,5 +411,5 @@ func TestTypeChecking(t *testing.T) {
 
 	_, err := interp.LexAndEvaluate(`(+ "2" 2)`)
 	require.Error(t, err)
-	require.Equal(t, fmt.Sprintf("Found no eval function for (+ 2 2)\n  Expression (+ 2 2) doesn't match '+(Decimal, Decimal, Decimal...)'\n  Expression (+ 2 2) doesn't match '+(String, String, String...)'\n"), err.Error())
+	require.Equal(t, fmt.Sprintf("Found no eval function for (+ \"2\" 2)\n  Expression (+ \"2\" 2) doesn't match '+(Decimal, Decimal, Decimal...)'\n  Expression (+ \"2\" 2) doesn't match '+(String, String, String...)'\n"), err.Error())
 }
