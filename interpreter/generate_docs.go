@@ -96,7 +96,13 @@ func main() {
 			log.Printf("WARNING: func's `%s' `Example` has a TAB character in it", filepath.Join(packageName, f.Name))
 		}
 		if f.Returns == 0 {
-			log.Printf("WARNING: func `%s' has no valid ReturnType", filepath.Join(packageName, f.Name))
+			log.Printf("WARNING: func `%s' has invalid ReturnType", filepath.Join(packageName, f.Name))
+		}
+
+		for j, kind := range f.Arguments {
+			if kind == 0 {
+				log.Printf("WARNING: func `%s' has invalid Type on Arg #%d", filepath.Join(packageName, f.Name), j+1)
+			}
 		}
 
 		fns[i] = fn{
