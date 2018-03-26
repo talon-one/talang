@@ -367,7 +367,7 @@ func TestStringify(t *testing.T) {
 	require.Equal(t, "[1, 2, 3]", tkn.Stringify())
 
 	tkn = NewString("Hello")
-	require.Equal(t, "Hello", tkn.Stringify())
+	require.Equal(t, `"Hello"`, tkn.Stringify())
 
 	time, err := time.Parse(time.UnixDate, "Mon Jan 2 15:04:05 MST 2006")
 	require.NoError(t, err)
@@ -403,7 +403,7 @@ func TestStringify(t *testing.T) {
 		},
 	}
 
-	require.Equal(t, "{Key1:{SubKey1:14.5}, Key2:Hello}", tkn.Stringify())
+	require.Equal(t, `{Key1:{SubKey1:14.5}, Key2:"Hello"}`, tkn.Stringify())
 }
 
 func TestEqual(t *testing.T) {
