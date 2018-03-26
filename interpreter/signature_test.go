@@ -192,3 +192,35 @@ func TestSignatureParse(t *testing.T) {
 
 	require.EqualValues(t, &sig, NewCommonSignature(sig.String()))
 }
+
+func TestSignatureString(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{
+			"Plus(Decimal, String...)Boolean",
+			"Plus(Decimal, String...)Boolean",
+		},
+		{
+			"Plus(Decimal, String...)",
+			"Plus(Decimal, String...)",
+		},
+		{
+			"Plus(Decimal)",
+			"Plus(Decimal)",
+		},
+		{
+			"Plus()Decimal",
+			"Plus()Decimal",
+		},
+		{
+			"Plus()",
+			"Plus()",
+		},
+	}
+
+	for i, test := range tests {
+		require.Equal(t, test.expected, NewCommonSignature(test.input).String(), "Test %d failed", i)
+	}
+}

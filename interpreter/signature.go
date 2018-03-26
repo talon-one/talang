@@ -43,7 +43,7 @@ func (s *CommonSignature) String() string {
 	if s.IsVariadic {
 		variadic = "..."
 	}
-	return fmt.Sprintf("%s(%s%s)", s.Name, args, variadic)
+	return fmt.Sprintf("%s(%s%s)%s", s.Name, args, variadic, s.Returns.String())
 }
 
 func NewCommonSignature(s string) *CommonSignature {
@@ -78,6 +78,13 @@ func NewCommonSignature(s string) *CommonSignature {
 	}
 
 	return &signature
+}
+
+func MustNewCommonSignature(s string) CommonSignature {
+	if sig := NewCommonSignature(s); sig != nil {
+		return *sig
+	}
+	panic("Unable to parse signature")
 }
 
 func (a *CommonSignature) Equal(b *CommonSignature) bool {
