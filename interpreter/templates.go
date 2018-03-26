@@ -168,7 +168,7 @@ var setTemplateSignature = TaFunction{
 `,
 	},
 	Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		sig := NewCommonSignature(args[0].Stringify())
+		sig := NewCommonSignature(args[0].String)
 		if sig == nil {
 			return nil, errors.New("Invalid signature")
 		}

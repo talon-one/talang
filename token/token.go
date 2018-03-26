@@ -340,7 +340,13 @@ func (b *TaToken) Stringify() string {
 		builder.WriteString(strings.Join(keys, ", "))
 		builder.WriteString("}")
 	} else if len(b.String) > 0 {
+		if b.IsString() {
+			builder.WriteRune('"')
+		}
 		builder.WriteString(b.String)
+		if b.IsString() {
+			builder.WriteRune('"')
+		}
 	}
 
 	return builder.String()
