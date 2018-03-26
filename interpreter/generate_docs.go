@@ -95,6 +95,9 @@ func main() {
 		if strings.IndexRune(f.Example, '\t') >= 0 {
 			log.Printf("WARNING: func's `%s' `Example` has a TAB character in it", filepath.Join(packageName, f.Name))
 		}
+		if f.Returns == 0 {
+			log.Printf("WARNING: func `%s' has no valid ReturnType", filepath.Join(packageName, f.Name))
+		}
 
 		fns[i] = fn{
 			Signature:  f.CommonSignature.String(),
