@@ -411,5 +411,5 @@ func TestTypeChecking(t *testing.T) {
 
 	_, err := interp.LexAndEvaluate(`(+ "2" 2)`)
 	require.Error(t, err)
-	require.Equal(t, fmt.Sprintf("Found no eval function for (+ \"2\" 2)\n  Expression (+ \"2\" 2) doesn't match '+(Decimal, Decimal, Decimal...)'\n  Expression (+ \"2\" 2) doesn't match '+(String, String, String...)'\n"), err.Error())
+	require.Equal(t, fmt.Sprintf("Found no eval function for (+ \"2\" 2)\n  Expression (+ \"2\" 2) doesn't match '+(Decimal, Decimal, Decimal...)Decimal'\n  Expression (+ \"2\" 2) doesn't match '+(String, String, String...)String'\n"), err.Error())
 }

@@ -42,15 +42,7 @@ const htmlTemplate string = `
 	<h1>Embedded Functions</h1>
 	{{ range $index, $element := . }}
 		<details>
-			<summary><b>{{ $element.Name -}}</b>
-			(
-			{{- range $i,$arg := $element.Arguments -}}
-				{{if $i}}, {{end}}{{ $arg -}}
-			{{ end -}}
-			{{ if $element.IsVariadic }}...{{ end -}}
-			)
-			{{- $element.Returns -}}
-			</summary>
+			<summary><b>{{ $element.Signature }}</b></summary>
 			<p>{{ $element.Description }}</p>
 			<code>{{- $element.Example -}}</code>
 		</details>
@@ -60,14 +52,7 @@ const htmlTemplate string = `
 
 const markdownTemplate string = `# Embedded Functions
 {{ range $index, $element := . }}
-### {{ $element.Name -}}
-(
-{{- range $i,$arg := $element.Arguments -}}
-	{{if $i}}, {{end}}{{ $arg -}}
-{{ end -}}
-{{ if $element.IsVariadic }}...{{ end -}}
-)
-{{- $element.Returns }}
+### {{ $element.Signature }}
 {{ $element.Description }}
 ` + "```lisp" + `
 {{ TrimSpace $element.Example }}
@@ -81,6 +66,7 @@ func main() {
 	interp := talang.MustNewInterpreter()
 
 	type fn struct {
+		Signature string
 		Arguments []string
 		Returns   string
 		interpreter.TaFunction
@@ -111,6 +97,7 @@ func main() {
 		}
 
 		fns[i] = fn{
+			Signature:  f.CommonSignature.String(),
 			Arguments:  arguments,
 			Returns:    f.Returns.String(),
 			TaFunction: f,
