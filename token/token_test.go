@@ -381,6 +381,8 @@ func TestStringify(t *testing.T) {
 	tkn = NewDecimal(decimal.New(145, 1))
 	require.Equal(t, "14.5", tkn.Stringify())
 
+	// We need to do this manually because the order of the elements of a map in Go is not quaranteed,
+	// hence why we specify the key and values in the right order so the test always passes.
 	tkn = &TaToken{
 		Kind: Map,
 		Keys: []string{"Key1", "Key2"},
