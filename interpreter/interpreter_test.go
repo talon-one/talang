@@ -208,6 +208,27 @@ func TestGenericSet(t *testing.T) {
 	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
 	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Int2").String)
 
+	// struct with a struct
+	require.NoError(t, interp.GenericSet("Key", struct {
+		Str1    string
+		Struct2 struct {
+			Str3 string
+			Int4 int
+		}
+	}{
+		Str1: "Test",
+		Struct2: struct {
+			Str3 string
+			Int4 int
+		}{
+			Str3: "Hello",
+			Int4: 1,
+		},
+	}))
+	require.Equal(t, "Test", interp.MustLexAndEvaluate(". Key Str1").String)
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate(". Key Struct2 Str3").String)
+	require.Equal(t, "1", interp.MustLexAndEvaluate(". Key Struct2 Int4").String)
+
 	// struct ptr
 	require.NoError(t, interp.GenericSet("Key", &struct {
 		Str1 string
