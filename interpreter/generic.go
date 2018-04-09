@@ -5,7 +5,7 @@ import (
 	"go/ast"
 	"reflect"
 
-	"github.com/go-errors/errors"
+	"github.com/pkg/errors"
 	"github.com/talon-one/talang/token"
 )
 
