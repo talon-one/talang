@@ -3,9 +3,7 @@ package interpreter
 import (
 	"context"
 	"fmt"
-	"go/ast"
 	"log"
-	"reflect"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -289,97 +287,6 @@ func (interp *Interpreter) Set(key string, value *token.TaToken) {
 		interp.Binding = token.NewMap(map[string]*token.TaToken{})
 	}
 	interp.Binding.SetMapItem(key, value)
-}
-
-func genericSetConv(value interface{}) (*token.TaToken, error) {
-	reflectValue := reflect.ValueOf(value)
-	reflectType := reflectValue.Type()
-	for reflectType.Kind() == reflect.Ptr {
-		reflectType = reflectType.Elem()
-		reflectValue = reflectValue.Elem()
-	}
-
-	switch reflectType.Kind() {
-	case reflect.Struct:
-		m := make(map[string]*token.TaToken)
-		for i := 0; i < reflectType.NumField(); i++ {
-			if fieldStruct := reflectType.Field(i); ast.IsExported(fieldStruct.Name) {
-				structValue, err := genericSetConv(reflectValue.Field(i).Interface())
-				if err != nil {
-					return nil, err
-				}
-				m[fieldStruct.Name] = structValue
-			}
-		}
-		return token.NewMap(m), nil
-	case reflect.Map:
-		m := make(map[string]*token.TaToken)
-		if reflectType.Key().Kind() != reflect.String {
-			return nil, errors.New("A different key than `string' is not supported")
-		}
-		for _, key := range reflectValue.MapKeys() {
-			var err error
-			m[key.String()], err = genericSetConv(reflectValue.MapIndex(key).Interface())
-			if err != nil {
-				return nil, err
-			}
-		}
-		return token.NewMap(m), nil
-	case reflect.Slice:
-		size := reflectValue.Len()
-		s := make([]*token.TaToken, size, size)
-		for i := 0; i < size; i++ {
-			var err error
-			s[i], err = genericSetConv(reflectValue.Index(i).Interface())
-			if err != nil {
-				return nil, err
-			}
-		}
-		return token.NewList(s...), nil
-	case reflect.Int:
-		fallthrough
-	case reflect.Int8:
-		fallthrough
-	case reflect.Int16:
-		fallthrough
-	case reflect.Int32:
-		fallthrough
-	case reflect.Int64:
-		fallthrough
-	case reflect.Uint:
-		fallthrough
-	case reflect.Uint8:
-		fallthrough
-	case reflect.Uint16:
-		fallthrough
-	case reflect.Uint32:
-		fallthrough
-	case reflect.Uint64:
-		return token.NewDecimalFromString(fmt.Sprintf("%v", value)), nil
-	case reflect.String:
-		return token.NewString(value.(string)), nil
-	case reflect.Bool:
-		return token.NewBool(value.(bool)), nil
-	case reflect.Float32:
-		return token.NewDecimalFromFloat(float64(value.(float32))), nil
-	case reflect.Float64:
-		return token.NewDecimalFromFloat(value.(float64)), nil
-	}
-	return nil, errors.Errorf("Unknown type `%T'", value)
-}
-
-func (interp *Interpreter) GenericSet(key string, value interface{}) error {
-	block, err := genericSetConv(value)
-	if err != nil {
-		return err
-	}
-
-	if len(key) == 0 {
-		interp.Binding = block
-	} else {
-		interp.Set(key, block)
-	}
-	return nil
 }
 
 func (interp *Interpreter) NewScope() *Interpreter {

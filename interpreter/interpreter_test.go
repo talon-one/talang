@@ -180,6 +180,19 @@ func TestDoubleFuncCall(t *testing.T) {
 	require.Equal(t, false, fn2Runned)
 }
 
+type dec struct {
+	*decimal.Big
+}
+
+func (d *dec) MarshalTaToken() (*token.TaToken, error) {
+	return token.NewDecimal(d.Big), nil
+}
+
+func (d *dec) UnmarshalTaToken(tkn *token.TaToken) error {
+	d.Big = tkn.Decimal
+	return nil
+}
+
 func TestGenericSet(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
 
@@ -257,6 +270,149 @@ func TestGenericSet(t *testing.T) {
 	require.NoError(t, interp.GenericSet("Key", []interface{}{"Hello", true}))
 	require.Equal(t, "Hello", interp.MustLexAndEvaluate("item (. Key) 0").String)
 	require.Equal(t, true, interp.MustLexAndEvaluate("item (. Key) 1").Bool)
+
+	// decimal
+	require.NoError(t, interp.GenericSet("Key", &dec{decimal.New(1, 0)}))
+	require.Equal(t, "1", interp.MustLexAndEvaluate("(. Key)").String)
+}
+
+func TestGenericGet(t *testing.T) {
+	t.Run("Primitives", func(t *testing.T) {
+		var data struct {
+			Str     string
+			Int     int
+			Int8    int8
+			Int16   int16
+			Int32   int32
+			Int64   int64
+			UInt    uint
+			UInt8   uint8
+			UInt16  uint16
+			UInt32  uint32
+			UInt64  uint64
+			Float32 float32
+			Float64 float64
+			Bool    bool
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Str Hello)`)
+		interp.MustLexAndEvaluate(`(set Int 1)`)
+		interp.MustLexAndEvaluate(`(set Int8 1)`)
+		interp.MustLexAndEvaluate(`(set Int16 1)`)
+		interp.MustLexAndEvaluate(`(set Int32 1)`)
+		interp.MustLexAndEvaluate(`(set Int64 1)`)
+		interp.MustLexAndEvaluate(`(set UInt 1)`)
+		interp.MustLexAndEvaluate(`(set UInt8 1)`)
+		interp.MustLexAndEvaluate(`(set UInt16 1)`)
+		interp.MustLexAndEvaluate(`(set UInt32 1)`)
+		interp.MustLexAndEvaluate(`(set UInt64 1)`)
+		interp.MustLexAndEvaluate(`(set Float32 1.2)`)
+		interp.MustLexAndEvaluate(`(set Float64 1.2)`)
+		interp.MustLexAndEvaluate(`(set Bool true)`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.Equal(t, "Hello", data.Str)
+		require.Equal(t, int(1), data.Int)
+		require.Equal(t, int8(1), data.Int8)
+		require.Equal(t, int16(1), data.Int16)
+		require.Equal(t, int32(1), data.Int32)
+		require.Equal(t, int64(1), data.Int64)
+		require.Equal(t, uint(1), data.UInt)
+		require.Equal(t, uint8(1), data.UInt8)
+		require.Equal(t, uint16(1), data.UInt16)
+		require.Equal(t, uint32(1), data.UInt32)
+		require.Equal(t, uint64(1), data.UInt64)
+		require.Equal(t, float32(1.2), data.Float32)
+		require.Equal(t, float64(1.2), data.Float64)
+		require.Equal(t, true, data.Bool)
+	})
+
+	t.Run("Pointer", func(t *testing.T) {
+		var data struct {
+			Str  *string
+			Int  *int
+			Bool *bool
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Str Hello)`)
+		interp.MustLexAndEvaluate(`(set Int 1)`)
+		interp.MustLexAndEvaluate(`(set Bool true)`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.Equal(t, "Hello", *data.Str)
+		require.Equal(t, int(1), *data.Int)
+		require.Equal(t, true, *data.Bool)
+	})
+
+	t.Run("Slice", func(t *testing.T) {
+		var data struct {
+			Slice1 []string
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Slice1 (list Hello World))`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.EqualValues(t, []string{"Hello", "World"}, data.Slice1)
+	})
+
+	t.Run("Map", func(t *testing.T) {
+		var data struct {
+			Map1 map[string]string
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Map1 Key1 World)`)
+		interp.MustLexAndEvaluate(`(set Map1 Key2 Universe)`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.Equal(t, "World", data.Map1["Key1"])
+		require.Equal(t, "Universe", data.Map1["Key2"])
+	})
+
+	t.Run("Struct", func(t *testing.T) {
+		type subStruct struct {
+			Str1 string
+			Int2 int
+		}
+		var data struct {
+			Sub1 subStruct
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Sub1 Str1 World)`)
+		interp.MustLexAndEvaluate(`(set Sub1 Int2 1)`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.Equal(t, "World", data.Sub1.Str1)
+		require.Equal(t, 1, data.Sub1.Int2)
+	})
+
+	t.Run("Decimal", func(t *testing.T) {
+		var data struct {
+			Decimal dec
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Decimal 1)`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.Equal(t, 0, data.Decimal.Cmp(decimal.New(1, 0)))
+	})
+
+	t.Run("DecimalPTR", func(t *testing.T) {
+		var data struct {
+			Decimal *dec
+		}
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Decimal 1)`)
+
+		require.NoError(t, interp.GenericGet("", &data))
+
+		require.Equal(t, 0, data.Decimal.Cmp(decimal.New(1, 0)))
+	})
 }
 
 func TestMustEvaluate(t *testing.T) {
