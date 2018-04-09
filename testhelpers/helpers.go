@@ -55,10 +55,6 @@ func MustError(result interface{}, err error) error {
 	return err
 }
 
-type Error struct{}
-
-func (Error) Error() string { return "" }
-
 type Test struct {
 	Input    string
 	Binding  *token.TaToken
@@ -82,3 +78,46 @@ func RunTestsWithInterpreter(t *testing.T, interp *talang.Interpreter, tests ...
 		}
 	}
 }
+
+type Error struct{}
+
+func (Error) Error() string { return "" }
+
+/*
+type Error error
+type ErrorStackTrace struct {
+	Error
+	*ErrorStackTrace
+}
+
+func TestErrorStackTrace(err error, stackTrace ErrorStackTrace) {
+	for trace := &stackTrace; trace != nil; trace = trace.ErrorStackTrace {
+		errValue := reflect.ValueOf(err)
+		for ; errValue.Kind() == reflect.Ptr; errValue = errValue.Elem() {
+		}
+		traceValue := reflect.ValueOf(trace.Error)
+		for ; traceValue.Kind() == reflect.Ptr; traceValue = traceValue.Elem() {
+		}
+
+		if errValue.Type() != traceValue.Type() {
+			panic(fmt.Sprintf("Expected %T was %T", err, trace.Error))
+		}
+
+		fieldValue := errValue.FieldByName("StackTrace")
+		if fieldValue.Kind() == reflect.Invalid {
+			if trace.ErrorStackTrace == nil {
+				return
+			}
+			panic(fmt.Sprintf("Unable to find StackTrace in %T", err))
+		}
+		var ok bool
+		err, ok = fieldValue.Interface().(error)
+		if !ok {
+			if trace.ErrorStackTrace == nil {
+				return
+			}
+			panic(fmt.Sprintf("Unable to find StackTrace in %T", err))
+		}
+	}
+}
+*/

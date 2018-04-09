@@ -161,24 +161,24 @@ func TestPush(t *testing.T) {
 		Template: *lexer.MustLex(`(# 0)`),
 	}))
 	// check if the return value contains the appended data
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and Universe"), interp.MustLexAndEvaluate("push (. List) and Universe"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World and Universe)"), interp.MustLexAndEvaluate("(push (. List) and Universe)"))
 
 	// check if the original list is still unmodified
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World)"), interp.Binding.MapItem("List"))
 
 	// Push with a function inside
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World Alice"), interp.MustLexAndEvaluate("push (. List) (! fn Alice)"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World Alice)"), interp.MustLexAndEvaluate("(push (. List) (! fn Alice))"))
 
 	// check if the original list is still unmodified
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World)"), interp.Binding.MapItem("List"))
 
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World)"), interp.Binding.MapItem("List"))
 
-	newList := interp.MustLexAndEvaluate("push (. List) and")
+	newList := interp.MustLexAndEvaluate("(push (. List) and)")
 
 	interp.Binding.MapItem("List").Children[0] = token.NewString("Dude!")
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Dude! World"), interp.Binding.MapItem("List"))
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Dude! World)"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World and)"), newList)
 }
 
 func TestAppend(t *testing.T) {
@@ -197,24 +197,24 @@ func TestAppend(t *testing.T) {
 		Template: *lexer.MustLex(`(# 0)`),
 	}))
 	// check if the return value contains the appended data
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and Universe"), interp.MustLexAndEvaluate("append (. List) and Universe"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World and Universe)"), interp.MustLexAndEvaluate("(append (. List) and Universe)"))
 
 	// check if the original list is still unmodified
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World)"), interp.Binding.MapItem("List"))
 
 	// Push with a function inside
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World Alice"), interp.MustLexAndEvaluate("append (. List) (! fn Alice)"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World Alice)"), interp.MustLexAndEvaluate("(append (. List) (! fn Alice))"))
 
 	// check if the original list is still unmodified
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World)"), interp.Binding.MapItem("List"))
 
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World)"), interp.Binding.MapItem("List"))
 
-	newList := interp.MustLexAndEvaluate("append (. List) and")
+	newList := interp.MustLexAndEvaluate("(append (. List) and)")
 
 	interp.Binding.MapItem("List").Children[0] = token.NewString("Dude!")
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Dude! World"), interp.Binding.MapItem("List"))
-	require.EqualValues(t, interp.MustLexAndEvaluate("list Hello World and"), newList)
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Dude! World)"), interp.Binding.MapItem("List"))
+	require.EqualValues(t, interp.MustLexAndEvaluate("(list Hello World and)"), newList)
 }
 
 func TestMap(t *testing.T) {
@@ -273,12 +273,12 @@ func TestSort(t *testing.T) {
 			token.NewDecimalFromInt(1),
 		),
 	})
-	require.EqualValues(t, token.NewList(token.NewDecimalFromInt(1), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewString("World")), interp.MustLexAndEvaluate("sort (. List)"))
+	require.EqualValues(t, token.NewList(token.NewDecimalFromInt(1), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewString("World")), interp.MustLexAndEvaluate("(sort (. List))"))
 
 	// integrity check
 	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewDecimalFromInt(1)), interp.Get("List"))
 
-	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewString("Hello"), token.NewDecimalFromInt(2), token.NewDecimalFromInt(1)), interp.MustLexAndEvaluate("sort (. List) true"))
+	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewString("Hello"), token.NewDecimalFromInt(2), token.NewDecimalFromInt(1)), interp.MustLexAndEvaluate("(sort (. List) true)"))
 
 	// integrity check
 	require.EqualValues(t, token.NewList(token.NewString("World"), token.NewDecimalFromInt(2), token.NewString("Hello"), token.NewDecimalFromInt(1)), interp.Get("List"))
@@ -359,7 +359,7 @@ func BenchmarkReverse(b *testing.B) {
 		input    string
 		expected *token.TaToken
 	}{
-		{"reverse (list 1 2 3 4)", token.NewList(
+		{"(reverse (list 1 2 3 4))", token.NewList(
 			token.NewDecimalFromInt(4),
 			token.NewDecimalFromInt(3),
 			token.NewDecimalFromInt(2),

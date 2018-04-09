@@ -418,11 +418,13 @@ func TestAnd(t *testing.T) {
 			`and false false false false false`,
 			nil,
 			token.NewBool(false),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and true true true`,
 			nil,
 			token.NewBool(true),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and (. List True) true`,
 			token.NewMap(map[string]*token.TaToken{
 				"List": token.NewMap(map[string]*token.TaToken{
@@ -431,36 +433,44 @@ func TestAnd(t *testing.T) {
 				}),
 			}),
 			token.NewBool(true),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and false false`,
 			nil,
 			token.NewBool(false),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and true`,
 			nil,
 			token.NewBool(true),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and (> 1 1)`,
 			nil,
 			token.NewBool(false),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and (> 2 1) true`,
 			nil,
 			token.NewBool(true),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and (+ 2 2)`,
 			nil,
 			helpers.Error{},
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and (list 1 2 3) false`,
 			nil,
 			token.NewBool(false),
-		}, helpers.Test{
+		},
+		helpers.Test{
 			`and (list 1 2 3)`,
 			nil,
 			token.NewBool(true),
-		}, helpers.Test{
-			`and`,
+		},
+		helpers.Test{
+			`(and)`,
 			nil,
 			token.NewBool(true),
 		},

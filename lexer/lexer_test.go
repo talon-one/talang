@@ -14,6 +14,10 @@ func TestLexer(t *testing.T) {
 		expected *token.TaToken
 	}{
 		{
+			"1",
+			token.NewDecimalFromInt(1),
+		},
+		{
 			"+ 1 2",
 			token.New("+",
 				token.NewDecimalFromInt(1),

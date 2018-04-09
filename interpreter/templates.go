@@ -82,29 +82,13 @@ var templateSignature = TaFunction{
 `,
 	},
 	Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		walker := templateWalker{interp: interp}
-		blockText := strings.ToLower(args[0].String)
-		// iterate trough all functions
-		for template := walker.Next(); template != nil; template = walker.Next() {
-			run, detail, children, err := interp.matchesSignature(&template.CommonSignature, blockText, args[1:], 0)
-			if err != nil {
-				return nil, errors.Errorf("error in template `%s': %v", template.Name, err)
-			}
-			if !run {
-				if interp.Logger != nil {
-					switch detail {
-					case invalidSignature:
-						interp.Logger.Printf("NOT Running template `%s' (not matching signature)\n", template.String())
-					case errorInChildrenEvaluation:
-						interp.Logger.Printf("NOT Running template `%s' (errors in child evaluation)\n", template.String())
-					}
-				}
-				continue
-			}
+		walker := newtemplateToRunWalker(interp, token.NewToken(args[0].String, args[1:]...), 0)
+		for tmpl := walker.Next(); tmpl != nil; tmpl = walker.Next() {
 			if interp.Logger != nil {
-				interp.Logger.Printf("Running template `%s' with `%v'\n", template.String(), token.TokenArguments(children).ToHumanReadable())
+				interp.Logger.Printf("Running template `%s' with `%v'\n", tmpl.CommonSignature.String(), token.TokenArguments(args[1:]).ToHumanReadable())
 			}
-			b := template.Template
+
+			b := tmpl.Template
 			if len(args) > 1 {
 				if _, err := replaceVariables(&b, args[1:]...); err != nil {
 					return nil, err
@@ -112,6 +96,7 @@ var templateSignature = TaFunction{
 			}
 			return &b, nil
 		}
+
 		return nil, errors.Errorf("template `%s' not found", args[0].String)
 	},
 }

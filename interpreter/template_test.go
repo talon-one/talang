@@ -71,7 +71,7 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 		Template: *lexer.MustLex("(* 2 (# 0))"),
 	}))
 
-	require.Error(t, getError(interp.LexAndEvaluate("! MultiplyWith2 A")))
+	require.Error(t, getError(interp.LexAndEvaluate("(! MultiplyWith2 A)")))
 }
 
 // // test if children got an error
@@ -97,7 +97,7 @@ func TestInvalidTemplateArgumentTypes(t *testing.T) {
 // 		},
 // 	})
 
-// 	require.Error(t, getError(interp.LexAndEvaluate("! MultiplyWith2 (FN)")))
+// 	require.Error(t, getError(interp.LexAndEvaluate("(! MultiplyWith2 (FN))")))
 // }
 
 func TestSetTemplate(t *testing.T) {

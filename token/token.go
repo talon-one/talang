@@ -137,6 +137,18 @@ func NewMap(m map[string]*TaToken) *TaToken {
 	return &b
 }
 
+func NewToken(text string, children ...*TaToken) *TaToken {
+	var b TaToken
+	b.String = text
+	b.Kind = Token
+	if children == nil {
+		b.Children = []*TaToken{}
+	} else {
+		b.Children = children
+	}
+	return &b
+}
+
 func (b *TaToken) IsEmpty() bool {
 	return len(b.Children) == 0 && len(b.String) == 0
 }

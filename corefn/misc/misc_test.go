@@ -9,7 +9,7 @@ import (
 
 func TestNoop(t *testing.T) {
 	helpers.RunTests(t, helpers.Test{
-		"noop",
+		"(noop)",
 		nil,
 		token.NewNull(),
 	})

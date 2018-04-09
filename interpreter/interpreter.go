@@ -2,21 +2,12 @@ package interpreter
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/talon-one/talang/token"
 
 	lexer "github.com/talon-one/talang/lexer"
-)
-
-type EvaluationMode int
-
-const (
-	Unsafe EvaluationMode = iota
-	Safe   EvaluationMode = iota
 )
 
 type Interpreter struct {
@@ -27,7 +18,6 @@ type Interpreter struct {
 	Templates         []TaTemplate
 	Logger            *log.Logger
 	IsDryRun          bool
-	EvaluationMode    EvaluationMode
 	MaxRecursiveLevel *int
 }
 
@@ -72,7 +62,7 @@ func (interp *Interpreter) Evaluate(b *token.TaToken) error {
 }
 func (interp *Interpreter) evaluate(b *token.TaToken, level int) error {
 	if interp.MaxRecursiveLevel != nil && level > *interp.MaxRecursiveLevel {
-		return errors.Errorf("Max Recursive level (%d) reached", *interp.MaxRecursiveLevel)
+		return &MaxRecursiveLevelReachedError{*interp.MaxRecursiveLevel}
 	}
 	if b == nil || b.IsEmpty() {
 		return errors.New("Empty term")
@@ -118,137 +108,92 @@ func (interp *Interpreter) MustEvaluate(b *token.TaToken) {
 	}
 }
 
-type notMatchingDetail int
-
-const (
-	invalidName               notMatchingDetail = iota
-	invalidSignature          notMatchingDetail = iota
-	errorInChildrenEvaluation notMatchingDetail = iota
-)
-
-func (interp *Interpreter) matchesSignature(sig *CommonSignature, lowerName string, args []*token.TaToken, level int) (bool, notMatchingDetail, []*token.TaToken, error) {
-	if sig.lowerName != lowerName {
-		return false, invalidName, nil, nil
-	}
-
-	var children []*token.TaToken
-	argc := len(args)
-	sigargc := len(sig.Arguments)
-	if !sig.IsVariadic {
-		if sigargc != argc {
-			return false, invalidSignature, nil, nil
-		}
-	} else {
-		if sigargc-1 > argc {
-			return false, invalidSignature, nil, nil
-		}
-	}
-
-	willEvaluate := false
-	for i, j := 0, 0; i < argc; i++ {
-		if sig.Arguments[j]&token.Token == 0 && args[i].IsBlock() {
-			willEvaluate = true
-			break
-		}
-		j++
-		if j >= sigargc {
-			j = sigargc - 1
-		}
-	}
-
-	if willEvaluate {
-		// make a copy of the children
-		children = make([]*token.TaToken, argc)
-		for i, child := range args {
-			children[i] = new(token.TaToken)
-			*children[i] = *child
-		}
-	} else {
-		children = args
-	}
-
-	for i, j := 0, 0; i < len(children); i++ {
-		if sig.Arguments[j]&token.Token == 0 && children[i].IsBlock() {
-			if err := interp.evaluate(children[i], level+1); err != nil {
-				return false, errorInChildrenEvaluation, nil, errors.Errorf("Error in child %s: %v", children[i].String, err)
-			}
-		}
-		j++
-		if j >= sigargc {
-			j = sigargc - 1
-		}
-	}
-
-	if sig.MatchesArguments(token.Arguments(children)) {
-		return true, 0, children, nil
-	}
-	return false, invalidSignature, nil, nil
-}
-
 func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
-	walker := funcWalker{interp: interp}
-	blockText := strings.ToLower(b.String)
+	if !b.IsBlock() {
+		return false, nil
+	}
+
 	var collectedErrors []error
-	// iterate trough all functions
+	walker := newFuncToRunWalker(interp, b, level+1)
+
+nextfunc:
 	for fn := walker.Next(); fn != nil; fn = walker.Next() {
-		run, detail, children, err := interp.matchesSignature(&fn.CommonSignature, blockText, b.Children, level+1)
-
-		if interp.EvaluationMode == Safe {
-			switch detail {
-			case invalidSignature:
-				collectedErrors = append(collectedErrors, errors.Errorf(`  Expression %s doesn't match '%s'`, b.Stringify(), fn.String()))
-			case errorInChildrenEvaluation:
-				collectedErrors = append(collectedErrors, errors.Errorf("  NOT Running function `%s' (errors in child evaluation)", fn.String()))
-			}
-		}
-
-		if !run {
-			if interp.Logger != nil {
-				switch detail {
-				case invalidSignature:
-					interp.Logger.Printf("NOT Running function `%s' (not matching signature)\n", fn.String())
-				case errorInChildrenEvaluation:
-					interp.Logger.Printf("NOT Running function `%s' (errors in child evaluation)\n", fn.String())
-				}
-			}
-			if err != nil {
-				return false, err
-			}
-			continue
-		}
-		// paranoid check
-		if err != nil {
-			return false, err
-		}
-
 		var result *token.TaToken
-		if !interp.IsDryRun {
+		if interp.IsDryRun {
 			if interp.Logger != nil {
-				interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
-			}
-			result, err = fn.Func(interp, children...)
-		} else {
-			if interp.Logger != nil {
-				interp.Logger.Printf("DryRunning function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
+				interp.Logger.Printf("DryRunning function `%s' with `%v'\n", fn.String(), token.TokenArguments(b.Children).ToHumanReadable())
 			}
 			result = &token.TaToken{
 				Kind: fn.Returns,
 			}
-		}
-		if err != nil {
-			if interp.Logger != nil {
-				interp.Logger.Printf("Error in function %s: %v", fn.Name, err)
+		} else {
+			// evaluating children
+			var children []*token.TaToken
+
+			if hasTokenBlock(b) {
+				// make a copy of the children
+				children = make([]*token.TaToken, len(b.Children))
+				for i, child := range b.Children {
+					children[i] = new(token.TaToken)
+					token.Copy(children[i], child)
+				}
+			} else {
+				children = b.Children
 			}
-			return false, errors.Errorf("Error in function %s: %v", fn.Name, err)
+
+			sigargc := len(fn.CommonSignature.Arguments)
+
+			for i, j := 0, 0; i < len(children); i++ {
+				if fn.CommonSignature.Arguments[j]&token.Token == 0 && children[i].IsBlock() {
+					if err := interp.evaluate(children[i], level+1); err != nil {
+						// children got an error
+						return false, FunctionError{
+							error:    err,
+							function: fn,
+						}
+					}
+				}
+				j++
+				if j >= sigargc {
+					j = sigargc - 1
+				}
+			}
+
+			// the children do not match after evaluation => goto next function
+			if !fn.CommonSignature.MatchesArguments(token.Arguments(children)) {
+
+				collectedErrors = append(collectedErrors, FunctionNotRanError{
+					Reason:   errors.New("Not matching signature - after evaluation"),
+					function: fn,
+				})
+				continue nextfunc
+			}
+
+			if interp.Logger != nil {
+				interp.Logger.Printf("Running function `%s' with `%v'\n", fn.String(), token.TokenArguments(children).ToHumanReadable())
+			}
+			var err error
+			result, err = fn.Func(interp, children...)
+			// error in function
+			if err != nil {
+				return false, FunctionError{error: err, function: fn}
+			}
+			if result == nil {
+				result = token.NewNull()
+			}
 		}
-		if result == nil {
-			result = token.NewNull()
-		}
+
+		// we ran the function and everything is okay
+		// make sure the result matches our expected data
 		if fn.CommonSignature.Returns&result.Kind != result.Kind {
+			err := errors.Errorf("Unexpected return type for `%s': was `%s' expected `%s'", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
 			if interp.Logger != nil {
-				interp.Logger.Printf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
+				interp.Logger.Println(err)
 			}
-			return false, errors.Errorf("Unexpected return type for %s: was `%s' expected %s", fn.Name, result.Kind.String(), fn.CommonSignature.Returns.String())
+			// if not => goto next function
+			collectedErrors = append(collectedErrors, err)
+			err = nil
+			continue
 		}
 		if interp.Logger != nil {
 			interp.Logger.Printf("Updating value to `%s' (%s)\n", result.Stringify(), result.Kind.String())
@@ -259,20 +204,12 @@ func (interp *Interpreter) callFunc(b *token.TaToken, level int) (bool, error) {
 		}
 		return true, nil
 	}
+	// we found no matching function OR all functions failed
+	err := FunctionNotFoundError{CollectedErrors: collectedErrors, token: b}
 	if interp.Logger != nil {
-		interp.Logger.Printf("Found no func `%s' in interpreter instance\n", blockText)
+		interp.Logger.Println(err)
 	}
-	if interp.EvaluationMode == Safe {
-		var builder strings.Builder
-		builder.WriteString(fmt.Sprintf("Found no eval function for %s", b.Stringify()))
-		builder.WriteRune('\n')
-		for i := 0; i < len(collectedErrors); i++ {
-			builder.WriteString(collectedErrors[i].Error())
-			builder.WriteRune('\n')
-		}
-		return false, errors.Errorf(builder.String())
-	}
-	return false, nil
+	return false, err
 }
 
 func (interp *Interpreter) Get(key string) *token.TaToken {
@@ -319,42 +256,11 @@ func (interp *Interpreter) AllTemplates() (templates []TaTemplate) {
 	return templates
 }
 
-type funcWalker struct {
-	interp *Interpreter
-	pos    int
-}
-
-func (f *funcWalker) Next() *TaFunction {
-n:
-	if f.pos >= len(f.interp.Functions) {
-		if f.interp.Parent != nil {
-			f.pos = 0
-			f.interp = f.interp.Parent
-			goto n
+func hasTokenBlock(tkn *token.TaToken) bool {
+	for _, child := range tkn.Children {
+		if child.IsBlock() {
+			return true
 		}
-		return nil
 	}
-	fn := &f.interp.Functions[f.pos]
-	f.pos++
-	return fn
-}
-
-type templateWalker struct {
-	interp *Interpreter
-	pos    int
-}
-
-func (f *templateWalker) Next() *TaTemplate {
-n:
-	if f.pos >= len(f.interp.Templates) {
-		if f.interp.Parent != nil {
-			f.pos = 0
-			f.interp = f.interp.Parent
-			goto n
-		}
-		return nil
-	}
-	fn := &f.interp.Templates[f.pos]
-	f.pos++
-	return fn
+	return false
 }

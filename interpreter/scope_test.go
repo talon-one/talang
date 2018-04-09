@@ -36,7 +36,7 @@ func TestScopeBinding(t *testing.T) {
 
 func TestScopeFunctions(t *testing.T) {
 	interp := helpers.MustNewInterpreterWithLogger()
-	interp.RegisterFunction(interpreter.TaFunction{
+	interp.MustRegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn1",
 			Returns: token.String,
@@ -46,10 +46,10 @@ func TestScopeFunctions(t *testing.T) {
 		},
 	})
 
-	require.Equal(t, "Hello", interp.MustLexAndEvaluate("fn1").String)
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("(fn1)").String)
 
 	scope := interp.NewScope()
-	scope.RegisterFunction(interpreter.TaFunction{
+	scope.MustRegisterFunction(interpreter.TaFunction{
 		CommonSignature: interpreter.CommonSignature{
 			Name:    "fn2",
 			Returns: token.String,
@@ -58,10 +58,10 @@ func TestScopeFunctions(t *testing.T) {
 			return token.NewString("Bye"), nil
 		},
 	})
-	require.Equal(t, "Hello", scope.MustLexAndEvaluate("fn1").String)
+	require.Equal(t, "Hello", scope.MustLexAndEvaluate("(fn1)").String)
 
-	require.Equal(t, "fn2", interp.MustLexAndEvaluate("fn2").String)
-	require.Equal(t, "Bye", scope.MustLexAndEvaluate("fn2").String)
+	require.Error(t, getError(interp.LexAndEvaluate("(fn2)")))
+	require.Equal(t, "Bye", scope.MustLexAndEvaluate("(fn2)").String)
 }
 
 func TestScopeTemplates(t *testing.T) {
@@ -73,7 +73,7 @@ func TestScopeTemplates(t *testing.T) {
 		},
 		Template: *lexer.MustLex("Hello"),
 	}))
-	require.Equal(t, "Hello", interp.MustLexAndEvaluate("! Template1").String)
+	require.Equal(t, "Hello", interp.MustLexAndEvaluate("(! Template1)").String)
 
 	scope := interp.NewScope()
 
@@ -86,5 +86,5 @@ func TestScopeTemplates(t *testing.T) {
 	}))
 	require.Equal(t, "Hello World", scope.MustLexAndEvaluate(`+ (! Template1) " " (! Template2)`).String)
 
-	require.Error(t, getError(interp.LexAndEvaluate("! Template2")))
+	require.Error(t, getError(interp.LexAndEvaluate("(! Template2)")))
 }

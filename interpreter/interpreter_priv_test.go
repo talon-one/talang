@@ -5,684 +5,347 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ericlagergren/decimal"
-	"github.com/talon-one/talang/lexer"
-
 	"github.com/stretchr/testify/require"
 
+	"github.com/talon-one/talang/lexer"
 	"github.com/talon-one/talang/token"
 )
 
-func TestMatchesSignatureNonVariadic(t *testing.T) {
+func TestFuncToRunWalkerNonVariadic(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-
-	type Expected struct {
-		Matches           bool
-		NotMatching       notMatchingDetail
-		EvaluatedChildren []*token.TaToken
-		Error             bool
-	}
-
-	type Result struct {
-		Matches           bool
-		NotMatching       notMatchingDetail
-		EvaluatedChildren []*token.TaToken
-		Error             error
-	}
-
-	makeResult := func(Matches bool, NotMatching notMatchingDetail, EvaluatedChildren []*token.TaToken, Error error) Result {
-		return Result{
-			Matches:           Matches,
-			NotMatching:       NotMatching,
-			EvaluatedChildren: EvaluatedChildren,
-			Error:             Error,
-		}
-	}
+	require.NoError(t, interp.RemoveAllFunctions())
 
 	tests := []struct {
-		Expected Expected
-		Result   Result
+		Input    *token.TaToken
+		Register []CommonSignature
+		Expected []CommonSignature
 	}{
 
 		// MATCHING SIGNATURES
 		// 1 parameter
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal)"),
+			},
 		},
 
 		// 2 parameters
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String,Decimal)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.String,
-						token.Decimal,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(String,Decimal)"),
+			},
 		},
 
 		// AnyKind(Decimal)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Any)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Any,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Any)"),
+			},
 		},
 
 		// AnyKind(String)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Any)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Any,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Any)"),
+			},
 		},
 
 		// AtomKind(Decimal)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Atom)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Atom,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Atom)"),
+			},
 		},
 
 		// AtomKind(String)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Atom)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Atom,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Atom)"),
+			},
+		},
+
+		// Multiple possibilities
+		{
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Atom)"),
+				MustNewCommonSignature("fn(Decimal)"),
+				MustNewCommonSignature("fn(String)"),
+			},
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Atom)"),
+				MustNewCommonSignature("fn(String)"),
+			},
+		},
+
+		// Nested
+		{
+			Input: lexer.MustLex("fn (sub Hello)"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+				MustNewCommonSignature("sub(String)String"),
+			},
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+			},
+		},
+
+		// Nested multiple
+		{
+			Input: lexer.MustLex("fn (sub Hello)"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+				MustNewCommonSignature("sub(String)Decimal"),
+				MustNewCommonSignature("sub(Atom)String"),
+			},
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+			},
+		},
+
+		// Nested multiple
+		{
+			Input: lexer.MustLex("fn (sub Hello)"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+				MustNewCommonSignature("fn(Decimal)"),
+				MustNewCommonSignature("fn(Token)"),
+				MustNewCommonSignature("sub(Any)Any"),
+			},
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+				MustNewCommonSignature("fn(Decimal)"),
+				MustNewCommonSignature("fn(Token)"),
+			},
 		},
 
 		// NOT MATCHING
-		// invalid name
+		// Invalid name
 		{
-			Expected: Expected{
-				false,
-				invalidName,
-				nil,
-				false,
+			Input: lexer.MustLex("fn1 Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn2(String)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn1",
-					lowerName: "fn1",
-					Arguments: []token.Kind{
-						token.String,
-					},
-					IsVariadic: false,
-				},
-				"fn2",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: nil,
 		},
-		// invalid count of arguments
+
+		// Invalid count of arguments
 		{
-			Expected: Expected{
-				false,
-				invalidSignature,
-				nil,
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn()"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:       "fn",
-					lowerName:  "fn",
-					Arguments:  []token.Kind{},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: nil,
 		},
-		// invalid type
+
+		// Invalid type
 		{
-			Expected: Expected{
-				false,
-				invalidSignature,
-				nil,
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: nil,
 		},
-		// error in child
+
+		// Nested invalid type
 		{
-			Expected: Expected{
-				false,
-				errorInChildrenEvaluation,
-				nil,
-				true,
+			Input: lexer.MustLex("fn (sub Hello)"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+				MustNewCommonSignature("sub(String)Decimal"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: false,
-				},
-				"fn",
-				[]*token.TaToken{
-					lexer.MustLex("(panic)"),
-				},
-				0,
-			)),
+			Expected: nil,
+		},
+
+		// Nested nested invalid type
+		{
+			Input: lexer.MustLex("fn (sub Hello)"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String)"),
+				MustNewCommonSignature("sub(Decimal)String"),
+			},
+			Expected: nil,
 		},
 	}
 
 	for i, test := range tests {
-		require.Equal(t, test.Expected.Matches, test.Result.Matches, "Test #%d failed", i)
-		require.Equal(t, test.Expected.NotMatching, test.Result.NotMatching, "Test #%d failed", i)
-		require.EqualValues(t, test.Expected.EvaluatedChildren, test.Result.EvaluatedChildren, "Test #%d failed", i)
-		if test.Expected.Error == true {
-			require.Error(t, test.Result.Error, "Test %d failed", i)
-		} else {
-			require.NoError(t, test.Result.Error, "Test %d failed", i)
+		scope := interp.NewScope()
+		for j := 0; j < len(test.Register); j++ {
+			scope.MustRegisterFunction(TaFunction{CommonSignature: test.Register[j]})
 		}
+		walker := newFuncToRunWalker(scope, test.Input, 0)
+
+		for j := 0; j < len(test.Expected); j++ {
+			require.Equal(t, test.Expected[j].String(), walker.Next().CommonSignature.String(), "Test %d failed", i)
+		}
+		require.Nil(t, walker.Next())
 	}
 }
 
-func TestMatchesSignatureVariadic(t *testing.T) {
+func TestFuncToRunWalkerVariadic(t *testing.T) {
 	interp := MustNewInterpreter()
 	interp.Logger = log.New(os.Stdout, "", log.LstdFlags)
-
-	type Expected struct {
-		Matches           bool
-		NotMatching       notMatchingDetail
-		EvaluatedChildren []*token.TaToken
-		Error             bool
-	}
-
-	type Result struct {
-		Matches           bool
-		NotMatching       notMatchingDetail
-		EvaluatedChildren []*token.TaToken
-		Error             error
-	}
-
-	makeResult := func(Matches bool, NotMatching notMatchingDetail, EvaluatedChildren []*token.TaToken, Error error) Result {
-		return Result{
-			Matches:           Matches,
-			NotMatching:       NotMatching,
-			EvaluatedChildren: EvaluatedChildren,
-			Error:             Error,
-		}
-	}
+	require.NoError(t, interp.RemoveAllFunctions())
 
 	tests := []struct {
-		Expected Expected
-		Result   Result
+		Input    *token.TaToken
+		Register []CommonSignature
+		Expected []CommonSignature
 	}{
 
 		// MATCHING SIGNATURES
-
 		// 0 parameters required, 0 parameter given
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{},
-				false,
+			Input: token.NewToken("fn"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal...)"),
+			},
 		},
+
 		// 0 parameters required, 1 parameter given
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal...)"),
+			},
 		},
 
-		// 1 parameters required, 2 parameters given
+		// 1 parameter required, 2 parameter given
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String, Decimal...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.String,
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(String, Decimal...)"),
+			},
 		},
 
-		// 1 parameters required, 3 parameters given
+		// 1 parameter required, 3 parameters given
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-					token.NewDecimal(decimal.New(0, 0)),
-					token.NewDecimal(decimal.New(1, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello 0 1"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(String, Decimal...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.String,
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-					token.NewDecimal(decimal.New(0, 0)),
-					token.NewDecimal(decimal.New(1, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(String, Decimal...)"),
+			},
 		},
 
 		// AnyKind(Decimal)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Any...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Any,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Any...)"),
+			},
 		},
 
 		// AnyKind(String)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Any...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Any,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Any...)"),
+			},
 		},
 
 		// AtomKind(Decimal)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				false,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Atom...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Atom,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimal(decimal.New(0, 0)),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Atom...)"),
+			},
 		},
 
 		// AtomKind(String)
 		{
-			Expected: Expected{
-				true,
-				notMatchingDetail(0),
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Atom...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Atom,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: []CommonSignature{
+				MustNewCommonSignature("fn(Atom...)"),
+			},
 		},
 
 		// NOT MATCHING
-		// invalid name
+		// Invalid name
 		{
-			Expected: Expected{
-				false,
-				invalidName,
-				nil,
-				false,
+			Input: lexer.MustLex("fn1 Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn2(String...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn1",
-					lowerName: "fn1",
-					Arguments: []token.Kind{
-						token.String,
-					},
-					IsVariadic: true,
-				},
-				"fn2",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: nil,
 		},
-		// invalid type
+		// Invalid type
 		{
-			Expected: Expected{
-				false,
-				invalidSignature,
-				nil,
-				false,
+			Input: lexer.MustLex("fn Hello"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewString("Hello"),
-				},
-				0,
-			)),
+			Expected: nil,
 		},
-		// error in child
+
+		// To few arguments
 		{
-			Expected: Expected{
-				false,
-				errorInChildrenEvaluation,
-				nil,
-				true,
+			Input: lexer.MustLex("fn 0"),
+			Register: []CommonSignature{
+				MustNewCommonSignature("fn(Decimal, Decimal, Decimal...)"),
 			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					lexer.MustLex("(panic)"),
-				},
-				0,
-			)),
-		},
-		// to few arguments
-		{
-			Expected: Expected{
-				false,
-				invalidSignature,
-				nil,
-				false,
-			},
-			Result: makeResult(interp.matchesSignature(
-				&CommonSignature{
-					Name:      "fn",
-					lowerName: "fn",
-					Arguments: []token.Kind{
-						token.Decimal,
-						token.Decimal,
-						token.Decimal,
-					},
-					IsVariadic: true,
-				},
-				"fn",
-				[]*token.TaToken{
-					token.NewDecimalFromString("1"),
-				},
-				0,
-			)),
+			Expected: nil,
 		},
 	}
 
 	for i, test := range tests {
-		require.Equal(t, test.Expected.NotMatching, test.Result.NotMatching, "Test #%d failed", i)
-		require.Equal(t, test.Expected.Matches, test.Result.Matches, "Test #%d failed", i)
-		require.EqualValues(t, test.Expected.EvaluatedChildren, test.Result.EvaluatedChildren, "Test #%d failed", i)
-		if test.Expected.Error == true {
-			require.Error(t, test.Result.Error, "Test #%d failed", i)
-		} else {
-			require.NoError(t, test.Result.Error, "Test #%d failed", i)
+		scope := interp.NewScope()
+		for j := 0; j < len(test.Register); j++ {
+			scope.MustRegisterFunction(TaFunction{CommonSignature: test.Register[j]})
 		}
+		walker := newFuncToRunWalker(scope, test.Input, 0)
+
+		for j := 0; j < len(test.Expected); j++ {
+			require.Equal(t, test.Expected[j].String(), walker.Next().CommonSignature.String(), "Test %d failed", i)
+		}
+		require.Nil(t, walker.Next())
 	}
 }
 
@@ -756,64 +419,4 @@ func TestAllTemplates(t *testing.T) {
 
 	require.EqualValues(t, interp.Templates, interp.AllTemplates())
 	require.EqualValues(t, append(subInterp.Templates, interp.Templates...), subInterp.AllTemplates())
-}
-
-func TestFuncWalker(t *testing.T) {
-	interp, err := NewInterpreter()
-
-	require.NoError(t, err)
-	require.NoError(t, interp.RemoveAllFunctions())
-
-	require.NoError(t, interp.RegisterFunction(TaFunction{
-		CommonSignature: CommonSignature{
-			Name: "ROOTFN",
-		},
-		Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-			return nil, nil
-		},
-	}))
-
-	interp = interp.NewScope()
-	require.NoError(t, interp.RemoveAllFunctions())
-
-	require.NoError(t, interp.RegisterFunction(TaFunction{
-		CommonSignature: CommonSignature{
-			Name: "Scope1FN",
-		},
-		Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-			return nil, nil
-		},
-	}))
-
-	interp = interp.NewScope()
-	require.NoError(t, interp.RemoveAllFunctions())
-
-	require.NoError(t, interp.RegisterFunction(
-		TaFunction{
-			CommonSignature: CommonSignature{
-				Name: "Scope2FN1",
-			},
-			Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-				return nil, nil
-			},
-		},
-		TaFunction{
-			CommonSignature: CommonSignature{
-				Name: "Scope2FN2",
-			},
-			Func: func(interp *Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-				return nil, nil
-			},
-		},
-	))
-
-	walker := funcWalker{
-		interp: interp,
-	}
-
-	require.Equal(t, "Scope2FN1", walker.Next().Name)
-	require.Equal(t, "Scope2FN2", walker.Next().Name)
-	require.Equal(t, "Scope1FN", walker.Next().Name)
-	require.Equal(t, "ROOTFN", walker.Next().Name)
-	require.Nil(t, walker.Next())
 }
