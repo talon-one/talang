@@ -2,7 +2,7 @@
 package math
 
 import (
-	"github.com/ericlagergren/decimal"
+	"github.com/talon-one/talang/decimal"
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/token"
 )
@@ -30,12 +30,12 @@ var Add = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
 			} else {
-				d = d.Add(d, args[i].Decimal)
+				d.Add(args[i].Decimal)
 			}
 		}
 		return token.NewDecimal(d), nil
@@ -59,12 +59,12 @@ var Sub = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
 			} else {
-				d = d.Sub(d, args[i].Decimal)
+				d.Sub(args[i].Decimal)
 			}
 		}
 		return token.NewDecimal(d), nil
@@ -88,12 +88,12 @@ var Mul = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
 			} else {
-				d = d.Mul(d, args[i].Decimal)
+				d.Mul(args[i].Decimal)
 			}
 		}
 		return token.NewDecimal(d), nil
@@ -117,12 +117,12 @@ var Div = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
 			} else {
-				d = d.Quo(d, args[i].Decimal)
+				d.Div(args[i].Decimal)
 			}
 		}
 		return token.NewDecimal(d), nil
@@ -146,12 +146,12 @@ var Mod = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
 			} else {
-				d = d.Rem(d, args[i].Decimal)
+				d.Mod(args[i].Decimal)
 			}
 		}
 		return token.NewDecimal(d), nil
@@ -176,13 +176,8 @@ var Floor = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
-		if args[0].Decimal.Signbit() {
-			ctx.RoundingMode = decimal.AwayFromZero
-		} else {
-			ctx.RoundingMode = decimal.ToZero
-		}
-		return token.NewDecimal(ctx.RoundToInt(args[0].Decimal)), nil
+		args[0].Decimal.Floor()
+		return token.NewDecimal(args[0].Decimal), nil
 	},
 }
 
@@ -204,12 +199,7 @@ var Ceil = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		ctx := decimal.Context{Precision: args[0].Decimal.Context.Precision}
-		if args[0].Decimal.Signbit() {
-			ctx.RoundingMode = decimal.ToZero
-		} else {
-			ctx.RoundingMode = decimal.AwayFromZero
-		}
-		return token.NewDecimal(ctx.RoundToInt(args[0].Decimal)), nil
+		args[0].Decimal.Ceil()
+		return token.NewDecimal(args[0].Decimal), nil
 	},
 }

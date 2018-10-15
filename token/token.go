@@ -6,12 +6,13 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/ericlagergren/decimal"
+	"github.com/talon-one/talang/decimal"
 )
 
 type TaToken struct {
+	// String contains the string value of an block
 	String   string
-	Decimal  *decimal.Big
+	Decimal  *decimal.Decimal
 	Bool     bool
 	Time     time.Time
 	Kind     Kind
@@ -31,7 +32,7 @@ func New(text string, children ...*TaToken) *TaToken {
 	return &b
 }
 
-func NewDecimal(decimal *decimal.Big) *TaToken {
+func NewDecimal(decimal *decimal.Decimal) *TaToken {
 	var b TaToken
 	b.Decimal = decimal
 	b.Kind = Decimal
@@ -42,7 +43,11 @@ func NewDecimal(decimal *decimal.Big) *TaToken {
 
 func NewDecimalFromInt(i int64) *TaToken {
 	var b TaToken
-	b.Decimal = decimal.New(i, 0)
+	b.Decimal = decimal.NewFromInt(i)
+	if b.Decimal == nil {
+		b.Kind = Null
+		return &b
+	}
 	b.Kind = Decimal
 	b.String = b.Decimal.String()
 	b.Children = []*TaToken{}
@@ -51,11 +56,9 @@ func NewDecimalFromInt(i int64) *TaToken {
 
 func NewDecimalFromString(s string) *TaToken {
 	var b TaToken
-	var ok bool
 	b.Children = []*TaToken{}
-	b.Decimal = decimal.New(0, 0)
-	b.Decimal, ok = b.Decimal.SetString(s)
-	if !ok {
+	b.Decimal = decimal.NewFromString(s)
+	if b.Decimal == nil {
 		b.Kind = Null
 		return &b
 	}
@@ -67,8 +70,11 @@ func NewDecimalFromString(s string) *TaToken {
 // NewDecimalFromFloat creates a new decimal block from a float (REMEMBER float64 is not exact! use with care)
 func NewDecimalFromFloat(i float64) *TaToken {
 	var b TaToken
-	b.Decimal = decimal.New(0, 0)
-	b.Decimal = b.Decimal.SetFloat64(i)
+	b.Decimal = decimal.NewFromFloat(i)
+	if b.Decimal == nil {
+		b.Kind = Null
+		return &b
+	}
 	b.Kind = Decimal
 	b.String = b.Decimal.String()
 	b.Children = []*TaToken{}
@@ -238,10 +244,9 @@ func (b *TaToken) initValue(text string) {
 
 		// is it a decimal?
 		if isDecimal(text) {
-			var ok bool
 			// try to parse it as a decimal
-			b.Decimal, ok = decimal.New(0, 0).SetString(text)
-			if ok {
+			b.Decimal = decimal.NewFromString(text)
+			if b.Decimal != nil {
 				b.Kind = Decimal
 				return
 			}
@@ -317,6 +322,7 @@ func Copy(dst *TaToken, src *TaToken) {
 	}
 }
 
+// Stringify returns the string representation of an Token
 func (b *TaToken) Stringify() string {
 	var builder strings.Builder
 	var children []string
@@ -371,7 +377,7 @@ func (b *TaToken) Equal(a *TaToken) bool {
 
 	switch a.Kind {
 	case Decimal:
-		return a.Decimal.Cmp(b.Decimal) == 0
+		return a.Decimal.Equal(b.Decimal)
 	case String:
 		return a.String == b.String
 	case Boolean:

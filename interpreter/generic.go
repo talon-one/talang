@@ -6,8 +6,12 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
+	"github.com/talon-one/talang/decimal"
 	"github.com/talon-one/talang/token"
 )
+
+var decimalType = reflect.TypeOf(decimal.Decimal{})
+var decimalTypePTR = reflect.TypeOf(&decimal.Decimal{})
 
 type Unmarshaler interface {
 	UnmarshalTaToken(*token.TaToken) error
@@ -22,6 +26,10 @@ func genericSetConv(value interface{}) (*token.TaToken, error) {
 	// walk down until we can address something
 	if v.Kind() != reflect.Ptr && v.Type().Name() != "" && v.CanAddr() {
 		v = v.Addr()
+	}
+
+	if v.Type() == decimalTypePTR {
+		return token.NewDecimal(v.Interface().(*decimal.Decimal)), nil
 	}
 
 	for {
@@ -164,7 +172,15 @@ func genericGetConv(tkn *token.TaToken, v reflect.Value) (reflect.Value, error) 
 		v = v.Elem()
 	}
 
+	fmt.Printf("%v", v.Type())
+
+	if v.Type() == decimalType {
+		return reflect.ValueOf(decimal.NewFromString(tkn.String)), nil
+	}
+
 	var result interface{}
+	var err error
+
 	switch v.Kind() {
 	case reflect.Struct:
 		if !tkn.IsMap() {
@@ -232,60 +248,82 @@ func genericGetConv(tkn *token.TaToken, v reflect.Value) (reflect.Value, error) 
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Int64()
-		result = int(i)
+		result, err = tkn.Decimal.Int()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Int8:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Int64()
-		result = int8(i)
+		result, err = tkn.Decimal.Int8()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Int16:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Int64()
-		result = int16(i)
+		result, err = tkn.Decimal.Int16()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Int32:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Int64()
-		result = int32(i)
+		result, err = tkn.Decimal.Int32()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Int64:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		result, _ = tkn.Decimal.Int64()
+		result, err = tkn.Decimal.Int64()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Uint:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Uint64()
-		result = uint(i)
+		result, err = tkn.Decimal.Uint()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Uint8:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Uint64()
-		result = uint8(i)
+		result, err = tkn.Decimal.Uint8()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Uint16:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Uint64()
-		result = uint16(i)
+		result, err = tkn.Decimal.Uint16()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Uint32:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		i, _ := tkn.Decimal.Uint64()
-		result = uint32(i)
+		result, err = tkn.Decimal.Uint32()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Uint64:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		result, _ = tkn.Decimal.Uint64()
+		result, err = tkn.Decimal.Uint64()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.String:
 		if !tkn.IsString() {
 			return reflect.Value{}, errors.Errorf("%s is not a string", tkn.String)
@@ -300,13 +338,18 @@ func genericGetConv(tkn *token.TaToken, v reflect.Value) (reflect.Value, error) 
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		f, _ := tkn.Decimal.Float64()
-		result = float32(f)
+		result, err = tkn.Decimal.Float32()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	case reflect.Float64:
 		if !tkn.IsDecimal() {
 			return reflect.Value{}, errors.Errorf("%s is not a decimal", tkn.String)
 		}
-		result, _ = tkn.Decimal.Float64()
+		result, err = tkn.Decimal.Float64()
+		if err != nil {
+			return reflect.Value{}, err
+		}
 	default:
 		return reflect.Value{}, errors.Errorf("Unknown type `%T'", v.Interface())
 	}

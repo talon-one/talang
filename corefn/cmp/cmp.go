@@ -96,7 +96,7 @@ var GreaterThanDecimal = interpreter.TaFunction{
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
-			if a.Cmp(args[i].Decimal) <= 0 {
+			if a.Compare(args[i].Decimal) <= 0 {
 				return token.NewBool(false), nil
 			}
 		}
@@ -152,7 +152,7 @@ var LessThanDecimal = interpreter.TaFunction{
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
-			if a.Cmp(args[i].Decimal) >= 0 {
+			if a.Compare(args[i].Decimal) >= 0 {
 				return token.NewBool(false), nil
 			}
 		}
@@ -208,7 +208,7 @@ var GreaterThanOrEqualDecimal = interpreter.TaFunction{
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
-			if a.Cmp(args[i].Decimal) < 0 {
+			if a.Compare(args[i].Decimal) < 0 {
 				return token.NewBool(false), nil
 			}
 		}
@@ -264,7 +264,7 @@ var LessThanOrEqualDecimal = interpreter.TaFunction{
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
 		a := args[0].Decimal
 		for i := 1; i < len(args); i++ {
-			if a.Cmp(args[i].Decimal) > 0 {
+			if a.Compare(args[i].Decimal) > 0 {
 				return token.NewBool(false), nil
 			}
 		}
@@ -329,7 +329,7 @@ var BetweenDecimal = interpreter.TaFunction{
 		argc -= 2
 
 		for i := 0; i < argc; i++ {
-			if args[i].Decimal.Cmp(min.Decimal) <= 0 || args[i].Decimal.Cmp(max.Decimal) >= 0 {
+			if args[i].Decimal.Compare(min.Decimal) <= 0 || args[i].Decimal.Compare(max.Decimal) >= 0 {
 				return token.NewBool(false), nil
 			}
 		}

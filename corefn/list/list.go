@@ -5,9 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ericlagergren/decimal"
 	"github.com/pkg/errors"
-
+	"github.com/talon-one/talang/decimal"
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/token"
 )
@@ -120,9 +119,9 @@ var Item = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		i, ok := args[1].Decimal.Int64()
-		if !ok {
-			return nil, errors.Errorf("`%s' is not an int", args[1].String)
+		i, err := args[1].Decimal.Int64()
+		if err != nil {
+			return nil, err
 		}
 		index := int(i)
 		l := len(args[0].Children)
@@ -259,12 +258,12 @@ var Min = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for _, item := range args[0].Children {
 			if item.IsDecimal() {
 				if d == nil {
 					d = item.Decimal
-				} else if item.Decimal.Cmp(d) < 0 {
+				} else if item.Decimal.Compare(d) < 0 {
 					d = item.Decimal
 				}
 			}
@@ -291,12 +290,12 @@ var Max = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Big
+		var d *decimal.Decimal
 		for _, item := range args[0].Children {
 			if item.IsDecimal() {
 				if d == nil {
 					d = item.Decimal
-				} else if item.Decimal.Cmp(d) > 0 {
+				} else if item.Decimal.Compare(d) > 0 {
 					d = item.Decimal
 				}
 			}
@@ -530,7 +529,7 @@ sum (. List) Item (. Item Price)                                 ; returns 4 Wit
 		list := args[0]
 		bindingName := args[1].String
 		blockToRun := args[2]
-		accumulator := decimal.New(0, 0)
+		accumulator := decimal.NewFromInt(0)
 
 		size := len(list.Children)
 		scope := interp.NewScope()
@@ -546,7 +545,7 @@ sum (. List) Item (. Item Price)                                 ; returns 4 Wit
 			if !result.IsDecimal() {
 				return nil, errors.Errorf("Invalid type in block evaluation, expected type: DecimalKind got %s", result.Kind.String())
 			}
-			accumulator = accumulator.Add(accumulator, result.Decimal)
+			accumulator.Add(result.Decimal)
 		}
 		return token.NewDecimal(accumulator), nil
 	},
@@ -636,7 +635,7 @@ sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2
 		bindingName := args[1].Children[0].String
 
 		type SortByItem struct {
-			Num  *decimal.Big
+			Num  *decimal.Decimal
 			Item *token.TaToken
 		}
 
@@ -660,7 +659,7 @@ sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2
 			if args[2].Bool {
 				expected = 1
 			}
-			return structlist[i].Num.Cmp(structlist[j].Num) == expected
+			return structlist[i].Num.Compare(structlist[j].Num) == expected
 		})
 
 		for i := 0; i < len(structlist); i++ {
