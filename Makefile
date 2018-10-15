@@ -11,7 +11,6 @@ docs: generate docs
 	go run interpreter/generate_docs.go -dir=./docs/
 
 generate:
-	@go get golang.org/x/tools/cmd/stringer
 	go generate ./...
 
 test: generate
