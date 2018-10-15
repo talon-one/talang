@@ -2,10 +2,11 @@ language: go
 go:
   - 1.9
 
-go_import_path: github.com/Eun/goremovelines
+go_import_path: github.com/talon-one/talang
 
 before_install:
   - go get -t -v ./...
+  - make generate
 
 script:
   - go test -race -coverprofile=coverage.txt -covermode=atomic
