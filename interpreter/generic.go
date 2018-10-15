@@ -172,10 +172,8 @@ func genericGetConv(tkn *token.TaToken, v reflect.Value) (reflect.Value, error) 
 		v = v.Elem()
 	}
 
-	fmt.Printf("%v", v.Type())
-
 	if v.Type() == decimalType {
-		return reflect.ValueOf(decimal.NewFromString(tkn.String)), nil
+		return reflect.ValueOf(*decimal.NewFromString(tkn.String)), nil
 	}
 
 	var result interface{}

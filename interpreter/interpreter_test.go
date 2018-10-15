@@ -279,7 +279,7 @@ func TestGenericSet(t *testing.T) {
 
 func TestGenericGet(t *testing.T) {
 	t.Run("Primitives", func(t *testing.T) {
-		var data struct {
+		type dataStruct struct {
 			Str     string
 			Int     int
 			Int8    int8
@@ -295,6 +295,7 @@ func TestGenericGet(t *testing.T) {
 			Float64 float64
 			Bool    bool
 		}
+
 		interp := helpers.MustNewInterpreterWithLogger()
 		interp.MustLexAndEvaluate(`(set Str Hello)`)
 		interp.MustLexAndEvaluate(`(set Int 1)`)
@@ -311,22 +312,57 @@ func TestGenericGet(t *testing.T) {
 		interp.MustLexAndEvaluate(`(set Float64 1.2)`)
 		interp.MustLexAndEvaluate(`(set Bool true)`)
 
-		require.NoError(t, interp.GenericGet("", &data))
+		t.Run("Combined", func(t *testing.T) {
+			var data dataStruct
+			require.NoError(t, interp.GenericGet("", &data))
 
-		require.Equal(t, "Hello", data.Str)
-		require.Equal(t, int(1), data.Int)
-		require.Equal(t, int8(1), data.Int8)
-		require.Equal(t, int16(1), data.Int16)
-		require.Equal(t, int32(1), data.Int32)
-		require.Equal(t, int64(1), data.Int64)
-		require.Equal(t, uint(1), data.UInt)
-		require.Equal(t, uint8(1), data.UInt8)
-		require.Equal(t, uint16(1), data.UInt16)
-		require.Equal(t, uint32(1), data.UInt32)
-		require.Equal(t, uint64(1), data.UInt64)
-		require.Equal(t, float32(1.2), data.Float32)
-		require.Equal(t, float64(1.2), data.Float64)
-		require.Equal(t, true, data.Bool)
+			require.Equal(t, "Hello", data.Str)
+			require.Equal(t, int(1), data.Int)
+			require.Equal(t, int8(1), data.Int8)
+			require.Equal(t, int16(1), data.Int16)
+			require.Equal(t, int32(1), data.Int32)
+			require.Equal(t, int64(1), data.Int64)
+			require.Equal(t, uint(1), data.UInt)
+			require.Equal(t, uint8(1), data.UInt8)
+			require.Equal(t, uint16(1), data.UInt16)
+			require.Equal(t, uint32(1), data.UInt32)
+			require.Equal(t, uint64(1), data.UInt64)
+			require.Equal(t, float32(1.2), data.Float32)
+			require.Equal(t, float64(1.2), data.Float64)
+			require.Equal(t, true, data.Bool)
+		})
+
+		t.Run("Single", func(t *testing.T) {
+			var data dataStruct
+			require.NoError(t, interp.GenericGet("Str", &data.Str))
+			require.Equal(t, "Hello", data.Str)
+			require.NoError(t, interp.GenericGet("Int", &data.Int))
+			require.Equal(t, int(1), data.Int)
+			require.NoError(t, interp.GenericGet("Int8", &data.Int8))
+			require.Equal(t, int8(1), data.Int8)
+			require.NoError(t, interp.GenericGet("Int16", &data.Int16))
+			require.Equal(t, int16(1), data.Int16)
+			require.NoError(t, interp.GenericGet("Int32", &data.Int32))
+			require.Equal(t, int32(1), data.Int32)
+			require.NoError(t, interp.GenericGet("Int64", &data.Int64))
+			require.Equal(t, int64(1), data.Int64)
+			require.NoError(t, interp.GenericGet("UInt", &data.UInt))
+			require.Equal(t, uint(1), data.UInt)
+			require.NoError(t, interp.GenericGet("UInt8", &data.UInt8))
+			require.Equal(t, uint8(1), data.UInt8)
+			require.NoError(t, interp.GenericGet("UInt16", &data.UInt16))
+			require.Equal(t, uint16(1), data.UInt16)
+			require.NoError(t, interp.GenericGet("UInt32", &data.UInt32))
+			require.Equal(t, uint32(1), data.UInt32)
+			require.NoError(t, interp.GenericGet("UInt64", &data.UInt64))
+			require.Equal(t, uint64(1), data.UInt64)
+			require.NoError(t, interp.GenericGet("Float32", &data.Float32))
+			require.Equal(t, float32(1.2), data.Float32)
+			require.NoError(t, interp.GenericGet("Float64", &data.Float64))
+			require.Equal(t, float64(1.2), data.Float64)
+			require.NoError(t, interp.GenericGet("Bool", &data.Bool))
+			require.Equal(t, true, data.Bool)
+		})
 	})
 
 	t.Run("Pointer", func(t *testing.T) {
@@ -391,15 +427,15 @@ func TestGenericGet(t *testing.T) {
 		require.Equal(t, 1, data.Sub1.Int2)
 	})
 
-	// t.Run("Decimal", func(t *testing.T) {
-	// 	var dec decimal.Decimal
-	// 	interp := helpers.MustNewInterpreterWithLogger()
-	// 	interp.MustLexAndEvaluate(`(set Decimal 1)`)
+	t.Run("Decimal", func(t *testing.T) {
+		var dec decimal.Decimal
+		interp := helpers.MustNewInterpreterWithLogger()
+		interp.MustLexAndEvaluate(`(set Decimal 1)`)
 
-	// 	require.NoError(t, interp.GenericGet("Decimal", &dec))
+		require.NoError(t, interp.GenericGet("Decimal", &dec))
 
-	// 	require.Equal(t, "1", dec.String())
-	// })
+		require.Equal(t, "1", dec.String())
+	})
 
 	t.Run("Custom", func(t *testing.T) {
 		var data struct {
