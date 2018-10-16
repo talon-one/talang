@@ -59,7 +59,7 @@ fmt.Println(result.Stringify()) // 3
 
 You can refer to the [examples](/examples) folder for more examples and usages.
 
-[Here](docs/functions) you can see a list of the embedded function in the language.
+[Here](https://talon-one.github.io/talang/docs/functions) you can see a list of the embedded function in the language.
 
 ## Playing Around
 
