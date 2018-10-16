@@ -57,20 +57,19 @@ fmt.Println(result.Stringify()) // 3
 ```
 
 
-You can refer to the [examples](/examples) folder for more examples and usages.
+You can refer to the [examples](https://github.com/talon-one/talang/tree/master/examples) folder for more examples and usages.
 
 [Here](https://talon-one.github.io/talang/docs/functions) you can see a list of the embedded function in the language.
 
 ## Playing Around
 
-You can get a feeling of how is it to write some Talang using the integrated [CLI](../master/cmd/talang-cli) tool.
+You can get a feeling of how is it to write some Talang using the integrated [CLI](https://github.com/talon-one/talang/tree/master/cmd/talang-cli) tool.
 
 ## Contributing
 
-We have collected notes on how to contribute to this project in [CONTRIBUTING.md].
+We have collected notes on how to contribute to this project in [CONTRIBUTING.md](https://github.com/talon-one/talang/tree/master/CONTRIBUTING.md).
 
-[CONTRIBUTING.md]: CONTRIBUTING.md
 
 ## License
 
-Talang is released under the [MIT License](LICENSE).
+Talang is released under the [MIT License](https://github.com/talon-one/talang/tree/master/LICENSE).
