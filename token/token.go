@@ -1,18 +1,20 @@
 package token
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 	"unicode"
 
-	"github.com/talon-one/talang/decimal"
+	"github.com/talon-one/decimal"
 )
 
 type TaToken struct {
 	// String contains the string value of an block
 	String   string
-	Decimal  *decimal.Decimal
+	Decimal  decimal.Decimal
 	Bool     bool
 	Time     time.Time
 	Kind     Kind
@@ -32,7 +34,7 @@ func New(text string, children ...*TaToken) *TaToken {
 	return &b
 }
 
-func NewDecimal(decimal *decimal.Decimal) *TaToken {
+func NewDecimal(decimal decimal.Decimal) *TaToken {
 	var b TaToken
 	b.Decimal = decimal
 	b.Kind = Decimal
@@ -43,11 +45,7 @@ func NewDecimal(decimal *decimal.Decimal) *TaToken {
 
 func NewDecimalFromInt(i int64) *TaToken {
 	var b TaToken
-	b.Decimal = decimal.NewFromInt(i)
-	if b.Decimal == nil {
-		b.Kind = Null
-		return &b
-	}
+	b.Decimal = decimal.NewFromInt64(i)
 	b.Kind = Decimal
 	b.String = b.Decimal.String()
 	b.Children = []*TaToken{}
@@ -57,8 +55,9 @@ func NewDecimalFromInt(i int64) *TaToken {
 func NewDecimalFromString(s string) *TaToken {
 	var b TaToken
 	b.Children = []*TaToken{}
-	b.Decimal = decimal.NewFromString(s)
-	if b.Decimal == nil {
+	var err error
+	b.Decimal, err = decimal.NewFromString(s)
+	if err != nil {
 		b.Kind = Null
 		return &b
 	}
@@ -70,11 +69,7 @@ func NewDecimalFromString(s string) *TaToken {
 // NewDecimalFromFloat creates a new decimal block from a float (REMEMBER float64 is not exact! use with care)
 func NewDecimalFromFloat(i float64) *TaToken {
 	var b TaToken
-	b.Decimal = decimal.NewFromFloat(i)
-	if b.Decimal == nil {
-		b.Kind = Null
-		return &b
-	}
+	b.Decimal = decimal.NewFromFloat64(i)
 	b.Kind = Decimal
 	b.String = b.Decimal.String()
 	b.Children = []*TaToken{}
@@ -244,9 +239,10 @@ func (b *TaToken) initValue(text string) {
 
 		// is it a decimal?
 		if isDecimal(text) {
+			var err error
 			// try to parse it as a decimal
-			b.Decimal = decimal.NewFromString(text)
-			if b.Decimal != nil {
+			b.Decimal, err = decimal.NewFromString(text)
+			if err == nil {
 				b.Kind = Decimal
 				return
 			}
@@ -377,7 +373,7 @@ func (b *TaToken) Equal(a *TaToken) bool {
 
 	switch a.Kind {
 	case Decimal:
-		return a.Decimal.Equal(b.Decimal)
+		return a.Decimal.Equals(b.Decimal)
 	case String:
 		return a.String == b.String
 	case Boolean:
@@ -411,6 +407,61 @@ func (b *TaToken) Equal(a *TaToken) bool {
 		return true
 	}
 	return false
+}
+
+func (t *TaToken) MarshalJSON() ([]byte, error) {
+	keys := make(map[string]interface{})
+	if t.Kind&Decimal == Decimal {
+		keys["Decimal"] = t.Decimal.String()
+	}
+	if t.Kind&String == String {
+		keys["String"] = t.String
+	}
+	if t.Kind&Boolean == Boolean {
+		keys["Boolean"] = t.Bool
+	}
+	if t.Kind&Time == Time {
+		keys["Time"] = t.Time
+	}
+	if t.Kind&Null == Null {
+		keys["Null"] = true
+	}
+	if t.Kind&List == List {
+		keys["List"] = t.Children
+	}
+	if t.Kind&Map == Map {
+		mapKeys := make(map[string]interface{})
+
+		for i, key := range t.Keys {
+			mapKeys[key] = t.Children[i]
+		}
+
+		keys["Map"] = mapKeys
+	}
+	if t.Kind&Token == Token {
+		keys["Token"] = struct {
+			String   string
+			Children []*TaToken
+		}{
+			String:   t.String,
+			Children: t.Children,
+		}
+	}
+
+	return json.Marshal(keys)
+}
+
+func (t *TaToken) UnmarshalJSON(b []byte) error {
+	// var data map[string]interface{}
+	// if err := json.Unmarshal(b, &data); err != nil {
+	// 	return err
+	// }
+
+	// for _, var := range var {
+
+	// }
+
+	return errors.New("Unimplemented")
 }
 
 func Arguments(children []*TaToken) []Kind {

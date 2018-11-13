@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/talon-one/talang/decimal"
+	"github.com/talon-one/decimal"
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/token"
 )
@@ -262,16 +262,16 @@ var Min = interpreter.TaFunction{
 		for _, item := range args[0].Children {
 			if item.IsDecimal() {
 				if d == nil {
-					d = item.Decimal
-				} else if item.Decimal.Compare(d) < 0 {
-					d = item.Decimal
+					d = &item.Decimal
+				} else if item.Decimal.Cmp(*d) < 0 {
+					d = &item.Decimal
 				}
 			}
 		}
 		if d == nil {
 			return nil, errors.New("No decimal present in list")
 		}
-		return token.NewDecimal(d), nil
+		return token.NewDecimal(*d), nil
 	},
 }
 
@@ -294,16 +294,16 @@ var Max = interpreter.TaFunction{
 		for _, item := range args[0].Children {
 			if item.IsDecimal() {
 				if d == nil {
-					d = item.Decimal
-				} else if item.Decimal.Compare(d) > 0 {
-					d = item.Decimal
+					d = &item.Decimal
+				} else if item.Decimal.Cmp(*d) > 0 {
+					d = &item.Decimal
 				}
 			}
 		}
 		if d == nil {
 			return nil, errors.New("No decimal present in list")
 		}
-		return token.NewDecimal(d), nil
+		return token.NewDecimal(*d), nil
 	},
 }
 
@@ -635,7 +635,7 @@ sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2
 		bindingName := args[1].Children[0].String
 
 		type SortByItem struct {
-			Num  *decimal.Decimal
+			Num  decimal.Decimal
 			Item *token.TaToken
 		}
 
@@ -659,7 +659,7 @@ sortByNumber (list 2 4 3 1) ((Item) (. Item)) false              ; returns [1, 2
 			if args[2].Bool {
 				expected = 1
 			}
-			return structlist[i].Num.Compare(structlist[j].Num) == expected
+			return structlist[i].Num.Cmp(structlist[j].Num) == expected
 		})
 
 		for i := 0; i < len(structlist); i++ {

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/decimal"
+	"github.com/talon-one/decimal"
 )
 
 func mustDecimal(d *decimal.Decimal, ok bool) *decimal.Decimal {
@@ -394,7 +394,7 @@ func TestStringify(t *testing.T) {
 					&TaToken{
 						String:  "14.5",
 						Kind:    Decimal,
-						Decimal: decimal.NewFromString("14.5"),
+						Decimal: decimal.MustNewFromString("14.5"),
 					},
 				},
 			},
@@ -529,20 +529,17 @@ func TestToHumanReadable(t *testing.T) {
 
 func TestMarshaling(t *testing.T) {
 	// block1 := NewMap(map[string]*TaToken{
-	// 	"Key2": NewDecimalFromInt(1),
 	// 	"Key1": NewBool(true),
+	// 	"Key2": NewDecimalFromInt(1),
 	// 	"Key3": NewString("Hello"),
 	// 	"Key4": NewList(NewBool(false), NewMap(map[string]*TaToken{
 	// 		"SubKey1": NewDecimalFromInt(3),
 	// 		"SubKey2": NewTime(time.Now()),
 	// 	})),
 	// })
+	// var block2 TaToken
 	// b, err := json.Marshal(block1)
 	// require.NoError(t, err)
-	// println(string(b))
-
-	// var block2 TaToken
-
 	// require.NoError(t, json.Unmarshal(b, &block2))
 
 	// require.Equal(t, true, block1.Equal(&block2))

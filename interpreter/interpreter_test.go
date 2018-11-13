@@ -8,7 +8,7 @@ import (
 	"github.com/talon-one/talang/lexer"
 
 	"github.com/stretchr/testify/require"
-	"github.com/talon-one/talang/decimal"
+	"github.com/talon-one/decimal"
 	"github.com/talon-one/talang/interpreter"
 	helpers "github.com/talon-one/talang/testhelpers"
 	"github.com/talon-one/talang/token"
@@ -57,7 +57,7 @@ func TestOverloading(t *testing.T) {
 			Returns: token.Decimal,
 		},
 		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-			return token.NewDecimal(decimal.Add(args[0].Decimal, args[1].Decimal)), nil
+			return token.NewDecimal(args[0].Decimal.Add(args[1].Decimal)), nil
 		},
 	})
 	require.Equal(t, token.NewDecimalFromInt(3).Decimal, interp.MustLexAndEvaluate("(FN 1 2)").Decimal)
@@ -98,7 +98,7 @@ func TestOverloadingNested(t *testing.T) {
 			Returns: token.Decimal,
 		},
 		Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-			return token.NewDecimal(decimal.Add(args[0].Decimal, args[1].Decimal)), nil
+			return token.NewDecimal(args[0].Decimal.Add(args[1].Decimal)), nil
 		},
 	})
 

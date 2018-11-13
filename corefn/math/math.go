@@ -2,7 +2,7 @@
 package math
 
 import (
-	"github.com/talon-one/talang/decimal"
+	"github.com/talon-one/decimal"
 	"github.com/talon-one/talang/interpreter"
 	"github.com/talon-one/talang/token"
 )
@@ -30,7 +30,7 @@ var Add = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Decimal
+		var d decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
@@ -59,7 +59,7 @@ var Sub = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Decimal
+		var d decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
@@ -88,7 +88,7 @@ var Mul = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Decimal
+		var d decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
@@ -117,7 +117,7 @@ var Div = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Decimal
+		var d decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal
@@ -146,7 +146,7 @@ var Mod = interpreter.TaFunction{
 `,
 	},
 	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
-		var d *decimal.Decimal
+		var d decimal.Decimal
 		for i := 0; i < len(args); i++ {
 			if i == 0 {
 				d = args[i].Decimal

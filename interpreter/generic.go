@@ -6,12 +6,11 @@ import (
 	"reflect"
 
 	"github.com/pkg/errors"
-	"github.com/talon-one/talang/decimal"
+	"github.com/talon-one/decimal"
 	"github.com/talon-one/talang/token"
 )
 
 var decimalType = reflect.TypeOf(decimal.Decimal{})
-var decimalTypePTR = reflect.TypeOf(&decimal.Decimal{})
 
 type Unmarshaler interface {
 	UnmarshalTaToken(*token.TaToken) error
@@ -28,8 +27,8 @@ func genericSetConv(value interface{}) (*token.TaToken, error) {
 		v = v.Addr()
 	}
 
-	if v.Type() == decimalTypePTR {
-		return token.NewDecimal(v.Interface().(*decimal.Decimal)), nil
+	if v.Type() == decimalType {
+		return token.NewDecimal(v.Interface().(decimal.Decimal)), nil
 	}
 
 	for {
@@ -173,7 +172,11 @@ func genericGetConv(tkn *token.TaToken, v reflect.Value) (reflect.Value, error) 
 	}
 
 	if v.Type() == decimalType {
-		return reflect.ValueOf(*decimal.NewFromString(tkn.String)), nil
+		d, err := decimal.NewFromString(tkn.String)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		return reflect.ValueOf(d), nil
 	}
 
 	var result interface{}
