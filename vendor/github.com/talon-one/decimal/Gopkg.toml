@@ -27,7 +27,7 @@
 
 [[constraint]]
   name = "github.com/ericlagergren/decimal"
-  version = "3.2.0"
+  revision = "0bb163153a5daa921bc8ccd715eeb2c50e11cb62"
 
 [[constraint]]
   name = "github.com/mattn/go-sqlite3"

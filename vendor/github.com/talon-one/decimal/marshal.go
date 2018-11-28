@@ -13,7 +13,7 @@ func (d *Decimal) UnmarshalText(buf []byte) error {
 	if err != nil {
 		return err
 	}
-	d.native = tmp.native
+	d.nat = tmp.nat
 	return nil
 }
 

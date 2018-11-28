@@ -10,7 +10,7 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:a4e57c4024ea3a581ee1c57c809eb66addfde89335a386ad0f4b4ba6b3228c65"
+  digest = "1:bc270c5a0b8bb1b41433b26806b5c0003ad9261bf777914f6ca43bdf319fa0c5"
   name = "github.com/ericlagergren/decimal"
   packages = [
     ".",
@@ -21,8 +21,7 @@
     "misc",
   ]
   pruneopts = "UT"
-  revision = "2a5821154e156e9036761a55c2e820d8653a5a60"
-  version = "v3.2"
+  revision = "0bb163153a5daa921bc8ccd715eeb2c50e11cb62"
 
 [[projects]]
   digest = "1:4a49346ca45376a2bba679ca0e83bec949d780d4e927931317904bad482943ec"

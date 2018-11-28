@@ -8,7 +8,7 @@ import (
 
 // Cmp compares n to the decimal instance
 func (dec Decimal) Cmp(n Decimal) int {
-	return dec.native.Cmp(n.native)
+	return dec.native().Cmp(n.native())
 }
 
 // Cmp compares a to b
@@ -44,8 +44,8 @@ func EqualsInterface(d Decimal, v interface{}) bool {
 
 // Add adds n to the decimal instance
 func (dec Decimal) Add(n Decimal) Decimal {
-	dec.native.Add(dec.native, n.native)
-	return Decimal{dec.native}
+	dec.native().Add(dec.native(), n.native())
+	return Decimal{dec.native()}
 }
 
 // Add adds a to b and returns a new decimal instance
@@ -57,8 +57,8 @@ func Add(a Decimal, b Decimal) Decimal {
 
 // Sub substracts n to the decimal instance
 func (dec Decimal) Sub(n Decimal) Decimal {
-	dec.native.Sub(dec.native, n.native)
-	return Decimal{dec.native}
+	dec.native().Sub(dec.native(), n.native())
+	return Decimal{dec.native()}
 }
 
 // Sub substracts b from a and returns a new decimal instance
@@ -70,8 +70,8 @@ func Sub(a Decimal, b Decimal) Decimal {
 
 // Div divides n on the decimal instance
 func (dec Decimal) Div(n Decimal) Decimal {
-	dec.native.Quo(dec.native, n.native)
-	return Decimal{dec.native}
+	dec.native().Quo(dec.native(), n.native())
+	return Decimal{dec.native()}
 }
 
 // Div divides b from a and returns a new decimal instance
@@ -83,8 +83,8 @@ func Div(a Decimal, b Decimal) Decimal {
 
 // Mul multiplies n to the decimal instance
 func (dec Decimal) Mul(n Decimal) Decimal {
-	dec.native.Mul(dec.native, n.native)
-	return Decimal{dec.native}
+	dec.native().Mul(dec.native(), n.native())
+	return Decimal{dec.native()}
 }
 
 // Mul multiplies a to b and returns a new decimal instance
@@ -96,8 +96,8 @@ func Mul(a Decimal, b Decimal) Decimal {
 
 // Mod modulos n on the decimal instance
 func (dec Decimal) Mod(n Decimal) Decimal {
-	dec.native.Rem(dec.native, n.native)
-	return Decimal{dec.native}
+	dec.native().Rem(dec.native(), n.native())
+	return Decimal{dec.native()}
 }
 
 // Mod modulos b on a and returns a new decimal instance
@@ -109,8 +109,8 @@ func Mod(a Decimal, b Decimal) Decimal {
 
 // Floor rounds the instance down to the next whole number
 func (dec Decimal) Floor() Decimal {
-	math.Floor(dec.native, dec.native)
-	return Decimal{dec.native}
+	math.Floor(dec.native(), dec.native())
+	return Decimal{dec.native()}
 }
 
 // Floor rounds d down to the next whole number and returns it as a new instance
@@ -122,8 +122,8 @@ func Floor(a Decimal) Decimal {
 
 // Ceil rounds the instance up to the next whole number
 func (dec Decimal) Ceil() Decimal {
-	math.Ceil(dec.native, dec.native)
-	return Decimal{dec.native}
+	math.Ceil(dec.native(), dec.native())
+	return Decimal{dec.native()}
 }
 
 // Ceil rounds d up to the next whole number and returns it as a new instance
@@ -135,8 +135,8 @@ func Ceil(a Decimal) Decimal {
 
 // Round rounds the instance to the specific digits
 func (dec Decimal) Round(digits int) Decimal {
-	dec.native.Round(digits)
-	return Decimal{dec.native}
+	dec.native().Round(digits)
+	return Decimal{dec.native()}
 }
 
 // Round rounds d to the specific digits and returns it as a new instance
@@ -148,17 +148,17 @@ func Round(a Decimal, digits int) Decimal {
 
 // Truncate truncates the instance to the specific digits
 func (dec Decimal) Truncate(digits int) Decimal {
-	parts := strings.SplitN(dec.native.String(), ".", 2)
+	parts := strings.SplitN(dec.native().String(), ".", 2)
 	if len(parts) <= 1 {
 		v, _ := NewFromString(parts[0])
-		dec.native.Copy(v.native)
+		dec.native().Copy(v.native())
 		return v
 	}
 	if digits > len(parts[1])-1 {
 		digits = len(parts[1])
 	}
 	v, _ := NewFromString(parts[0] + "." + parts[1][:digits])
-	dec.native.Copy(v.native)
+	dec.native().Copy(v.native())
 	return v
 }
 

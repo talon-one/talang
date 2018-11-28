@@ -15,6 +15,6 @@ func (d *Decimal) Scan(value interface{}) error {
 	if err != nil {
 		return err
 	}
-	d.native = dec.native
+	d.nat = dec.nat
 	return nil
 }

@@ -9,7 +9,14 @@ import (
 )
 
 type Decimal struct {
-	native *decimal.Big
+	nat *decimal.Big
+}
+
+func (d *Decimal) native() *decimal.Big {
+	if d.nat == nil {
+		d.nat = decimal.New(0, 0)
+	}
+	return d.nat
 }
 
 func Zero() Decimal {
@@ -97,7 +104,7 @@ func MustNewFromString(s string) Decimal {
 }
 
 func NewFromDecimal(d Decimal) Decimal {
-	cpy := *d.native
+	cpy := *d.native()
 	return Decimal{&cpy}
 }
 
@@ -143,7 +150,7 @@ func NewFromInterface(value interface{}) (Decimal, error) {
 		if err != nil {
 			return Decimal{}, fmt.Errorf("Unable to create decimal from value type %T: %v", v, err)
 		}
-		return Decimal{tmp.native}, nil
+		return Decimal{tmp.native()}, nil
 	}
 }
 
@@ -156,7 +163,7 @@ func MustNewFromInterface(value interface{}) Decimal {
 }
 
 func (d Decimal) Int8() (int8, error) {
-	i, ok := d.native.Int64()
+	i, ok := d.native().Int64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an int8", d.String())
 	}
@@ -172,7 +179,7 @@ func (d Decimal) MustInt8() int8 {
 }
 
 func (d Decimal) Int16() (int16, error) {
-	i, ok := d.native.Int64()
+	i, ok := d.native().Int64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an int16", d.String())
 	}
@@ -188,7 +195,7 @@ func (d Decimal) MustInt16() int16 {
 }
 
 func (d Decimal) Int32() (int32, error) {
-	i, ok := d.native.Int64()
+	i, ok := d.native().Int64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an int32", d.String())
 	}
@@ -204,7 +211,7 @@ func (d Decimal) MustInt32() int32 {
 }
 
 func (d Decimal) Int64() (int64, error) {
-	i, ok := d.native.Int64()
+	i, ok := d.native().Int64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an int64", d.String())
 	}
@@ -220,7 +227,7 @@ func (d Decimal) MustInt64() int64 {
 }
 
 func (d Decimal) Uint8() (uint8, error) {
-	i, ok := d.native.Uint64()
+	i, ok := d.native().Uint64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an uint8", d.String())
 	}
@@ -236,7 +243,7 @@ func (d Decimal) MustUint8() uint8 {
 }
 
 func (d Decimal) Uint16() (uint16, error) {
-	i, ok := d.native.Uint64()
+	i, ok := d.native().Uint64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an uint16", d.String())
 	}
@@ -252,7 +259,7 @@ func (d Decimal) MustUint16() uint16 {
 }
 
 func (d Decimal) Uint32() (uint32, error) {
-	i, ok := d.native.Uint64()
+	i, ok := d.native().Uint64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an uint32", d.String())
 	}
@@ -268,7 +275,7 @@ func (d Decimal) MustUint32() uint32 {
 }
 
 func (d Decimal) Uint64() (uint64, error) {
-	i, ok := d.native.Uint64()
+	i, ok := d.native().Uint64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an uint64", d.String())
 	}
@@ -284,7 +291,7 @@ func (d Decimal) MustUint64() uint64 {
 }
 
 func (d Decimal) Int() (int, error) {
-	i, ok := d.native.Int64()
+	i, ok := d.native().Int64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an int", d.String())
 	}
@@ -300,7 +307,7 @@ func (d Decimal) MustInt() int {
 }
 
 func (d Decimal) Uint() (uint, error) {
-	i, ok := d.native.Uint64()
+	i, ok := d.native().Uint64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an uint", d.String())
 	}
@@ -316,7 +323,7 @@ func (d Decimal) MustUint() uint {
 }
 
 func (d Decimal) Float32() (float32, error) {
-	i, ok := d.native.Float64()
+	i, ok := d.native().Float64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an float32", d.String())
 	}
@@ -332,7 +339,7 @@ func (d Decimal) MustFloat32() float32 {
 }
 
 func (d Decimal) Float64() (float64, error) {
-	i, ok := d.native.Float64()
+	i, ok := d.native().Float64()
 	if !ok {
 		return 0, fmt.Errorf("`%s' not an float64", d.String())
 	}
@@ -348,11 +355,14 @@ func (d Decimal) MustFloat64() float64 {
 }
 
 func (d Decimal) String() string {
-	return d.native.String()
+	if d.native() == nil {
+		return "0"
+	}
+	return d.native().String()
 }
 
 func (d Decimal) Bytes() []byte {
-	return []byte(d.native.String())
+	return []byte(d.String())
 }
 
 func isDecimal(s string) bool {

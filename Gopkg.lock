@@ -22,19 +22,18 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0f893aeaa870f517664d80ac7be7fa85c4b04ce984ae3eeb0dac7687c8fd34d1"
+  digest = "1:f9bb4fba309ed75573053608ea00f16c6b5764d2accbad0ce27189b8edcba934"
   name = "github.com/araddon/dateparse"
   packages = ["."]
   pruneopts = "UT"
-  revision = "00e168d34895ce6682b546bc3914bcea611a6dbd"
+  revision = "21df004e09ca46e07ce99bbba1e8c2422ba4ecf9"
 
 [[projects]]
-  digest = "1:b95738a1e6ace058b5b8544303c0871fc01d224ef0d672f778f696265d0f2917"
+  digest = "1:454adc7f974228ff789428b6dc098638c57a64aa0718f0bd61e53d3cd39d7a75"
   name = "github.com/chzyer/readline"
   packages = ["."]
   pruneopts = "UT"
-  revision = "62c6fe6193755f722b8b8788aa7357be55a50ff1"
-  version = "v1.4"
+  revision = "2972be24d48e78746da79ba8e24e8b488c9880de"
 
 [[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
@@ -45,7 +44,7 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:a4e57c4024ea3a581ee1c57c809eb66addfde89335a386ad0f4b4ba6b3228c65"
+  digest = "1:bc270c5a0b8bb1b41433b26806b5c0003ad9261bf777914f6ca43bdf319fa0c5"
   name = "github.com/ericlagergren/decimal"
   packages = [
     ".",
@@ -56,8 +55,7 @@
     "misc",
   ]
   pruneopts = "UT"
-  revision = "2a5821154e156e9036761a55c2e820d8653a5a60"
-  version = "v3.2"
+  revision = "0bb163153a5daa921bc8ccd715eeb2c50e11cb62"
 
 [[projects]]
   digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
@@ -112,11 +110,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:172c41a72093fa01b78e5cd49b9867ab0b6443b58c17a352c479fc6deda7ff49"
+  digest = "1:4fb7c66fcec451c383718fc7d8c4c50f3ce905c276286d21875286e6e689fcc6"
   name = "github.com/talon-one/decimal"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1336e92d2dba977c3465b4d78b9cddd7ee0a5052"
+  revision = "07129d6a48dc6c1225dc2ea152b4192d27acbec0"
 
 [[projects]]
   digest = "1:d1ebc372e6950357b8eca6343582a019b235ef46d343b723619f239dfd98f1da"
@@ -136,11 +134,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:7ba061af4131fb44b30448572acd0d6fefbf63a61b97b7ef1dea0be5871c2742"
+  digest = "1:8775d8a768d9e65e8b659172804aac5db1fc8d563ba766470a6c2698c57c61a7"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399"
+  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
 
 [[projects]]
   digest = "1:c06d9e11d955af78ac3bbb26bd02e01d2f61f689e1a3bce2ef6fb683ef8a7f2d"
