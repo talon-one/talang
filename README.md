@@ -63,7 +63,9 @@ You can refer to the [examples](https://github.com/talon-one/talang/tree/master/
 
 ## Playing Around
 
-You can get a feeling of how is it to write some Talang using the integrated [CLI](https://github.com/talon-one/talang/tree/master/cmd/talang-cli) tool.
+Check out our brand new playground at https://talang-land.talon.one/.
+
+Or alternatively, get our [CLI](https://github.com/talon-one/talang/tree/master/cmd/talang-cli) locally and play with Talang in your consolse!
 
 ## Contributing
 
