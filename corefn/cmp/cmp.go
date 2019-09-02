@@ -403,7 +403,7 @@ var Or = interpreter.TaFunction{
 
 			// post-eval checks.
 			if args[i].Kind != token.Boolean {
-				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
+				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String())
 			}
 			if args[i].Bool == true || args[i].Kind == token.Collection {
 				return (token.NewBool(true)), nil
@@ -443,7 +443,7 @@ var And = interpreter.TaFunction{
 
 			// post-eval checks
 			if args[i].Kind != token.Boolean {
-				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String)
+				return nil, errors.Errorf("Unexpected return type, expected Bool, got %s", args[i].Kind.String())
 			}
 			if args[i].Bool == false {
 				return (token.NewBool(false)), nil
