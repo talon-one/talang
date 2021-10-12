@@ -11,5 +11,6 @@ func AllOperations() []interpreter.TaFunction {
 		Do,
 		DoLegacy,
 		SafeRead,
+		Identity,
 	}
 }

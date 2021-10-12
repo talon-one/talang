@@ -166,3 +166,19 @@ var SafeRead = interpreter.TaFunction{
 		return blockToRun, nil
 	},
 }
+
+var Identity = interpreter.TaFunction{
+	CommonSignature: interpreter.CommonSignature{
+		Name: "identity",
+		Arguments: []token.Kind{token.Any},
+		Returns:     token.Any,
+		Description: "Returns its argument",
+		Example: `
+(identity 1)                                                     ; returns 1
+(identity true)                                                  ; returns true
+`,
+	},
+	Func: func(interp *interpreter.Interpreter, args ...*token.TaToken) (*token.TaToken, error) {
+		return args[0], nil
+	},
+}
