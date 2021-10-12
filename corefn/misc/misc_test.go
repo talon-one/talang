@@ -182,3 +182,11 @@ func TestSafeRead(t *testing.T) {
 		// }
 	)
 }
+
+func TestIdentity(t *testing.T) {
+	helpers.RunTests(t, helpers.Test{
+		"identity 1",
+		nil,
+        token.NewDecimalFromInt(1),
+	})
+}

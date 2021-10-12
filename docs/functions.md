@@ -365,6 +365,13 @@ Extract the hour (00-23) from a time
 (hour 2018-01-14T19:04:05Z)                                      ; returns "19"
 ```
 
+### identity(Any)Any
+Returns its argument
+```lisp
+(identity 1)                                                     ; returns 1
+(identity true)                                                  ; returns true
+```
+
 ### isEmpty(List)Boolean
 Check if a list is empty
 ```lisp
