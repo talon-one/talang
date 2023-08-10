@@ -8,7 +8,7 @@ require (
 	github.com/fatih/color v1.7.0
 	github.com/pkg/errors v0.8.0
 	github.com/stretchr/testify v1.2.2
-	github.com/talon-one/decimal v0.0.0-20181115143752-07129d6a48dc
+	github.com/talon-one/decimal v0.0.0-20230808140726-2fa8136fba18
 	github.com/talon-one/runes v0.0.0-20180307151450-47145e1bb254
 	github.com/vjeantet/jodaTime v0.0.0-20170816150230-be924ce213fb
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6

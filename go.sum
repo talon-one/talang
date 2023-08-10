@@ -23,6 +23,7 @@ github.com/mattn/go-colorable v0.0.9 h1:UVL0vNpWh04HeJXV0KLcaT7r06gOH2l4OW6ddYRU
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
 github.com/mattn/go-isatty v0.0.4 h1:bnP0vzxcAdeI1zdubAl5PjU6zsERjGZb7raWodagDYs=
 github.com/mattn/go-isatty v0.0.4/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
+github.com/mattn/go-sqlite3 v1.10.0/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsOqkbpncsNc=
 github.com/mattn/go-sqlite3 v1.14.8 h1:gDp86IdQsN/xWjIEmr9MF6o9mpksUgh0fu+9ByFxzIU=
 github.com/mattn/go-sqlite3 v1.14.8/go.mod h1:NyWgC/yNuGj7Q9rpYnZvas74GogHl5/Z4A/KQRfk6bU=
 github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
@@ -34,8 +35,8 @@ github.com/simplereach/timeutils v1.2.0 h1:btgOAlu9RW6de2r2qQiONhjgxdAG7BL6je0G6
 github.com/simplereach/timeutils v1.2.0/go.mod h1:VVbQDfN/FHRZa1LSqcwo4kNZ62OOyqLLGQKYB3pB0Q8=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
-github.com/talon-one/decimal v0.0.0-20181115143752-07129d6a48dc h1:JiAkdX3QLyLQV/wNMj0uSRWlB7pRlSHCPFyqE/OWILw=
-github.com/talon-one/decimal v0.0.0-20181115143752-07129d6a48dc/go.mod h1:/9om0m8PZwglp+PvLuqkfm9xl6KxcM6GqXlBOp5j71Q=
+github.com/talon-one/decimal v0.0.0-20230808140726-2fa8136fba18 h1:IJ4RsBDPsxyOoxgwRuX5c63jinXFgnfik/n6XSc4pP8=
+github.com/talon-one/decimal v0.0.0-20230808140726-2fa8136fba18/go.mod h1:ZngR4L+qSr/nE3mdpLoRRLY6Y3VyEErS5XRzUJBzf90=
 github.com/talon-one/runes v0.0.0-20180307151450-47145e1bb254 h1:sv12emjtNfAi9KiIwmB95cd/FUGE2MQ+mHUZlHckWSU=
 github.com/talon-one/runes v0.0.0-20180307151450-47145e1bb254/go.mod h1:BSDizmSP/tUDNkyR2Y0VffwYlIOaO4LW0eZ+XFwVJP8=
 github.com/vjeantet/jodaTime v0.0.0-20170816150230-be924ce213fb h1:9Cx/q/wd5p+BjCDBjY+rauPbwoS+chrnQ9MKMUtv/hs=
